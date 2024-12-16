@@ -1,0 +1,218 @@
+### .NET Core ###
+*.swp
+*.*~
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+### Visual Studio ###
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## Mono auto generated files
+mono_crash.*
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+## Visual Studio directory
+.vs/
+Generated\ Files/
+*.ncrunch*
+*.pidb
+*.resources
+test-results/
+TestResults/
+
+## Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.e2e
+
+## ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Test Tools
+_Chutzpah*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+BenchmarkDotNet.Artifacts/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+### NuGet ###
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+### SQL Server ###
+*.mdf
+*.ldf
+*.ndf
+
+### Azure ###
+*.publishsettings
+PublishProfiles/
+*.pubxml
+*.pubxml.user
+PublishScripts/
+csx/
+*.build.csdef
+ecf/
+rcf/
+ServiceFabricBackup/
+*.rptproj.bak
+
+### Node.js ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### Environment Files ###
+.env
+.env.local
+.env.*.local
+appsettings.json
+appsettings.*.json
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+*.Development.json
+*.Production.json
+*.Staging.json
+
+### IDE ###
+## Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+## Rider
+.idea/
+*.sln.iml
+
+## Other IDEs
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+*.launch
+.loadpath
+*.code-workspace
+
+### Terraform ###
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+### Logs and Temp ###
+logs/
+*.log
+coverage/
+*.coverage
+.nyc_output
+*.tmp
+*.temp
+*.swp
+*~
+
+### OS Generated ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### Application Specific ###
+## ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+## StyleCop
+StyleCopReport.xml
+
+## Documentation
+DocProject/buildhelp/
+DocProject/Help/
+
+## Click-Once
+publish/
+
+## Windows Store
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.appx
+*.appxbundle
+*.appxupload
+
+## Others
+ClientBin/
+~$*
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+orleans.codegen.cs
+FakesAssemblies/
+*.GhostDoc.xml
+.paket/
+.fake/
+.cr/personal
+.localhistory/
+.vshistory/
+healthchecksdb
+MigrationBackup/
+.ionide/
+FodyWeavers.xsd
