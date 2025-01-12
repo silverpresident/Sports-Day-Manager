@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,10 +18,11 @@ public class House
     [StringLength(20)]
     public string Color { get; set; } = string.Empty;
 
-    [StringLength(255)]
+    [StringLength(200)]
     public string? LogoUrl { get; set; }
 
     // Navigation properties
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
+    public virtual ICollection<TournamentHouseSummary> TournamentSummaries { get; set; } = new List<TournamentHouseSummary>();
 }

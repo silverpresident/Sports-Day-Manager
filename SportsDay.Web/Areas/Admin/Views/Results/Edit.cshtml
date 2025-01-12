@@ -1,0 +1,201 @@
+@model SportsDay.Lib.Models.Result
+@{
+    ViewData["Title"] = "Edit Result";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-pencil-fill text-success me-2"></i>Edit Result
+            </h1>
+            <p class="text-muted mt-2">Modify result details</p>
+        </div>
+        <div class="btn-group">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-list-ol me-2"></i>Result Details
+                    </div>
+                    @if (Model.IsNewRecord)
+                    {
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-trophy-fill me-1"></i>Record Holder
+                        </span>
+                    }
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" id="resultForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="TournamentId" />
+                        <input type="hidden" asp-for="EventId" />
+                        <input type="hidden" asp-for="IsNewRecord" />
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="bi bi-calendar-event me-2"></i>Event
+                            </label>
+                            <input class="form-control" value="@Model.Event.Name" disabled />
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="ParticipantId" class="form-label">
+                                    <i class="bi bi-person me-2"></i>Participant
+                                </label>
+                                <select asp-for="ParticipantId" asp-items="ViewBag.Participants" 
+                                        class="form-select">
+                                    <option value="">Select Participant</option>
+                                </select>
+                                <span asp-validation-for="ParticipantId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="HouseId" class="form-label">
+                                    <i class="bi bi-house me-2"></i>House
+                                </label>
+                                <select asp-for="HouseId" asp-items="ViewBag.Houses" 
+                                        class="form-select">
+                                    <option value="">Select House</option>
+                                </select>
+                                <span asp-validation-for="HouseId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div id="resultInputs">
+                            @if (Model.Event.Type == EventType.Distance || Model.Event.Type == EventType.Speed)
+                            {
+                                <!-- Speed/Distance input -->
+                                <div class="mb-4">
+                                    <label asp-for="SpeedOrDistance" class="form-label">
+                                        <i class="bi bi-speedometer2 me-2"></i>@Model.Event.Type
+                                    </label>
+                                    <input asp-for="SpeedOrDistance" class="form-control" type="number" step="0.01" />
+                                    <span asp-validation-for="SpeedOrDistance" class="text-danger"></span>
+                                    <div class="form-text">Enter the @Model.Event.Type.ToString().ToLower() value</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Placement input -->
+                                <div class="mb-4">
+                                    <label asp-for="Placement" class="form-label">
+                                        <i class="bi bi-trophy me-2"></i>Placement
+                                    </label>
+                                    <input asp-for="Placement" class="form-control" type="number" min="1" />
+                                    <span asp-validation-for="Placement" class="text-danger"></span>
+                                    <div class="form-text">Enter the participant's placement (1st, 2nd, etc.)</div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Event Info -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-info-circle me-2"></i>Event Information
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="small text-muted">Division</div>
+                            <div class="fw-bold">@Model.Event.Division.Name</div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Class</div>
+                            <div class="fw-bold">
+                                @(Model.Event.Class == 0 ? "Open" : $"Class {Model.Event.Class}")
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Type</div>
+                            <div class="fw-bold">@Model.Event.Type</div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Point System</div>
+                            <div class="fw-bold">@Model.Event.PointSystem</div>
+                        </div>
+                        @if (Model.Event.Record.HasValue)
+                        {
+                            <div class="list-group-item">
+                                <div class="small text-muted">Current Record</div>
+                                <div class="fw-bold">@Model.Event.Record.Value</div>
+                                @if (!string.IsNullOrEmpty(Model.Event.RecordHolderName))
+                                {
+                                    <small class="text-muted">Held by @Model.Event.RecordHolderName</small>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Quick Tips
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Verify participant details
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Check result accuracy
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Points update automatically
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success me-2"></i>Records are tracked
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Auto-select house based on participant
+        document.querySelector('select[name="ParticipantId"]').addEventListener('change', function() {
+            const option = this.options[this.selectedIndex];
+            const houseSelect = document.querySelector('select[name="HouseId"]');
+            const houseName = option.parentElement.label;
+            
+            Array.from(houseSelect.options).forEach(opt => {
+                if (opt.text === houseName) {
+                    houseSelect.value = opt.value;
+                }
+            });
+        });
+    </script>
+}

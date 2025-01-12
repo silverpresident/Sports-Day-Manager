@@ -1,0 +1,249 @@
+@model IEnumerable<SportsDay.Lib.Models.Event>
+@{
+    ViewData["Title"] = "Events";
+    var activeTournament = ViewBag.ActiveTournament as Tournament;
+    var eventsByDivision = Model.GroupBy(e => e.Division);
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-calendar-event-fill text-success me-2"></i>Events
+            </h1>
+            <p class="text-muted mt-2">
+                Manage events for @activeTournament.Name
+            </p>
+        </div>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle me-2"></i>New Event
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @foreach (var divisionGroup in eventsByDivision)
+    {
+        var division = divisionGroup.Key;
+        var eventsByClass = divisionGroup.GroupBy(e => e.Class).OrderBy(g => g.Key);
+
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-diagram-3 me-2"></i>@division.Name Division
+                    </h5>
+                    <span class="badge bg-light text-dark">
+                        @divisionGroup.Count() Events
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @foreach (var classGroup in eventsByClass)
+                {
+                    <div class="border-bottom">
+                        <div class="p-3 bg-light">
+                            <h6 class="mb-0">
+                                <i class="bi bi-layers me-2"></i>
+                                @(classGroup.Key == 0 ? "Open Events" : $"Class {classGroup.Key} Events")
+                            </h6>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="bi bi-flag me-2"></i>Status
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-card-text me-2"></i>Event
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-tag me-2"></i>Category
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-speedometer2 me-2"></i>Type
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-clock me-2"></i>Schedule
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-list-ol me-2"></i>Points
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-trophy me-2"></i>Record
+                                        </th>
+                                        <th class="text-end">
+                                            <i class="bi bi-gear me-2"></i>Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var evt in classGroup.OrderBy(e => e.ScheduledTime))
+                                    {
+                                        <tr>
+                                            <td>
+                                                @{
+                                                    var (statusIcon, statusClass) = evt.Status switch
+                                                    {
+                                                        "Scheduled" => ("bi-calendar", "text-primary"),
+                                                        "InProgress" => ("bi-play-circle", "text-warning"),
+                                                        "Completed" => ("bi-check-circle", "text-success"),
+                                                        "Cancelled" => ("bi-x-circle", "text-danger"),
+                                                        _ => ("bi-question-circle", "text-secondary")
+                                                    };
+                                                }
+                                                <span class="@statusClass">
+                                                    <i class="bi @statusIcon me-1"></i>@evt.Status
+                                                </span>
+                                            </td>
+                                            <td>@evt.Name</td>
+                                            <td>@evt.Category</td>
+                                            <td>@evt.Type</td>
+                                            <td>
+                                                @if (evt.ScheduledTime.HasValue)
+                                                {
+                                                    <i class="bi bi-clock me-1"></i>@evt.ScheduledTime.Value.ToString("MMM dd, HH:mm")
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Not scheduled</span>
+                                                }
+                                            </td>
+                                            <td>@evt.PointSystem</td>
+                                            <td>
+                                                @if (evt.Record.HasValue)
+                                                {
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="badge bg-warning text-dark me-2">
+                                                            @evt.Record.Value
+                                                        </span>
+                                                        <small class="text-muted">@evt.RecordHolderName</small>
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-end gap-2">
+                                                    <div class="btn-group">
+                                                        <a asp-action="Details" asp-route-id="@evt.Id" 
+                                                           class="btn btn-sm btn-outline-success"
+                                                           title="View details">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a asp-action="Edit" asp-route-id="@evt.Id" 
+                                                           class="btn btn-sm btn-outline-success"
+                                                           title="Edit event">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#deleteModal@(evt.Id)"
+                                                                title="Delete event">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    @if (evt.Status != "Completed" && evt.Status != "Cancelled")
+                                                    {
+                                                        <div class="btn-group">
+                                                            @if (evt.Status == "Scheduled")
+                                                            {
+                                                                <form asp-action="UpdateStatus" asp-route-id="@evt.Id" method="post">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" name="status" value="InProgress" />
+                                                                    <button type="submit" class="btn btn-sm btn-outline-warning"
+                                                                            title="Start event">
+                                                                        <i class="bi bi-play-circle"></i>
+                                                                    </button>
+                                                                </form>
+                                                            }
+                                                            else if (evt.Status == "InProgress")
+                                                            {
+                                                                <form asp-action="UpdateStatus" asp-route-id="@evt.Id" method="post">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" name="status" value="Completed" />
+                                                                    <button type="submit" class="btn btn-sm btn-outline-success"
+                                                                            title="Complete event">
+                                                                        <i class="bi bi-check-circle"></i>
+                                                                    </button>
+                                                                </form>
+                                                            }
+                                                            <form asp-action="UpdateStatus" asp-route-id="@evt.Id" method="post">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="status" value="Cancelled" />
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                        title="Cancel event">
+                                                                    <i class="bi bi-x-circle"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="deleteModal@(evt.Id)" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title">
+                                                            <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" 
+                                                                data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete <strong>@evt.Name</strong>?</p>
+                                                        <p class="mb-0 text-danger">
+                                                            <i class="bi bi-exclamation-circle me-2"></i>
+                                                            This action cannot be undone.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            <i class="bi bi-x-circle me-2"></i>Cancel
+                                                        </button>
+                                                        <form asp-action="Delete" asp-route-id="@evt.Id" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class="bi bi-trash me-2"></i>Delete Event
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Enable tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Auto-hide alerts
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 4000);
+    </script>
+}

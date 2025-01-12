@@ -1,0 +1,225 @@
+@model SportsDay.Lib.Models.Announcement
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Create Announcement";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-megaphone-fill text-success me-2"></i>Create Announcement
+            </h1>
+            <p class="text-muted mt-2">Add a new announcement</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-pencil-square me-2"></i>Announcement Details
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="announcementForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <input type="hidden" asp-for="TournamentId" />
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Priority" class="form-label">
+                                    <i class="bi bi-flag me-2"></i>Priority
+                                </label>
+                                <select asp-for="Priority" class="form-select" id="prioritySelect">
+                                    @foreach (AnnouncementPriority priority in Enum.GetValues(typeof(AnnouncementPriority)))
+                                    {
+                                        <option value="@priority">@priority</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Priority" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ExpiresAt" class="form-label">
+                                    <i class="bi bi-calendar me-2"></i>Expires At
+                                </label>
+                                <input asp-for="ExpiresAt" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="ExpiresAt" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Body" class="form-label">
+                                <i class="bi bi-file-text me-2"></i>Body
+                            </label>
+                            <div class="alert alert-info">
+                                <i class="bi bi-markdown me-2"></i>Markdown formatting is supported
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <textarea asp-for="Body" class="form-control" rows="10" 
+                                              id="markdownInput" placeholder="Enter your announcement text here..."></textarea>
+                                    <span asp-validation-for="Body" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="bi bi-eye me-2"></i>Preview
+                                        </div>
+                                        <div class="card-body markdown-body" id="markdownPreview">
+                                            <!-- Preview will be rendered here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="IsEnabled" class="form-check-input" type="checkbox" checked />
+                            <label asp-for="IsEnabled" class="form-check-label">
+                                <i class="bi bi-toggle-on me-2"></i>Enable announcement immediately
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Create Announcement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Priority Preview -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-eye me-2"></i>Priority Preview
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="small text-muted">How it will look</div>
+                            <div id="priorityPreview" class="mt-2">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>Info announcement
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-lightbulb me-2"></i>Markdown Tips
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <code># Heading 1</code>
+                            <br />
+                            <small class="text-muted">Use # for headings</small>
+                        </li>
+                        <li class="mb-2">
+                            <code>**Bold Text**</code>
+                            <br />
+                            <small class="text-muted">Use ** for bold text</small>
+                        </li>
+                        <li class="mb-2">
+                            <code>*Italic Text*</code>
+                            <br />
+                            <small class="text-muted">Use * for italic text</small>
+                        </li>
+                        <li class="mb-2">
+                            <code>[Link Text](URL)</code>
+                            <br />
+                            <small class="text-muted">Create links</small>
+                        </li>
+                        <li>
+                            <code>- List Item</code>
+                            <br />
+                            <small class="text-muted">Create bullet points</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Priority preview
+        const prioritySelect = document.getElementById('prioritySelect');
+        const priorityPreview = document.getElementById('priorityPreview');
+
+        function updatePriorityPreview() {
+            const priority = prioritySelect.value.toLowerCase();
+            const alertClass = priority === 'info' ? 'alert-info' :
+                             priority === 'warning' ? 'alert-warning' :
+                             priority === 'danger' ? 'alert-danger' :
+                             priority === 'primary' ? 'alert-primary' :
+                             'alert-secondary';
+            
+            const icon = priority === 'info' ? 'info-circle' :
+                        priority === 'warning' ? 'exclamation-triangle' :
+                        priority === 'danger' ? 'exclamation-circle' :
+                        priority === 'primary' ? 'bell' :
+                        'chat';
+
+            priorityPreview.innerHTML = `
+                <div class="alert ${alertClass}">
+                    <i class="bi bi-${icon} me-2"></i>${priority.charAt(0).toUpperCase() + priority.slice(1)} announcement
+                </div>
+            `;
+        }
+
+        prioritySelect.addEventListener('change', updatePriorityPreview);
+
+        // Markdown preview
+        let previewTimeout;
+        const markdownInput = document.getElementById('markdownInput');
+        const markdownPreview = document.getElementById('markdownPreview');
+
+        markdownInput.addEventListener('input', function() {
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(updatePreview, 500);
+        });
+
+        async function updatePreview() {
+            try {
+                const response = await fetch('@Url.Action("Preview")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(markdownInput.value)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    markdownPreview.innerHTML = data.html;
+                }
+            } catch (error) {
+                console.error('Error updating preview:', error);
+            }
+        }
+
+        // Initial preview
+        updatePreview();
+    </script>
+}

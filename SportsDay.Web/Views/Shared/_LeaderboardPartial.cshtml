@@ -1,73 +1,92 @@
-@model dynamic
+@model IEnumerable<SportsDay.Lib.Models.TournamentHouseSummary>
 
-<div class="row g-4">
-    <div class="col-md-6">
-        <div class="leaderboard-section">
-            <h3 class="h6 mb-3">
-                <i class="bi bi-flag-fill text-success me-2"></i>House Points
-            </h3>
-            <div class="list-group">
-                @if (Model?.HousePoints != null)
-                {
-                    foreach (var house in Model.HousePoints)
-                    {
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <span class="badge rounded-circle me-2" style="background-color: @house.Color; width: 20px; height: 20px;"></span>
-                                <span>@house.Name</span>
-                            </div>
-                            <span class="badge bg-success rounded-pill">@house.Points pts</span>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="text-center text-muted py-3">
-                        <i class="bi bi-emoji-neutral mb-2"></i>
-                        <p class="mb-0">No house points available</p>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
+<div class="list-group list-group-flush">
+    @if (Model != null && Model.Any())
+    {
+        var divisions = Model.Select(s => s.Division).Distinct().OrderBy(d => d.Name);
+        
+        foreach (var division in divisions)
+        {
+            if (division != null)
+            {
+                var summaries = Model.Where(s => s.DivisionId == division.Id)
+                                    .OrderByDescending(s => s.Points)
+                                    .ToList();
 
-    <div class="col-md-6">
-        <div class="leaderboard-section">
-            <h3 class="h6 mb-3">
-                <i class="bi bi-star-fill text-warning me-2"></i>Top Participants
-            </h3>
-            <div class="list-group">
-                @if (Model?.TopParticipants != null)
-                {
-                    foreach (var participant in Model.TopParticipants)
-                    {
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <span class="badge rounded-circle me-2" style="background-color: @participant.HouseColor; width: 20px; height: 20px;"></span>
-                                <div>
-                                    <div>@participant.Name</div>
-                                    <small class="text-muted">@participant.Division</small>
-                                </div>
-                            </div>
-                            <span class="badge bg-warning text-dark rounded-pill">@participant.Points pts</span>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="text-center text-muted py-3">
-                        <i class="bi bi-emoji-neutral mb-2"></i>
-                        <p class="mb-0">No participant data available</p>
+                <div class="list-group-item">
+                    <h6 class="mb-3">@division.Name Division</h6>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>House</th>
+                                    <th class="text-end">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var summary in summaries)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge" style="background-color: @summary.House?.Color">
+                                                @summary.House?.Name
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="badge bg-success">@summary.Points pts</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                }
-            </div>
+
+                    @if (summaries.Any())
+                    {
+                        var topParticipants = summaries.SelectMany(s => s.House?.Participants ?? Enumerable.Empty<Participant>())
+                                                      .Where(p => p.DivisionId == division.Id)
+                                                      .OrderByDescending(p => p.Points)
+                                                      .Take(5)
+                                                      .ToList();
+
+                        if (topParticipants.Any())
+                        {
+                            <div class="mt-3">
+                                <h6 class="text-muted mb-2">Top Participants</h6>
+                                @foreach (var participant in topParticipants)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <div>
+                                            <span class="badge" style="background-color: @participant.House?.Color">
+                                                @participant.House?.Name
+                                            </span>
+                                            @participant.Name
+                                        </div>
+                                        <span class="badge bg-success">@participant.Points pts</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+    }
+    else
+    {
+        <div class="list-group-item text-center py-4">
+            <i class="bi bi-bar-chart text-muted fs-4 d-block mb-2"></i>
+            <p class="text-muted mb-0">No points recorded yet</p>
         </div>
-    </div>
+    }
 </div>
 
 <script>
-    // Auto-refresh leaderboard when SignalR sends update
-    connection.on("RefreshLeaderboard", function () {
-        $("#leaderboard").load(window.location.pathname + " #leaderboard > *");
+    // SignalR connection for real-time updates
+    connection.on("ReceiveResult", function () {
+        $.get('@Url.Action("GetLeaderboard", "Home")', function(data) {
+            $('.list-group').html(data);
+        });
     });
 </script>

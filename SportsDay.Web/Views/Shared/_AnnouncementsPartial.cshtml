@@ -1,56 +1,64 @@
 @model IEnumerable<SportsDay.Lib.Models.Announcement>
-@using SportsDay.Lib.Models
+@using SportsDay.Lib.Enums
 
-<div id="announcements-section">
-    @if (Model != null && Model.Any())
+<div id="announcements" class="mb-4">
+    @foreach (var announcement in Model.Where(a => a.IsEnabled && (!a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.Now)))
     {
-        foreach (var announcement in Model)
+        var (bgClass, icon) = announcement.Priority switch
         {
-            var priorityClass = announcement.Priority switch
-            {
-                AnnouncementPriority.Danger => "border-danger bg-danger bg-opacity-10",
-                AnnouncementPriority.Warning => "border-warning bg-warning bg-opacity-10",
-                AnnouncementPriority.Info => "border-info bg-info bg-opacity-10",
-                AnnouncementPriority.Primary => "border-primary bg-primary bg-opacity-10",
-                _ => "border-secondary bg-secondary bg-opacity-10"
-            };
+            AnnouncementPriority.Info => ("alert-info", "bi-info-circle"),
+            AnnouncementPriority.Warning => ("alert-warning", "bi-exclamation-triangle"),
+            AnnouncementPriority.Danger => ("alert-danger", "bi-exclamation-circle"),
+            AnnouncementPriority.Primary => ("alert-primary", "bi-bell"),
+            AnnouncementPriority.Secondary => ("alert-secondary", "bi-chat"),
+            _ => ("alert-light", "bi-megaphone")
+        };
 
-            var iconClass = announcement.Priority switch
-            {
-                AnnouncementPriority.Danger => "bi-exclamation-triangle-fill text-danger",
-                AnnouncementPriority.Warning => "bi-exclamation-circle-fill text-warning",
-                AnnouncementPriority.Info => "bi-info-circle-fill text-info",
-                AnnouncementPriority.Primary => "bi-bell-fill text-primary",
-                _ => "bi-chat-fill text-secondary"
-            };
-
-            <div class="announcement mb-3 rounded-3 border @priorityClass p-3">
-                <div class="d-flex align-items-start">
-                    <div class="me-3">
-                        <i class="bi @iconClass fs-4"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="markdown-content">@announcement.Body</div>
-                        <div class="mt-2 text-muted small">
-                            <i class="bi bi-clock me-1"></i>@announcement.CreatedAt.ToString("MMM dd, HH:mm")
-                        </div>
-                    </div>
+        <div class="alert @bgClass alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="bi @icon fs-4 me-2"></i>
+                </div>
+                <div class="flex-grow-1 markdown-body">
+                    @Html.Raw(Markdig.Markdown.ToHtml(announcement.Body))
+                </div>
+                <div class="flex-shrink-0 ms-3">
+                    <small class="text-muted d-block text-end">
+                        @announcement.CreatedAt.ToString("MMM dd, HH:mm")
+                    </small>
+                    @if (announcement.ExpiresAt.HasValue)
+                    {
+                        <small class="text-muted d-block text-end">
+                            Expires: @announcement.ExpiresAt.Value.ToString("MMM dd, HH:mm")
+                        </small>
+                    }
                 </div>
             </div>
-        }
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
-    else
+
+    @if (!Model.Any(a => a.IsEnabled && (!a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.Now)))
     {
-        <div class="text-center text-muted py-4">
-            <i class="bi bi-megaphone fs-1 mb-2"></i>
-            <p>No announcements at this time.</p>
+        <div class="alert alert-light text-center" role="alert">
+            <i class="bi bi-megaphone text-muted fs-4 d-block mb-2"></i>
+            <p class="text-muted mb-0">No active announcements</p>
         </div>
     }
 </div>
 
 <script>
-    // Auto-reload announcements every 2 minutes
-    setInterval(function () {
-        $("#announcements-section").load(window.location.pathname + " #announcements-section > *");
+    // Auto-refresh announcements every 2 minutes
+    setInterval(function() {
+        $.get('@Url.Action("GetAnnouncements", "Home")', function(data) {
+            $('#announcements').html(data);
+        });
     }, 120000);
+
+    // SignalR connection for real-time updates
+    connection.on("ReceiveAnnouncement", function () {
+        $.get('@Url.Action("GetAnnouncements", "Home")', function(data) {
+            $('#announcements').html(data);
+        });
+    });
 </script>

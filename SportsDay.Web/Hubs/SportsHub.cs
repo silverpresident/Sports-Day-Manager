@@ -4,14 +4,9 @@ namespace SportsDay.Web.Hubs;
 
 public class SportsHub : Hub
 {
-    public async Task SendUpdate(string message)
+    public async Task SendEventUpdate(string eventName, string status)
     {
-        await Clients.All.SendAsync("ReceiveUpdate", message);
-    }
-
-    public async Task SendAnnouncement(string message, string priority)
-    {
-        await Clients.All.SendAsync("ReceiveAnnouncement", message, priority);
+        await Clients.All.SendAsync("ReceiveEventUpdate", eventName, status);
     }
 
     public async Task SendResult(string eventName, string participantName, string result)
@@ -19,13 +14,18 @@ public class SportsHub : Hub
         await Clients.All.SendAsync("ReceiveResult", eventName, participantName, result);
     }
 
-    public async Task UpdateLeaderboard()
+    public async Task SendAnnouncement()
     {
-        await Clients.All.SendAsync("RefreshLeaderboard");
+        await Clients.All.SendAsync("ReceiveAnnouncement");
     }
 
-    public async Task UpdateEventStatus(string eventName, string status)
+    public override async Task OnConnectedAsync()
     {
-        await Clients.All.SendAsync("ReceiveEventStatus", eventName, status);
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        await base.OnDisconnectedAsync(exception);
     }
 }

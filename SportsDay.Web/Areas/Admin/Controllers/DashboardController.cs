@@ -1,28 +1,50 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SportsDay.Lib.Data;
+using SportsDay.Lib.Services;
 
 namespace SportsDay.Web.Areas.Admin.Controllers;
 
-public class DashboardController : AdminBaseController
+[Area("Admin")]
+//[Authorize(Roles = "Administrator")]
+public class DashboardController : Controller
 {
     private readonly SportsDayDbContext _context;
+    private readonly ITournamentService _tournamentService;
 
-    public DashboardController(SportsDayDbContext context)
+    public DashboardController(SportsDayDbContext context, ITournamentService tournamentService)
     {
         _context = context;
+        _tournamentService = tournamentService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var stats = new
+        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
+        
+        var viewModel = new
         {
-            TotalTournaments = _context.Tournaments.Count(),
-            TotalParticipants = _context.Participants.Count(),
-            TotalEvents = _context.Events.Count(),
-            TotalResults = _context.Results.Count(),
-            ActiveAnnouncements = _context.Announcements.Count(a => a.IsEnabled && (!a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.UtcNow))
+            ActiveTournament = activeTournament,
+            TotalTournaments = await _context.Tournaments.CountAsync(),
+            TotalEvents = await _context.Events.CountAsync(),
+            TotalParticipants = await _context.Participants.CountAsync(),
+            TotalResults = await _context.Results.CountAsync(),
+            ActiveAnnouncements = await _context.Announcements.CountAsync(a => a.IsEnabled && (!a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.Now)),
+            RecentUpdates = await _context.EventUpdates
+                .Include(u => u.Event)
+                .OrderByDescending(u => u.CreatedAt)
+                .Take(5)
+                .ToListAsync(),
+            RecentResults = await _context.Results
+                .Include(r => r.Event)
+                .Include(r => r.Participant)
+                .Include(r => r.House)
+                .OrderByDescending(r => r.Id)
+                .Take(5)
+                .ToListAsync()
         };
 
-        return View(stats);
+        return View(viewModel);
     }
 }

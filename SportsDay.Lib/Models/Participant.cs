@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -5,7 +6,6 @@ namespace SportsDay.Lib.Models;
 
 public class Participant
 {
-    [Key]
     public Guid Id { get; set; }
 
     [Required]
@@ -14,26 +14,20 @@ public class Participant
 
     [Required]
     public int HouseId { get; set; }
+    public House? House { get; set; }
 
     [Required]
     public Guid DivisionId { get; set; }
+    public Division? Division { get; set; }
 
     [Required]
-    [StringLength(10)]
-    public string Gender { get; set; } = string.Empty;
+    public Guid TournamentId { get; set; }
+    public Tournament? Tournament { get; set; }
 
-    [Required]
-    public EventClass Class { get; set; }
+    public int Points { get; set; }
 
     [StringLength(500)]
     public string? Notes { get; set; }
-
-    // Navigation properties
-    [ForeignKey("HouseId")]
-    public virtual House House { get; set; } = null!;
-
-    [ForeignKey("DivisionId")]
-    public virtual Division Division { get; set; } = null!;
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
 }

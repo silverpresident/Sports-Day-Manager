@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    var activeTournament = ViewBag.ActiveTournament as Tournament;
+}
+
+<div class="container-fluid">
+    @if (activeTournament == null)
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>No active tournament. Please contact an administrator.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Announcements Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-megaphone-fill me-2"></i>Announcements
+                            </div>
+                            <small>Auto-refreshes every 2 minutes</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @await Html.PartialAsync("_AnnouncementsPartial", ViewBag.Announcements)
+                    </div>
+                </div>
+
+                <!-- Update Stream Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-activity me-2"></i>Live Updates
+                            </div>
+                            <small>Real-time updates</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @await Html.PartialAsync("_UpdateStreamPartial", ViewBag.Updates)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Tournament Info -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-trophy-fill me-2"></i>@activeTournament.Name
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <i class="bi bi-calendar-event me-2"></i>Date
+                            </div>
+                            <div>@activeTournament.Date.ToString("MMMM dd, yyyy")</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-people me-2"></i>Divisions
+                            </div>
+                            <div>@activeTournament.Divisions.Count active</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-bar-chart-fill me-2"></i>Leaderboard
+                    </div>
+                    <div class="card-body p-0">
+                        @await Html.PartialAsync("_LeaderboardPartial", ViewBag.Summaries)
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-link-45deg me-2"></i>Quick Links
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a asp-controller="House" asp-action="Index" class="list-group-item list-group-item-action">
+                                <i class="bi bi-house me-2"></i>Houses
+                            </a>
+                            <a asp-controller="Event" asp-action="Index" class="list-group-item list-group-item-action">
+                                <i class="bi bi-calendar-event me-2"></i>Events Schedule
+                            </a>
+                            <a asp-controller="Record" asp-action="Index" class="list-group-item list-group-item-action">
+                                <i class="bi bi-trophy me-2"></i>Records
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize SignalR connection
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/sportshub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().catch(function (err) {
+            console.error(err.toString());
+        });
+    </script>
+}

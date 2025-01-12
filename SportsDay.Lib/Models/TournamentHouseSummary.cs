@@ -5,15 +5,15 @@ namespace SportsDay.Lib.Models
 {
     public class TournamentHouseSummary
     {
-        public TournamentHouseSummary(Tournament tournament, House house, string ageGroup, string gender)
+        public TournamentHouseSummary(Tournament tournament, House house, Division division)
         {
             Tournament = tournament ?? throw new ArgumentNullException(nameof(tournament));
             House = house ?? throw new ArgumentNullException(nameof(house));
-            AgeGroup = ageGroup ?? throw new ArgumentNullException(nameof(ageGroup));
-            Gender = gender ?? throw new ArgumentNullException(nameof(gender));
+            Division = division ?? throw new ArgumentNullException(nameof(division));
             
             TournamentId = tournament.Id;
             HouseId = house.Id;
+            DivisionId = division.Id;
         }
 
         protected TournamentHouseSummary() { } // For EF Core
@@ -26,8 +26,8 @@ namespace SportsDay.Lib.Models
         public int HouseId { get; set; }
         public House? House { get; set; }
 
-        public string? AgeGroup { get; set; }
-        public string? Gender { get; set; }
+        public Guid DivisionId { get; set; }
+        public Division? Division { get; set; }
 
         public int Points { get; set; }
     }

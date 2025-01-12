@@ -1,0 +1,202 @@
+@model IEnumerable<SportsDay.Lib.Models.Result>
+@{
+    ViewData["Title"] = "Results";
+    var activeTournament = ViewBag.ActiveTournament as Tournament;
+    var resultsByEvent = Model.GroupBy(r => r.Event)
+        .OrderByDescending(g => g.Key.ScheduledTime)
+        .ThenBy(g => g.Key.Name);
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-list-ol text-success me-2"></i>Results
+            </h1>
+            <p class="text-muted mt-2">
+                Manage results for @activeTournament.Name
+            </p>
+        </div>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle me-2"></i>Record Result
+        </a>
+    </div>
+
+    @foreach (var eventGroup in resultsByEvent)
+    {
+        var evt = eventGroup.Key;
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-calendar-event me-2"></i>@evt.Name
+                        </h5>
+                        <small class="text-white-50">
+                            @evt.Division.Name Division - 
+                            @(evt.Class == 0 ? "Open" : $"Class {evt.Class}")
+                        </small>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        @if (evt.Record.HasValue)
+                        {
+                            <div class="text-end">
+                                <small class="d-block text-white-50">Record</small>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-trophy-fill me-1"></i>@evt.Record.Value
+                                </span>
+                            </div>
+                        }
+                        <div class="text-end">
+                            <small class="d-block text-white-50">Points</small>
+                            <span class="badge bg-light text-dark">@evt.PointSystem</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block text-white-50">Status</small>
+                            @{
+                                var (statusIcon, statusClass) = evt.Status switch
+                                {
+                                    "Scheduled" => ("bi-calendar", "bg-primary"),
+                                    "InProgress" => ("bi-play-circle", "bg-warning text-dark"),
+                                    "Completed" => ("bi-check-circle", "bg-success"),
+                                    "Cancelled" => ("bi-x-circle", "bg-danger"),
+                                    _ => ("bi-question-circle", "bg-secondary")
+                                };
+                            }
+                            <span class="badge @statusClass">
+                                <i class="bi @statusIcon me-1"></i>@evt.Status
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <i class="bi bi-person me-2"></i>Participant
+                                </th>
+                                <th>
+                                    <i class="bi bi-house me-2"></i>House
+                                </th>
+                                <th>
+                                    <i class="bi bi-trophy me-2"></i>Result
+                                </th>
+                                <th>
+                                    <i class="bi bi-award me-2"></i>Points
+                                </th>
+                                <th>Record</th>
+                                <th class="text-end">
+                                    <i class="bi bi-gear me-2"></i>Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var result in eventGroup.OrderBy(r => r.Placement))
+                            {
+                                <tr>
+                                    <td>@result.Participant.Name</td>
+                                    <td>
+                                        <span class="badge" style="background-color: @result.House.Color">
+                                            @result.House.Name
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (result.Placement.HasValue)
+                                        {
+                                            <span class="badge bg-success">
+                                                @result.Placement.Value.ToOrdinal()
+                                            </span>
+                                        }
+                                        else if (result.SpeedOrDistance.HasValue)
+                                        {
+                                            @result.SpeedOrDistance.Value
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">
+                                            @result.Points pts
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (result.IsNewRecord)
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-trophy-fill me-1"></i>New Record
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a asp-action="Edit" asp-route-id="@result.Id" 
+                                               class="btn btn-sm btn-outline-success"
+                                               title="Edit result">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#deleteModal@(result.Id)"
+                                                    title="Delete result">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="deleteModal@(result.Id)" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title">
+                                                            <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" 
+                                                                data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete this result?</p>
+                                                        <div class="alert alert-warning">
+                                                            <i class="bi bi-exclamation-circle me-2"></i>
+                                                            This will also remove any associated points and records.
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            <i class="bi bi-x-circle me-2"></i>Cancel
+                                                        </button>
+                                                        <form asp-action="Delete" asp-route-id="@result.Id" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class="bi bi-trash me-2"></i>Delete Result
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Enable tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // SignalR connection for real-time updates
+        connection.on("ReceiveResult", function () {
+            location.reload();
+        });
+    </script>
+}

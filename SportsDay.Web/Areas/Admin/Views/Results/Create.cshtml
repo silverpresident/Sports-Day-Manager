@@ -1,0 +1,234 @@
+@model SportsDay.Lib.Models.Result
+@{
+    ViewData["Title"] = "Record Result";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-plus-circle-fill text-success me-2"></i>Record Result
+            </h1>
+            <p class="text-muted mt-2">Add a new result for an event</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-list-ol me-2"></i>Result Details
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="resultForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <input type="hidden" asp-for="TournamentId" />
+
+                        <div class="mb-4">
+                            <label asp-for="EventId" class="form-label">
+                                <i class="bi bi-calendar-event me-2"></i>Event
+                            </label>
+                            <select asp-for="EventId" asp-items="ViewBag.Events" 
+                                    class="form-select" id="eventSelect">
+                                <option value="">Select Event</option>
+                            </select>
+                            <span asp-validation-for="EventId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="ParticipantId" class="form-label">
+                                    <i class="bi bi-person me-2"></i>Participant
+                                </label>
+                                <select asp-for="ParticipantId" asp-items="ViewBag.Participants" 
+                                        class="form-select">
+                                    <option value="">Select Participant</option>
+                                </select>
+                                <span asp-validation-for="ParticipantId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="HouseId" class="form-label">
+                                    <i class="bi bi-house me-2"></i>House
+                                </label>
+                                <select asp-for="HouseId" asp-items="ViewBag.Houses" 
+                                        class="form-select">
+                                    <option value="">Select House</option>
+                                </select>
+                                <span asp-validation-for="HouseId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div id="resultInputs">
+                            <!-- Placement input (default) -->
+                            <div class="mb-4" id="placementInput">
+                                <label asp-for="Placement" class="form-label">
+                                    <i class="bi bi-trophy me-2"></i>Placement
+                                </label>
+                                <input asp-for="Placement" class="form-control" type="number" min="1" />
+                                <span asp-validation-for="Placement" class="text-danger"></span>
+                                <div class="form-text">Enter the participant's placement (1st, 2nd, etc.)</div>
+                            </div>
+
+                            <!-- Speed/Distance input (hidden by default) -->
+                            <div class="mb-4" id="measurementInput" style="display: none;">
+                                <label asp-for="SpeedOrDistance" class="form-label" id="measurementLabel">
+                                    <i class="bi bi-speedometer2 me-2"></i>Measurement
+                                </label>
+                                <input asp-for="SpeedOrDistance" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="SpeedOrDistance" class="text-danger"></span>
+                                <div class="form-text" id="measurementHelp">Enter the measurement value</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Record Result
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Event Info Card -->
+            <div class="card mb-4" id="eventInfo" style="display: none;">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-info-circle me-2"></i>Event Information
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="small text-muted">Division</div>
+                            <div class="fw-bold" id="eventDivision"></div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Class</div>
+                            <div class="fw-bold" id="eventClass"></div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Type</div>
+                            <div class="fw-bold" id="eventType"></div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Point System</div>
+                            <div class="fw-bold" id="eventPoints"></div>
+                        </div>
+                        <div class="list-group-item" id="eventRecordContainer">
+                            <div class="small text-muted">Current Record</div>
+                            <div class="fw-bold" id="eventRecord"></div>
+                            <small class="text-muted" id="eventRecordHolder"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Quick Tips
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Select the event first
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Choose participant and house
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Enter placement or measurement
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success me-2"></i>Points are calculated automatically
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Event data
+        const events = @Html.Raw(Json.Serialize(ViewBag.Events.Items.Select(i => new
+        {
+            id = i.Value,
+            text = i.Text,
+            division = i.Group,
+            type = ((EventType)i.GetType().GetProperty("Type").GetValue(i)).ToString(),
+            class_ = ((EventClass)i.GetType().GetProperty("Class").GetValue(i)).ToString(),
+            points = i.GetType().GetProperty("PointSystem").GetValue(i),
+            record = i.GetType().GetProperty("Record").GetValue(i),
+            recordHolder = i.GetType().GetProperty("RecordHolderName").GetValue(i)
+        })));
+
+        // Update form based on selected event
+        document.getElementById('eventSelect').addEventListener('change', function() {
+            const eventId = this.value;
+            const event = events.find(e => e.id === eventId);
+            
+            if (event) {
+                // Show event info
+                document.getElementById('eventInfo').style.display = 'block';
+                document.getElementById('eventDivision').textContent = event.division;
+                document.getElementById('eventClass').textContent = 
+                    event.class_ === 'Open' ? 'Open' : `Class ${event.class_}`;
+                document.getElementById('eventType').textContent = event.type;
+                document.getElementById('eventPoints').textContent = event.points;
+
+                if (event.record) {
+                    document.getElementById('eventRecordContainer').style.display = 'block';
+                    document.getElementById('eventRecord').textContent = event.record;
+                    document.getElementById('eventRecordHolder').textContent = 
+                        event.recordHolder ? `Held by ${event.recordHolder}` : '';
+                } else {
+                    document.getElementById('eventRecordContainer').style.display = 'none';
+                }
+
+                // Show appropriate input based on event type
+                if (event.type === 'Distance' || event.type === 'Speed') {
+                    document.getElementById('placementInput').style.display = 'none';
+                    document.getElementById('measurementInput').style.display = 'block';
+                    document.getElementById('measurementLabel').innerHTML = 
+                        `<i class="bi bi-speedometer2 me-2"></i>${event.type}`;
+                    document.getElementById('measurementHelp').textContent = 
+                        `Enter the ${event.type.toLowerCase()} value`;
+                } else {
+                    document.getElementById('placementInput').style.display = 'block';
+                    document.getElementById('measurementInput').style.display = 'none';
+                }
+            } else {
+                document.getElementById('eventInfo').style.display = 'none';
+                document.getElementById('placementInput').style.display = 'block';
+                document.getElementById('measurementInput').style.display = 'none';
+            }
+        });
+
+        // Auto-select house based on participant
+        document.querySelector('select[name="ParticipantId"]').addEventListener('change', function() {
+            const option = this.options[this.selectedIndex];
+            const houseSelect = document.querySelector('select[name="HouseId"]');
+            const houseName = option.parentElement.label;
+            
+            Array.from(houseSelect.options).forEach(opt => {
+                if (opt.text === houseName) {
+                    houseSelect.value = opt.value;
+                }
+            });
+        });
+    </script>
+}

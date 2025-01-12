@@ -3,92 +3,107 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Sports Day Manager</title>
+    <title>@ViewData["Title"] - Admin - St Jago High School Sports Day</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #006400;
-            --secondary-color: #FFD700;
-        }
-        .sidebar {
-            background-color: var(--primary-color);
-            min-height: 100vh;
-        }
-        .sidebar .nav-link {
-            color: white;
-        }
-        .sidebar .nav-link:hover {
-            background-color: rgba(255,255,255,0.1);
-        }
-        .sidebar .nav-link.active {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-        }
-    </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2 sidebar p-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white">Admin Panel</h4>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-success border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-gear-fill me-2"></i>Admin Dashboard
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Tournaments" asp-action="Index">
+                                <i class="bi bi-trophy me-1"></i>Tournaments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Houses" asp-action="Index">
+                                <i class="bi bi-house me-1"></i>Houses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Events" asp-action="Index">
+                                <i class="bi bi-calendar-event me-1"></i>Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Results" asp-action="Index">
+                                <i class="bi bi-list-ol me-1"></i>Results
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Announcements" asp-action="Index">
+                                <i class="bi bi-megaphone me-1"></i>Announcements
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-arrow-left-circle me-1"></i>Back to Site
+                            </a>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
                 </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Tournaments" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Tournaments" asp-action="Index">
-                            <i class="bi bi-trophy"></i> Tournaments
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Houses" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Houses" asp-action="Index">
-                            <i class="bi bi-house"></i> Houses
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Events" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Events" asp-action="Index">
-                            <i class="bi bi-calendar-event"></i> Events
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Participants" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Participants" asp-action="Index">
-                            <i class="bi bi-people"></i> Participants
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Results" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Results" asp-action="Index">
-                            <i class="bi bi-list-ol"></i> Results
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Announcements" ? "active" : "")"
-                           asp-area="Admin" asp-controller="Announcements" asp-action="Index">
-                            <i class="bi bi-megaphone"></i> Announcements
-                        </a>
-                    </li>
-                </ul>
             </div>
-            <div class="col-md-10 p-4">
-                @RenderBody()
-            </div>
-        </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @RenderBody()
+        </main>
     </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - St Jago High School Sports Day - Admin Area
+        </div>
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        // Initialize SignalR connection
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/sportshub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().catch(function (err) {
+            console.error(err.toString());
+        });
+
+        // Auto-hide alerts
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 4000);
+    </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,117 +1,265 @@
 @model dynamic
 @{
     ViewData["Title"] = "Dashboard";
-    Layout = "_AdminLayout";
 }
 
 <div class="container-fluid">
-    <h2 class="mb-4">Dashboard</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-speedometer2 text-success me-2"></i>Dashboard
+            </h1>
+            <p class="text-muted mt-2">Sports Day Management Overview</p>
+        </div>
+        @if (Model.ActiveTournament != null)
+        {
+            <div class="badge bg-success p-2">
+                <i class="bi bi-trophy-fill me-2"></i>Active Tournament: @Model.ActiveTournament.Name
+            </div>
+        }
+    </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card bg-primary text-white">
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-success text-white h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title">Total Tournaments</h6>
+                            <h6 class="card-title mb-2">Tournaments</h6>
                             <h2 class="mb-0">@Model.TotalTournaments</h2>
                         </div>
-                        <i class="bi bi-trophy fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Total Participants</h6>
-                            <h2 class="mb-0">@Model.TotalParticipants</h2>
+                        <div class="icon-shape">
+                            <i class="bi bi-trophy fs-1"></i>
                         </div>
-                        <i class="bi bi-people fs-1"></i>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card bg-info text-white">
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-primary text-white h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title">Total Events</h6>
+                            <h6 class="card-title mb-2">Events</h6>
                             <h2 class="mb-0">@Model.TotalEvents</h2>
                         </div>
-                        <i class="bi bi-calendar-event fs-1"></i>
+                        <div class="icon-shape">
+                            <i class="bi bi-calendar-event fs-1"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card bg-warning">
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-info text-white h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title">Total Results</h6>
+                            <h6 class="card-title mb-2">Participants</h6>
+                            <h2 class="mb-0">@Model.TotalParticipants</h2>
+                        </div>
+                        <div class="icon-shape">
+                            <i class="bi bi-people fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title mb-2">Results</h6>
                             <h2 class="mb-0">@Model.TotalResults</h2>
                         </div>
-                        <i class="bi bi-list-ol fs-1"></i>
+                        <div class="icon-shape">
+                            <i class="bi bi-list-ol fs-1"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card bg-danger text-white">
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-danger text-white h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title">Active Announcements</h6>
+                            <h6 class="card-title mb-2">Announcements</h6>
                             <h2 class="mb-0">@Model.ActiveAnnouncements</h2>
                         </div>
-                        <i class="bi bi-megaphone fs-1"></i>
+                        <div class="icon-shape">
+                            <i class="bi bi-megaphone fs-1"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
+    <!-- Quick Actions -->
+    <div class="row mb-4">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Quick Actions</h5>
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-lightning-charge me-2"></i>Quick Actions
                 </div>
                 <div class="card-body">
-                    <div class="list-group">
-                        <a href="@Url.Action("Create", "Tournaments", new { area = "Admin" })" class="list-group-item list-group-item-action">
-                            <i class="bi bi-plus-circle"></i> Create New Tournament
-                        </a>
-                        <a href="@Url.Action("Create", "Events", new { area = "Admin" })" class="list-group-item list-group-item-action">
-                            <i class="bi bi-plus-circle"></i> Add New Event
-                        </a>
-                        <a href="@Url.Action("Create", "Announcements", new { area = "Admin" })" class="list-group-item list-group-item-action">
-                            <i class="bi bi-plus-circle"></i> Post Announcement
-                        </a>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a asp-area="Admin" asp-controller="Tournaments" asp-action="Create" 
+                               class="btn btn-outline-success w-100 text-start">
+                                <i class="bi bi-plus-circle me-2"></i>New Tournament
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-area="Admin" asp-controller="Events" asp-action="Create" 
+                               class="btn btn-outline-success w-100 text-start">
+                                <i class="bi bi-calendar-plus me-2"></i>Add Event
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-area="Admin" asp-controller="Participants" asp-action="Create" 
+                               class="btn btn-outline-success w-100 text-start">
+                                <i class="bi bi-person-plus me-2"></i>Add Participant
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-area="Admin" asp-controller="Results" asp-action="Create" 
+                               class="btn btn-outline-success w-100 text-start">
+                                <i class="bi bi-clipboard-plus me-2"></i>Record Result
+                            </a>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Recent Updates -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-bell me-2"></i>Recent Updates
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        @if (Model.RecentUpdates != null && Model.RecentUpdates.Any())
+                        {
+                            foreach (var update in Model.RecentUpdates)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@update.Event.Name</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock me-1"></i>@update.CreatedAt.ToString("HH:mm")
+                                        </small>
+                                    </div>
+                                    <p class="mb-1">@update.Message</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <i class="bi bi-bell-slash text-muted fs-1"></i>
+                                <p class="text-muted mb-0">No recent updates</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Results -->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <i class="bi bi-list-ol me-2"></i>Recent Results
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Event</th>
+                            <th scope="col">Participant</th>
+                            <th scope="col">House</th>
+                            <th scope="col">Result</th>
+                            <th scope="col">Points</th>
+                            <th scope="col">Record</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentResults != null && Model.RecentResults.Any())
+                        {
+                            foreach (var result in Model.RecentResults)
+                            {
+                                <tr>
+                                    <td>@result.Event.Name</td>
+                                    <td>@result.Participant.Name</td>
+                                    <td>
+                                        <span class="badge" style="background-color: @result.House.Color">
+                                            @result.House.Name
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (result.Placement.HasValue)
+                                        {
+                                            <span class="badge bg-success">@result.Placement.Value.ToOrdinal()</span>
+                                        }
+                                        else
+                                        {
+                                            @result.SpeedOrDistance
+                                        }
+                                    </td>
+                                    <td>@result.Points pts</td>
+                                    <td>
+                                        @if (result.IsNewRecord)
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-trophy-fill me-1"></i>New Record
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="bi bi-clipboard-x text-muted fs-1"></i>
+                                    <p class="text-muted mb-0">No results recorded yet</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-    <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/sportshub")
-            .build();
+<style>
+    .icon-shape {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
 
-        connection.start().catch(err => console.error(err));
+@section Scripts {
+    <script>
+        // Enable SignalR updates
+        connection.on("ReceiveUpdate", function () {
+            location.reload();
+        });
+
+        connection.on("ReceiveResult", function () {
+            location.reload();
+        });
     </script>
 }

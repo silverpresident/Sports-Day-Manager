@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SportsDay.Lib.Enums;
 
 namespace SportsDay.Lib.Models;
 

@@ -1,0 +1,171 @@
+@model IEnumerable<SportsDay.Lib.Models.Announcement>
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Announcements";
+    var activeTournament = ViewBag.ActiveTournament as Tournament;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-megaphone-fill text-success me-2"></i>Announcements
+            </h1>
+            <p class="text-muted mt-2">
+                Manage announcements for @activeTournament.Name
+            </p>
+        </div>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle me-2"></i>New Announcement
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        @foreach (var announcement in Model)
+        {
+            var (bgClass, icon) = announcement.Priority switch
+            {
+                AnnouncementPriority.Info => ("bg-info text-white", "bi-info-circle"),
+                AnnouncementPriority.Warning => ("bg-warning text-dark", "bi-exclamation-triangle"),
+                AnnouncementPriority.Danger => ("bg-danger text-white", "bi-exclamation-circle"),
+                AnnouncementPriority.Primary => ("bg-primary text-white", "bi-bell"),
+                AnnouncementPriority.Secondary => ("bg-secondary text-white", "bi-chat"),
+                _ => ("bg-light", "bi-megaphone")
+            };
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header @bgClass d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi @icon me-2"></i>@announcement.Priority
+                        </div>
+                        <div>
+                            @if (announcement.IsEnabled)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Disabled</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="markdown-body mb-3">
+                            @Html.Raw(announcement.Body)
+                        </div>
+                        <div class="text-muted small">
+                            <div>
+                                <i class="bi bi-clock me-1"></i>Created: @announcement.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                            </div>
+                            @if (announcement.ExpiresAt.HasValue)
+                            {
+                                <div>
+                                    <i class="bi bi-calendar me-1"></i>Expires: @announcement.ExpiresAt.Value.ToString("MMM dd, yyyy HH:mm")
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Edit" asp-route-id="@announcement.Id" 
+                               class="btn btn-sm btn-outline-success"
+                               title="Edit announcement">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form asp-action="ToggleStatus" asp-route-id="@announcement.Id" method="post" 
+                                  style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-warning"
+                                        title="@(announcement.IsEnabled ? "Disable" : "Enable") announcement">
+                                    <i class="bi @(announcement.IsEnabled ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                </button>
+                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal@(announcement.Id)"
+                                    title="Delete announcement">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal@(announcement.Id)" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this announcement?</p>
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                    This action cannot be undone.
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </button>
+                                <form asp-action="Delete" asp-route-id="@announcement.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-trash me-2"></i>Delete Announcement
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-megaphone text-muted fs-1 d-block mb-3"></i>
+                    <p class="text-muted mb-3">No announcements found</p>
+                    <a asp-action="Create" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-2"></i>Create First Announcement
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Enable tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Auto-hide alerts
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 4000);
+
+        // SignalR connection for real-time updates
+        connection.on("ReceiveAnnouncement", function () {
+            location.reload();
+        });
+    </script>
+}

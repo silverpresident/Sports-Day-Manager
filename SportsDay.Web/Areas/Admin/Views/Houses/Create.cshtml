@@ -1,0 +1,135 @@
+@model SportsDay.Lib.Models.House
+@{
+    ViewData["Title"] = "Create House";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-plus-circle-fill text-success me-2"></i>Create House
+            </h1>
+            <p class="text-muted mt-2">Add a new house to the sports day</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-house-fill me-2"></i>House Details
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Id" class="form-label">
+                                <i class="bi bi-key me-2"></i>House ID
+                            </label>
+                            <input asp-for="Id" class="form-control" type="number" min="1" />
+                            <span asp-validation-for="Id" class="text-danger"></span>
+                            <div class="form-text">Enter a unique numeric identifier for the house</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">
+                                <i class="bi bi-card-text me-2"></i>House Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter house name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Color" class="form-label">
+                                <i class="bi bi-palette me-2"></i>House Color
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Color" class="form-control" placeholder="Enter color name or hex code" />
+                                <input type="color" class="form-control form-control-color" id="colorPicker" 
+                                       title="Choose house color">
+                            </div>
+                            <span asp-validation-for="Color" class="text-danger"></span>
+                            <div class="form-text">Enter a color name (e.g., Red) or hex code (e.g., #FF0000)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="LogoUrl" class="form-label">
+                                <i class="bi bi-image me-2"></i>Logo URL
+                            </label>
+                            <input asp-for="LogoUrl" class="form-control" placeholder="Enter logo URL (optional)" />
+                            <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                            <div class="form-text">Optional: Provide a URL to the house logo image</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Create House
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>House Information
+                    </h5>
+                    <p class="card-text">
+                        Houses represent teams in the sports day competition. Each house:
+                    </p>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Has a unique numeric ID
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Has a distinctive name
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Uses a specific color
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success me-2"></i>Can have an optional logo
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Sync color picker with input
+        const colorInput = document.querySelector('#Color');
+        const colorPicker = document.querySelector('#colorPicker');
+
+        // Update color picker when input changes
+        colorInput.addEventListener('input', function() {
+            colorPicker.value = this.value;
+        });
+
+        // Update input when color picker changes
+        colorPicker.addEventListener('input', function() {
+            colorInput.value = this.value;
+        });
+
+        // Set initial color picker value
+        if (colorInput.value) {
+            colorPicker.value = colorInput.value;
+        }
+    </script>
+}

@@ -1,0 +1,9 @@
+
+fix the ui of the public project. Use bootstrap and bootstrap icon. USe the specified theme colours and and make the display elegant.
+
+the tournament model (and db) needs a field for IsActive and should allow a single tournament to be made active at any given time.
+
+In the Lib project, Create a service to manage the ActiveTournament.
+
+
+fix the ui of the admin area, implement he views and controllers. Use bootstrap and bootstrap icon. USe the specified theme colours and and make the display elegant.

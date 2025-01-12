@@ -1,100 +1,101 @@
 @model IEnumerable<SportsDay.Lib.Models.EventUpdate>
 
-<div class="update-stream" id="update-stream">
+<div class="update-stream">
     @if (Model != null && Model.Any())
     {
-        foreach (var update in Model.OrderByDescending(u => u.CreatedAt))
-        {
-            <div class="update-item p-3 border-bottom">
-                <div class="d-flex align-items-start">
-                    <div class="me-3">
-                        <i class="bi bi-bell-fill text-success"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="markdown-content small">@update.Message</div>
-                        <div class="update-time mt-2">
-                            <i class="bi bi-clock me-1"></i>@update.CreatedAt.ToString("HH:mm")
+        <div class="list-group list-group-flush" id="updateList">
+            @foreach (var update in Model.OrderByDescending(u => u.CreatedAt))
+            {
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <div>
+                            <i class="bi bi-activity text-success me-2"></i>
+                            @Html.Raw(update.Message)
                         </div>
+                        <small class="text-muted">
+                            @update.CreatedAt.ToString("HH:mm")
+                        </small>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     }
     else
     {
-        <div class="text-center text-muted py-4">
-            <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
-            <p class="mb-0">No updates available</p>
+        <div class="text-center py-4">
+            <i class="bi bi-activity text-muted fs-4 d-block mb-2"></i>
+            <p class="text-muted mb-0">No updates yet</p>
         </div>
     }
 </div>
 
 <script>
     // SignalR connection for real-time updates
-    connection.on("ReceiveUpdate", function (message) {
-        const updateStream = document.getElementById('update-stream');
-        const newUpdate = `
-            <div class="update-item p-3 border-bottom" style="display: none;">
-                <div class="d-flex align-items-start">
-                    <div class="me-3">
-                        <i class="bi bi-bell-fill text-success"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="markdown-content small">${message}</div>
-                        <div class="update-time mt-2">
-                            <i class="bi bi-clock me-1"></i>${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                        </div>
-                    </div>
+    connection.on("ReceiveEventUpdate", function (eventName, status) {
+        var updateList = document.getElementById('updateList');
+        if (!updateList) {
+            updateList = document.createElement('div');
+            updateList.id = 'updateList';
+            updateList.className = 'list-group list-group-flush';
+            document.querySelector('.update-stream').innerHTML = '';
+            document.querySelector('.update-stream').appendChild(updateList);
+        }
+
+        var updateItem = document.createElement('div');
+        updateItem.className = 'list-group-item';
+        updateItem.innerHTML = `
+            <div class="d-flex w-100 justify-content-between">
+                <div>
+                    <i class="bi bi-activity text-success me-2"></i>
+                    ${eventName} status changed to ${status}
                 </div>
+                <small class="text-muted">
+                    ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                </small>
             </div>
         `;
-        
-        // Prepend new update and show with animation
-        $(updateStream).prepend(newUpdate);
-        $('.update-item:first').slideDown();
-        
-        // Remove old updates if there are too many
-        if ($('.update-item').length > 50) {
-            $('.update-item:last').remove();
-        }
+
+        updateList.insertBefore(updateItem, updateList.firstChild);
+
+        // Add fade-in animation
+        updateItem.style.opacity = '0';
+        setTimeout(() => {
+            updateItem.style.transition = 'opacity 0.5s';
+            updateItem.style.opacity = '1';
+        }, 10);
     });
 
-    // Scroll to bottom on load
-    document.addEventListener('DOMContentLoaded', function() {
-        const updateStream = document.getElementById('update-stream');
-        updateStream.scrollTop = updateStream.scrollHeight;
+    connection.on("ReceiveResult", function (eventName, participantName, result) {
+        var updateList = document.getElementById('updateList');
+        if (!updateList) {
+            updateList = document.createElement('div');
+            updateList.id = 'updateList';
+            updateList.className = 'list-group list-group-flush';
+            document.querySelector('.update-stream').innerHTML = '';
+            document.querySelector('.update-stream').appendChild(updateList);
+        }
+
+        var updateItem = document.createElement('div');
+        updateItem.className = 'list-group-item';
+        updateItem.innerHTML = `
+            <div class="d-flex w-100 justify-content-between">
+                <div>
+                    <i class="bi bi-trophy text-success me-2"></i>
+                    ${participantName} scored ${result} in ${eventName}
+                </div>
+                <small class="text-muted">
+                    ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                </small>
+            </div>
+        `;
+
+        updateList.insertBefore(updateItem, updateList.firstChild);
+
+        // Add fade-in animation
+        updateItem.style.opacity = '0';
+        setTimeout(() => {
+            updateItem.style.transition = 'opacity 0.5s';
+            updateItem.style.opacity = '1';
+        }, 10);
     });
 </script>
-
-<style>
-    .update-stream {
-        max-height: 600px;
-        overflow-y: auto;
-    }
-
-    .update-stream::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .update-stream::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    .update-stream::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 3px;
-    }
-
-    .update-item {
-        transition: all 0.3s ease;
-    }
-
-    .update-item:hover {
-        background-color: rgba(0, 100, 0, 0.05);
-    }
-
-    .update-time {
-        font-size: 0.75rem;
-        color: #6c757d;
-    }
-</style>

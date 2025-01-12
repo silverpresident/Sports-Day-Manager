@@ -38,8 +38,7 @@ BEGIN
     CREATE TABLE Tournaments (
         Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
         Name NVARCHAR(100) NOT NULL,
-        [Date] DATETIME2 NOT NULL,
-        [Year] INT NOT NULL,
+        [TournamentDate] DATETIME2 NOT NULL,
         IsActive BIT NOT NULL DEFAULT 0,
         CONSTRAINT PK_Tournaments PRIMARY KEY (Id)
     );

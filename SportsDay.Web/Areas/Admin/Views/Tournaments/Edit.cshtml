@@ -1,0 +1,154 @@
+@model SportsDay.Lib.Models.Tournament
+@{
+    ViewData["Title"] = "Edit Tournament";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-pencil-fill text-success me-2"></i>Edit Tournament
+            </h1>
+            <p class="text-muted mt-2">Modify tournament details</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-info-circle me-2"></i>Tournament Details
+                    </div>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-warning">
+                            <i class="bi bi-check-circle me-1"></i>Active Tournament
+                        </span>
+                    }
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">
+                                <i class="bi bi-card-text me-2"></i>Tournament Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter tournament name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="TournamentDate" class="form-label">
+                                    <i class="bi bi-calendar me-2"></i>Tournament Date
+                                </label>
+                                <input asp-for="TournamentDate" class="form-control" type="date" />
+                                <span asp-validation-for="TournamentDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Year" class="form-label">
+                                    <i class="bi bi-123 me-2"></i>Year
+                                </label>
+                                <input asp-for="Year" class="form-control" type="number" min="2000" max="2100" />
+                                <span asp-validation-for="Year" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsActive" class="form-check-label">
+                                <i class="bi bi-flag me-2"></i>Set as active tournament
+                            </label>
+                            <div class="form-text">Only one tournament can be active at a time</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-diagram-3 me-2"></i>Tournament Statistics
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-diagram-3 text-success me-2"></i>Divisions
+                            </span>
+                            <span class="badge bg-success rounded-pill">@Model.Divisions.Count</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-calendar-event text-success me-2"></i>Events
+                            </span>
+                            <span class="badge bg-success rounded-pill">@Model.Events.Count</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-list-ol text-success me-2"></i>Results
+                            </span>
+                            <span class="badge bg-success rounded-pill">@Model.Results.Count</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-megaphone text-success me-2"></i>Announcements
+                            </span>
+                            <span class="badge bg-success rounded-pill">@Model.Announcements.Count</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Quick Tips
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Update tournament details
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Manage active status
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success me-2"></i>View tournament statistics
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Auto-update year when date changes
+        document.querySelector('input[type="date"]').addEventListener('change', function() {
+            document.querySelector('input[type="number"]').value = new Date(this.value).getFullYear();
+        });
+    </script>
+}

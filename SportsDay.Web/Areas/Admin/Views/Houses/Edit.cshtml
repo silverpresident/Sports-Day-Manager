@@ -1,0 +1,185 @@
+@model SportsDay.Lib.Models.House
+@{
+    ViewData["Title"] = "Edit House";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-pencil-fill text-success me-2"></i>Edit House
+            </h1>
+            <p class="text-muted mt-2">Modify house details</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-house-fill me-2"></i>House Details
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="bi bi-key me-2"></i>House ID
+                            </label>
+                            <input class="form-control" value="@Model.Id" disabled />
+                            <div class="form-text">House ID cannot be modified</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">
+                                <i class="bi bi-card-text me-2"></i>House Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter house name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Color" class="form-label">
+                                <i class="bi bi-palette me-2"></i>House Color
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Color" class="form-control" placeholder="Enter color name or hex code" />
+                                <input type="color" class="form-control form-control-color" id="colorPicker" 
+                                       title="Choose house color">
+                            </div>
+                            <span asp-validation-for="Color" class="text-danger"></span>
+                            <div class="form-text">Enter a color name (e.g., Red) or hex code (e.g., #FF0000)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="LogoUrl" class="form-label">
+                                <i class="bi bi-image me-2"></i>Logo URL
+                            </label>
+                            <input asp-for="LogoUrl" class="form-control" placeholder="Enter logo URL (optional)" />
+                            <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                            <div class="form-text">Optional: Provide a URL to the house logo image</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Preview Card -->
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: @Model.Color; color: white;">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-eye me-2"></i>Preview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <img src="@Model.LogoUrl" class="card-img-top mb-3" alt="@Model.Name logo" 
+                             style="max-height: 100px; object-fit: contain;">
+                    }
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-shape" style="background-color: @Model.Color; color: white;">
+                            <i class="bi bi-house-fill"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-0">@Model.Name</h5>
+                            <small class="text-muted">ID: @Model.Id</small>
+                        </div>
+                    </div>
+                    <div class="badge" style="background-color: @Model.Color">
+                        @Model.Color
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-graph-up me-2"></i>House Statistics
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-people text-success me-2"></i>Participants
+                            </span>
+                            <span class="badge bg-success rounded-pill">@Model.Participants.Count</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-trophy text-success me-2"></i>Results
+                            </span>
+                            <span class="badge bg-success rounded-pill">@Model.Results.Count</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-shape {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Sync color picker with input
+        const colorInput = document.querySelector('#Color');
+        const colorPicker = document.querySelector('#colorPicker');
+        const previewHeader = document.querySelector('.card-header[style*="background-color"]');
+        const previewIconShape = document.querySelector('.icon-shape');
+        const previewBadge = document.querySelector('.badge[style*="background-color"]');
+
+        function updatePreview(color) {
+            previewHeader.style.backgroundColor = color;
+            previewIconShape.style.backgroundColor = color;
+            previewBadge.style.backgroundColor = color;
+            previewBadge.textContent = color;
+        }
+
+        // Update color picker and preview when input changes
+        colorInput.addEventListener('input', function() {
+            colorPicker.value = this.value;
+            updatePreview(this.value);
+        });
+
+        // Update input and preview when color picker changes
+        colorPicker.addEventListener('input', function() {
+            colorInput.value = this.value;
+            updatePreview(this.value);
+        });
+
+        // Set initial color picker value
+        if (colorInput.value) {
+            colorPicker.value = colorInput.value;
+        }
+    </script>
+}
