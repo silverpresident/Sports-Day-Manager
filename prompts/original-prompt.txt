@@ -1,0 +1,351 @@
+Sports Day Manager
+The following is a description of a c# .Net Solution. Check the current solution to ensure it meets the requirements.
+
+
+=============
+You are a senior software developer tasked with creating a C# .NET MVC web application called "Sports Day Manager" for St Jago High School. Your goal is to analyze the provided project description and create a detailed plan for implementing the application. Follow these instructions carefully:
+
+1. Read and analyze the following project description:
+<project_description>
+Sports Day Manager Description
+Build a C# dotnet MVC app project using the latest LTS version of c# dotnet. The app must use entity frame workidentity to allow user authentication and authorization. Once logged in users should be able access administative function.  The name of the project is "Sports Day Manager". The display title is "St Jago High School Sports Day" 
+The project will be backed by an SQL Server database hosted on azure
+The theme colour of the project should be a green and gold.
+
+STRUCTURE
+Create 2 projects. Do not use top level statements in program.cs.
+A lib project that handles business logic including the entities, models, database contexts, services and migrations.
+A app project that handles the ui and admin
+
+UI/UX
+-Use bootstrap, jquery and other relevant frameworks and libraries to improve the user interface and user experience.
+-Include and use the bootstrap icon icon pack as well as font awesome. Prefer to use bootstarp icons but use fontawesome if no bootstrap icon is available.
+-CRUD views should be nicely contained in a bootstrap card.
+-On the list(index) views, action buttons within tables should appear in the first td in the table rows not the last.
+-Every where action buttons should use icons, and text only where necessary
+-Use aria attribute when possible
+
+PUBLIC UI
+The following pages should be publicly available showing information for the current tournament
+-A list of houses (teams) 
+-A list of the participants from each house
+-A list of events, schedule, status and participants in the events. 
+-A list of records showing previous records stored for each event and any new record attained in the current tournament.
+-The deails of each event. This shoulds also show the points available for the events as well as the results of the participants.
+-On the home page  should be a partial view section for announcements. The section should automatically reload every 2 minutes.
+On this same page there should be a partial view showing a leader board showing the list of teams and total points in each division.
+On this same page there should be a partial view showing a leader board showing the top 5 participans in each division.
+On this same page there should be a partial view showing a update stream. Updates must display the time it was created.
+-Use signalR to push realtime update to the app. Use the Azure signalR integration.
+
+NON PUBLIC APP
+Use an admin area to separate the admin ui from the public ui
+The rest of the app is accessed by logging in.
+add a reference to the lib project
+A logged in user should be able to add, edit, delete and view a list of tournaments.
+A logged in user should be able to add, edit, delete and view a list of divisions.
+A logged in user should be able to add, edit, delete and view a list of houses. 
+A logged in user should be able to add, edit, delete and view a list of events. 
+A logged in user should be able to add, edit, delete and view a list of participants.
+A logged in user should be able to add, edit, delete and view a list of event registrations. 
+A logged in user should be able to add, edit, delete and view a list of event self registrations. 
+A logged in user should be able to add, edit, delete and view a list of results.
+A logged in user should be able to add, edit, delete and view a list of users and roles.
+A logged in user should be able to add, edit, delete and view a list of announcements. 
+A logged in user should be able to add, edit, delete and view a list of event updates.
+A logged in user should be able to see a running tally of point for each house.
+A logged in user should be able to see a running tally of point for each division.
+A logged in user should be able to see a list of event with results and one for those with no results.
+
+GENERAL OVERVIEW
+The system can have a number of tournaments. 
+Each tournament will have divisions. 
+Each division within a tournament has a number of participants and events. Each division will have a top participant (highest points), and a winner (house).
+A participant receives point for placement in an event.
+A house has the total points received by its participantsin each division as well as overall.
+Always display the house with it's color.
+Use Azure signalR to push updates to the app.
+
+Create a VS Code workspace file and a Visual Studio solution file.
+Create the relevant readme and gitignore files.
+Stick to the default "dbo" database schema
+All primary key ids must use GUID, except for house which must be an integer.
+use appsettings.json and not web.config. Generally prefer json settings files over XML
+1. Generate a db context for all the entity models
+2. include a markdown package which must be used to parse the updates and annoucements
+3. add entity framework for SQL server database
+3. add entity framework identity for use with google single sign on. Be sure to include the settings in the appsettings.json file.
+Use SQL script to handle database creation and setup; also create a cleanup.sql to reset the database to a completely empty state so i can rerun the setup.
+Create a readme file that contains instructions on what i need to set up on Azure to make all this work.
+Create a teraform file which can be used to provision the resources.
+You may include a .NET ASpire
+Create a appsettings.Example.json with a example of the appsetting.json file contents
+Make sure the gitignore file ignores appsettings files but not the .Example.json files.
+Create a default admin user with password "admin2025"
+
+
+DIVISIONS
+The database stores a list of divisions. By default there is a BOYS and a GIRLS division. 
+
+TOURNAMENT
+Each year we have a sports day (tournament).
+Each tournament has a name, date, year. The name is usually "Sports Day " + the year. For example "Sports Day 2024"
+Each tournament will have 1 or more active divisions from the list of divisions.
+
+HOUSE
+THe primary key must be of type integer.
+Each team is called a house and has a NAME, COLOR, URL to a image logo.
+Each team can have a number of participants or team members.
+Participants score point by participating in events.
+Add the following houses to the database
+1. Beckford, Red
+2. Bell, Green
+3. Campbell, Orange
+4. Nutall, Purble
+5. Smith, Blue
+6. Wortley, Yellow
+
+EVENT CLASS
+Each division has a number of groups called classes. A class is not a database entity merely an integer value from 0 to 4.
+In each division there is an "Open" (class 0) event which allows paricipants from any class.
+Each participant has a class and can only register for events in that class or for open events.
+The classes are "Open", "Class 1", "Class 2", "Class 3" and "Class 4"
+
+EVENT
+Each event has Name, Class, category, type, record, record holder name, point system and belongs to a division.
+The tournamanets has athletics events. 
+Each event uses one of the following point systems for the winner and subsequent placements "9,7,6,5,4,3,2,1", "12,10,9,8,7,6,1"
+An event type is either a "distance" or "speed" event
+A record in an event is either the distance or speed attained.
+If a participant scores a greater distance or faster speed than the record that result should be labelled as a New Record.
+
+SELF REGISTRATIONS
+A number of participant can register for an event.
+There should be a role that allows a user (house leader) to access only the event registration.
+They should only be able to register participant from their own house.
+They should be able to select or enter the name of a participant in an event.
+An adminstrator should be able to turn off this feature by setting an end date and time.
+
+ADMIN REGISTRATIONS
+Administrator can accept the self registration made by house leaders.
+Administrator can register participant in an event.
+
+RESULTS
+Results are added by entering either the placement, speed or distance by the participants in an event.
+When a result is added or edited an update should be created and pushed to the update board. 
+
+ANNOUNCEMENT
+Administrator can create announcements which are displayed on the announcement view until they have expired or are disabled.
+There should be a body and a priority (info, warning, danger, primary, secondary)
+Mark down should be used to format the body for display
+
+PARTICIPANT
+Each participant has a Name, House, Division, Gender, Class.
+Each participant has a Note used for storing arbitrary informtion by the administrator.
+
+
+
+
+</project_description>
+
+
+==========================
+<sports_day_manager_plan>
+
+<project_structure>
+1. SportsDay.Lib (Class Library)
+   - Models/
+     - House.cs
+     - Event.cs
+     - Participant.cs
+     - Result.cs
+     - Schedule.cs
+     - Tournament.cs
+   - Services/
+   - Data/
+     - ApplicationDbContext.cs
+     - Configurations/
+
+2. SportsDay.Web (MVC Application)
+   - Areas/
+     - Admin/
+     - Identity/
+   - Controllers/
+   - Views/
+   - wwwroot/
+   - Hubs/
+</project_structure>
+
+<database_design>
+Tables:
+1. Houses
+   - Id (int, PK)
+   - Name
+   - Color
+   - Points
+
+2. Events
+   - Id (Guid, PK)
+   - TounamentId (Guid, PK)
+   - Name
+   - Category
+   - GenderGroup
+   - AgeGroup
+   - StartTime
+   - Status
+
+3. Participants
+   - Id (Guid, PK)
+   - StudentId
+   - Name
+   - HouseId (FK)
+   - AgeGroup
+   - Gender
+
+4. Results
+   - Id (Guid, PK)
+   - EventId (FK)
+   - ParticipantId (FK)
+   - HouseId (FK)
+   - Position
+   - Points
+   - TimeOrDistance
+
+5. Tournaments
+   - Id (Guid, PK)
+   - Name
+   - TournamentDate
+
+5. TournamentHouseSummary
+   - Id (Guid, PK)
+   - TounamentId (Guid, FK)
+   - HouseId(Int, FK)
+   - AgeGroup
+   - Gender
+   - Points
+
+
+6. AspNetUsers (Identity)
+   - Additional fields:
+     - FullName
+     - Role
+</database_design>
+
+<authentication_authorization>
+1. Identity Implementation
+   - Configure ASP.NET Core Identity
+   - Custom User and Role classes
+   - JWT token authentication
+   - Cookie authentication
+
+2. Roles:
+   - Administrator
+   - Judge
+   - Viewer
+
+3. Google SSO:
+   - Configure Google OAuth
+   - Implement external login provider
+</authentication_authorization>
+
+<public_ui>
+1. Home Page
+   - Live results ticker
+   - Current events display
+   - House points summary
+   - Schedule overview
+
+2. Events Page
+   - List of all events
+   - Filtering options
+   - Event details view
+
+3. Results Page
+   - Searchable results
+   - Filter by house/event
+   - Points table
+</public_ui>
+
+<admin_ui>
+1. Dashboard
+   - Overview statistics
+   - Quick actions
+
+2. Management Pages
+   - House management
+   - Event management
+   - Participant management
+   - Results entry
+   - User management
+
+3. Reports
+   - Points summary
+   - Event statistics
+   - Participation reports
+</admin_ui>
+
+<real_time_updates>
+1. SignalR Implementation
+   - ResultsHub for live updates
+   - Connection management
+   - Azure SignalR service integration
+
+2. Real-time Features
+   - Live results updates
+   - Current event notifications
+   - Points table updates
+</real_time_updates>
+
+<ui_ux_design>
+1. Theme Implementation
+   - Primary color: #006400 (Green)
+   - Secondary color: #FFD700 (Gold)
+   - Bootstrap customization
+   - Responsive design
+
+2. Components
+   - Custom CSS components
+   - Bootstrap components
+   - Font Awesome icons
+   - ARIA labels for accessibility
+</ui_ux_design>
+
+<azure_setup>
+1. Required Resources
+   - Azure App Service
+   - Azure SQL Database
+   - Azure SignalR Service
+   - Azure Key Vault
+   - Application Insights
+
+2. Configuration
+   - Connection strings
+   - App settings
+   - Scaling rules
+</azure_setup>
+
+<deployment>
+1. Deployment Process
+   - CI/CD pipeline setup
+   - GitHub Actions configuration
+   - Environment variables
+   - Database migrations
+
+2. Monitoring
+   - Application Insights setup
+   - Error logging
+   - Performance monitoring
+</deployment>
+
+<documentation>
+1. Required Documentation
+   - README.md
+   - API documentation
+   - Database schema
+   - Deployment guide
+   - User manual
+   - .gitignore
+   - appsettings.Example.json templates
+</documentation>
+
+</sports_day_manager_plan>

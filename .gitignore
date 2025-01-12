@@ -117,6 +117,8 @@ appsettings.Staging.json
 *.Development.json
 *.Production.json
 *.Staging.json
+!appsettings.Example.json
+!*.Example.json
 
 ### IDE ###
 ## Visual Studio Code
