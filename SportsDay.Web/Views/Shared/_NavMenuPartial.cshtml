@@ -1,0 +1,84 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav flex-grow-1">
+@if (SignInManager.IsSignedIn(User))
+{
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="tournamentDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-list me-1"></i>
+            Entities
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="tournamentDropdown">
+            <li>
+            <a class="dropdown-item" asp-area="Admin" asp-controller="Tournament" asp-action="Index">Tournaments</a>
+            </li>
+            <li>
+            <a class="dropdown-item" asp-area="Admin" asp-controller="Houses" asp-action="Index">Houses</a>
+         </li>
+            <li>
+             <a class="dropdown-item" asp-area="Admin" asp-controller="Participants" asp-action="Index">Participants</a>
+            </li> 
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="activeTournamentDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-sitemap me-1"></i>
+            Active Tournament
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="activeTournamentDropdown">
+            <li>
+            <a class="dropdown-item" asp-area="Admin" asp-controller="ActiveTournament" asp-action="Index">Active Tournament</a>
+         
+            </li>
+            <li>
+            <a class="dropdown-item" asp-area="Admin" asp-controller="ActiveTournament" asp-action="SelectParticipants">Tournament Participants</a>
+         </li>
+            <li>
+            <a class="dropdown-item" asp-area="Admin" asp-controller="TournamentHouses" asp-action="Index">Houses</a>
+         </li>
+            <li>
+             <a class="dropdown-item" asp-area="Admin" asp-controller="Events" asp-action="Index">Events</a>
+        </li>
+        </ul>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="publicDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-list me-1"></i>
+            Public Pages
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="publicDropdown">
+            <li>
+             <a class="dropdown-item" asp-area="" asp-controller="Dashboard" asp-action="Index">Home Page</a>
+            </li>
+            <li>
+            <a class="dropdown-item" asp-area="" asp-controller="Announcements" asp-action="Index">Announcements</a>
+            </li>
+            <li>
+            <a class="dropdown-item" asp-area="" asp-controller="Houses" asp-action="Index">Houses</a>
+         </li>
+            <li>
+             <a class="dropdown-item" asp-area="" asp-controller="Events" asp-action="Index">Events</a>
+            </li>
+        </ul>
+      </li>
+} else {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="House" asp-action="Index">
+                                <i class="bi bi-house me-1"></i>Houses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Event" asp-action="Index">
+                                <i class="bi bi-calendar-event me-1"></i>Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Record" asp-action="Index">
+                                <i class="bi bi-trophy me-1"></i>Records
+                            </a>
+                        </li> 
+}
+</ul>

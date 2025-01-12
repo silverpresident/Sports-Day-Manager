@@ -20,23 +20,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="House" asp-action="Index">
-                                <i class="bi bi-house me-1"></i>Houses
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Event" asp-action="Index">
-                                <i class="bi bi-calendar-event me-1"></i>Events
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Record" asp-action="Index">
-                                <i class="bi bi-trophy me-1"></i>Records
-                            </a>
-                        </li>
-                    </ul>
+                    
+                    <partial name="_NavMenuPartial" />
                     <partial name="_LoginPartial" />
                 </div>
             </div>

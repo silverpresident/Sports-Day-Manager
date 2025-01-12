@@ -16,7 +16,11 @@ public class House
 
     [Required]
     [StringLength(20)]
+    //Hex colour
     public string Color { get; set; } = string.Empty;
+    [Required]
+    [StringLength(20)]
+    public string ColorName { get; set; } = string.Empty;
 
     [StringLength(200)]
     public string? LogoUrl { get; set; }

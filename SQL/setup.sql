@@ -15,6 +15,7 @@ BEGIN
         Id INT NOT NULL,
         Name NVARCHAR(50) NOT NULL,
         Color NVARCHAR(20) NOT NULL,
+        ColorName NVARCHAR(20) NOT NULL,
         LogoUrl NVARCHAR(255) NULL,
         CONSTRAINT PK_Houses PRIMARY KEY (Id)
     );
@@ -153,13 +154,13 @@ GO
 -- Insert default houses if they don't exist
 IF NOT EXISTS (SELECT * FROM Houses)
 BEGIN
-    INSERT INTO Houses (Id, Name, Color) VALUES
-    (1, 'Beckford', 'Red'),
-    (2, 'Bell', 'Green'),
-    (3, 'Campbell', 'Orange'),
-    (4, 'Nutall', 'Purple'),
-    (5, 'Smith', 'Blue'),
-    (6, 'Wortley', 'Yellow');
+    INSERT INTO Houses (Id, Name, Color,ColorName) VALUES
+    (1, 'Beckford', '#FF0000', 'Red'),
+    (2, 'Bell', '#006400', 'Green'),
+    (3, 'Campbell', '#FFA500', 'Orange'),
+    (4, 'Nutall', '#800080', 'Purple'),
+    (5, 'Smith', '#0000FF', 'Blue'),
+    (6, 'Wortley', '#FFFF00', 'Yellow');
 END
 GO
 
