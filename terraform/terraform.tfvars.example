@@ -1,0 +1,16 @@
+# Azure region where resources will be created
+location = "eastus"
+
+# SQL Server administrator credentials
+sql_admin_login = "sqladmin"
+sql_admin_password = "REPLACE_WITH_SECURE_PASSWORD" # Minimum 8 characters, must contain uppercase, lowercase, numbers and special characters
+
+# Azure AD SQL administrator
+sql_aad_admin_login = "aadadmin@yourdomain.com"
+sql_aad_admin_object_id = "00000000-0000-0000-0000-000000000000" # Get this from Azure AD
+
+# Google OAuth credentials
+# Get these from Google Cloud Console (https://console.cloud.google.com)
+# under APIs & Services > Credentials > OAuth 2.0 Client IDs
+google_client_id = "your-google-client-id.apps.googleusercontent.com"
+google_client_secret = "REPLACE_WITH_GOOGLE_CLIENT_SECRET"
