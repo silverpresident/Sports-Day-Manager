@@ -1,5 +1,100 @@
-<h2>Updates</h2>
+@model IEnumerable<SportsDay.Lib.Models.EventUpdate>
 
-<div id="update-stream">
-    <p>Real-time updates will load here.</p>
+<div class="update-stream" id="update-stream">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var update in Model.OrderByDescending(u => u.CreatedAt))
+        {
+            <div class="update-item p-3 border-bottom">
+                <div class="d-flex align-items-start">
+                    <div class="me-3">
+                        <i class="bi bi-bell-fill text-success"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="markdown-content small">@update.Message</div>
+                        <div class="update-time mt-2">
+                            <i class="bi bi-clock me-1"></i>@update.CreatedAt.ToString("HH:mm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+            <p class="mb-0">No updates available</p>
+        </div>
+    }
 </div>
+
+<script>
+    // SignalR connection for real-time updates
+    connection.on("ReceiveUpdate", function (message) {
+        const updateStream = document.getElementById('update-stream');
+        const newUpdate = `
+            <div class="update-item p-3 border-bottom" style="display: none;">
+                <div class="d-flex align-items-start">
+                    <div class="me-3">
+                        <i class="bi bi-bell-fill text-success"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="markdown-content small">${message}</div>
+                        <div class="update-time mt-2">
+                            <i class="bi bi-clock me-1"></i>${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Prepend new update and show with animation
+        $(updateStream).prepend(newUpdate);
+        $('.update-item:first').slideDown();
+        
+        // Remove old updates if there are too many
+        if ($('.update-item').length > 50) {
+            $('.update-item:last').remove();
+        }
+    });
+
+    // Scroll to bottom on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const updateStream = document.getElementById('update-stream');
+        updateStream.scrollTop = updateStream.scrollHeight;
+    });
+</script>
+
+<style>
+    .update-stream {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .update-stream::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .update-stream::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .update-stream::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+
+    .update-item {
+        transition: all 0.3s ease;
+    }
+
+    .update-item:hover {
+        background-color: rgba(0, 100, 0, 0.05);
+    }
+
+    .update-time {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+</style>

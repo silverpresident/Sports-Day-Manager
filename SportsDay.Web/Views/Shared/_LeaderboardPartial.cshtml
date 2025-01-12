@@ -1,11 +1,73 @@
-<h2>Leaderboard</h2>
+@model dynamic
 
-<div>
-    <h3>Team Standings</h3>
-    <p>Team leaderboard will load here.</p>
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="leaderboard-section">
+            <h3 class="h6 mb-3">
+                <i class="bi bi-flag-fill text-success me-2"></i>House Points
+            </h3>
+            <div class="list-group">
+                @if (Model?.HousePoints != null)
+                {
+                    foreach (var house in Model.HousePoints)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <span class="badge rounded-circle me-2" style="background-color: @house.Color; width: 20px; height: 20px;"></span>
+                                <span>@house.Name</span>
+                            </div>
+                            <span class="badge bg-success rounded-pill">@house.Points pts</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-emoji-neutral mb-2"></i>
+                        <p class="mb-0">No house points available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="leaderboard-section">
+            <h3 class="h6 mb-3">
+                <i class="bi bi-star-fill text-warning me-2"></i>Top Participants
+            </h3>
+            <div class="list-group">
+                @if (Model?.TopParticipants != null)
+                {
+                    foreach (var participant in Model.TopParticipants)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <span class="badge rounded-circle me-2" style="background-color: @participant.HouseColor; width: 20px; height: 20px;"></span>
+                                <div>
+                                    <div>@participant.Name</div>
+                                    <small class="text-muted">@participant.Division</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-warning text-dark rounded-pill">@participant.Points pts</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-emoji-neutral mb-2"></i>
+                        <p class="mb-0">No participant data available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
-<div>
-    <h3>Top Participants</h3>
-    <p>Top participants leaderboard will load here.</p>
-</div>
+<script>
+    // Auto-refresh leaderboard when SignalR sends update
+    connection.on("RefreshLeaderboard", function () {
+        $("#leaderboard").load(window.location.pathname + " #leaderboard > *");
+    });
+</script>

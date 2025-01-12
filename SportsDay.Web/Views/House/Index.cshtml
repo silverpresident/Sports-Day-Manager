@@ -1,7 +1,54 @@
+@model IEnumerable<SportsDay.Lib.Models.House>
 @{
     ViewData["Title"] = "Houses";
 }
 
-<h1>Houses</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">
+            <i class="bi bi-people-fill text-success me-2"></i>Houses
+        </h1>
+    </div>
 
-<p>List of houses will go here.</p>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var house in Model)
+        {
+            <div class="col">
+                <div class="sports-card card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-house-fill me-2"></i>@house.Name
+                        </h5>
+                        <span class="badge" style="background-color: @house.Color">
+                            <i class="bi bi-palette-fill"></i>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(house.LogoUrl))
+                        {
+                            <img src="@house.LogoUrl" class="card-img-top mb-3" alt="@house.Name logo" style="max-height: 150px; object-fit: contain;">
+                        }
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Participants" asp-route-id="@house.Id" class="btn btn-outline-success btn-action">
+                                <i class="bi bi-people me-1"></i>View Participants
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add aria-labels to the house cards for better accessibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const houseCards = document.querySelectorAll('.sports-card');
+            houseCards.forEach(card => {
+                const houseName = card.querySelector('.card-title').textContent.trim();
+                card.setAttribute('aria-label', `House card for ${houseName}`);
+            });
+        });
+    </script>
+}

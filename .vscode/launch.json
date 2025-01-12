@@ -16,14 +16,16 @@
             "program": "${workspaceFolder}/SportsDay.Web/bin/Debug/net8.0/SportsDay.Web.dll",
             "args": [],
             "cwd": "${workspaceFolder}/SportsDay.Web",
-            "stopAtEntry": false,
+            "stopAtEntry": false, 
+            "console": "internalConsole",
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5260/"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

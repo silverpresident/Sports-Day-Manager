@@ -1,22 +1,230 @@
+:root {
+    --primary-color: #006400;    /* Green */
+    --secondary-color: #FFD700;  /* Gold */
+    --accent-color: #004d00;     /* Darker Green */
+    --hover-color: #008000;      /* Lighter Green */
+}
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #f8f9fa;
+}
+
+/* Focus States */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--primary-color);
+}
+
+/* Theme Colors */
+.bg-success {
+    background-color: var(--primary-color) !important;
+}
+
+.text-warning {
+    color: var(--secondary-color) !important;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Card Styles */
+.sports-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 1.5rem;
+    background-color: white;
+}
+
+.sports-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.sports-card .card-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+    padding: 1rem;
+}
+
+/* Table Styles */
+.table-sports {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table-sports thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.table-sports th {
+    border-bottom: none;
+    padding: 1rem;
+}
+
+.table-sports td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* Action Buttons */
+.btn-action {
+    padding: 0.375rem 0.75rem;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Announcement Styles */
+.announcement {
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: white;
+    border-radius: 0 10px 10px 0;
+    transition: transform 0.2s;
+}
+
+.announcement:hover {
+    transform: translateX(5px);
+}
+
+.announcement.warning {
+    border-left-color: var(--secondary-color);
+}
+
+/* Leaderboard Styles */
+.leaderboard-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 1rem;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.list-group-item:hover {
+    background-color: rgba(0, 100, 0, 0.05);
+}
+
+/* Update Stream Styles */
+.update-stream {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: white;
+}
+
+.update-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.update-item:last-child {
+    border-bottom: none;
+}
+
+.update-item:hover {
+    background-color: rgba(0, 100, 0, 0.05);
+}
+
+.update-time {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Footer Styles */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+    background-color: var(--primary-color);
+    color: white !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+
+    .hero-section .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-section .btn {
+        margin-bottom: 0.5rem;
+    }
 }

@@ -1,11 +1,56 @@
-<h2>Announcements</h2>
+@model IEnumerable<SportsDay.Lib.Models.Announcement>
+@using SportsDay.Lib.Models
 
 <div id="announcements-section">
-    <p>Announcements will load here.</p>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var announcement in Model)
+        {
+            var priorityClass = announcement.Priority switch
+            {
+                AnnouncementPriority.Danger => "border-danger bg-danger bg-opacity-10",
+                AnnouncementPriority.Warning => "border-warning bg-warning bg-opacity-10",
+                AnnouncementPriority.Info => "border-info bg-info bg-opacity-10",
+                AnnouncementPriority.Primary => "border-primary bg-primary bg-opacity-10",
+                _ => "border-secondary bg-secondary bg-opacity-10"
+            };
+
+            var iconClass = announcement.Priority switch
+            {
+                AnnouncementPriority.Danger => "bi-exclamation-triangle-fill text-danger",
+                AnnouncementPriority.Warning => "bi-exclamation-circle-fill text-warning",
+                AnnouncementPriority.Info => "bi-info-circle-fill text-info",
+                AnnouncementPriority.Primary => "bi-bell-fill text-primary",
+                _ => "bi-chat-fill text-secondary"
+            };
+
+            <div class="announcement mb-3 rounded-3 border @priorityClass p-3">
+                <div class="d-flex align-items-start">
+                    <div class="me-3">
+                        <i class="bi @iconClass fs-4"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="markdown-content">@announcement.Body</div>
+                        <div class="mt-2 text-muted small">
+                            <i class="bi bi-clock me-1"></i>@announcement.CreatedAt.ToString("MMM dd, HH:mm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-megaphone fs-1 mb-2"></i>
+            <p>No announcements at this time.</p>
+        </div>
+    }
 </div>
 
 <script>
+    // Auto-reload announcements every 2 minutes
     setInterval(function () {
-        $("#announcements-section").load("/Home/AnnouncementsPartial"); // Assuming an action to load announcements
-    }, 120000); // Reload every 2 minutes
+        $("#announcements-section").load(window.location.pathname + " #announcements-section > *");
+    }, 120000);
 </script>

@@ -1,7 +1,99 @@
+@model IEnumerable<SportsDay.Lib.Models.Participant>
 @{
     ViewData["Title"] = "House Participants";
+    var house = ViewBag.House as SportsDay.Lib.Models.House;
 }
 
-<h1>House Participants</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0">
+                <i class="bi bi-people-fill text-success me-2"></i>@house?.Name Participants
+            </h1>
+            <p class="text-muted mt-2">
+                <i class="bi bi-info-circle me-1"></i>Showing all participants for @house?.Name house
+            </p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-success btn-action">
+            <i class="bi bi-arrow-left me-1"></i>Back to Houses
+        </a>
+    </div>
 
-<p>List of participants for the house will go here.</p>
+    <div class="sports-card card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-list-ul me-2"></i>Participant List
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sports mb-0" aria-label="Participants table">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <i class="bi bi-person me-1"></i>Name
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-gender-ambiguous me-1"></i>Gender
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-layers me-1"></i>Division
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-123 me-1"></i>Class
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-sticky me-1"></i>Notes
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var participant in Model)
+                            {
+                                <tr>
+                                    <td>@participant.Name</td>
+                                    <td>@participant.Gender</td>
+                                    <td>@participant.Division?.Name</td>
+                                    <td>Class @participant.Class</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(participant.Notes))
+                                        {
+                                            <span class="text-muted">
+                                                <i class="bi bi-info-circle me-1"></i>@participant.Notes
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="bi bi-emoji-neutral me-2"></i>No participants found for this house
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add aria-labels to the table rows for better accessibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const participantRows = document.querySelectorAll('tbody tr');
+            participantRows.forEach(row => {
+                const participantName = row.querySelector('td')?.textContent;
+                if (participantName) {
+                    row.setAttribute('aria-label', `Participant: ${participantName}`);
+                }
+            });
+        });
+    </script>
+}
