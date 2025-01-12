@@ -1,0 +1,11 @@
+<h2>Announcements</h2>
+
+<div id="announcements-section">
+    <p>Announcements will load here.</p>
+</div>
+
+<script>
+    setInterval(function () {
+        $("#announcements-section").load("/Home/AnnouncementsPartial"); // Assuming an action to load announcements
+    }, 120000); // Reload every 2 minutes
+</script>

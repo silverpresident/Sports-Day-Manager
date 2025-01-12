@@ -18,6 +18,21 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult AnnouncementsPartial()
+    {
+        return PartialView("_AnnouncementsPartial");
+    }
+
+    public IActionResult LeaderboardPartial()
+    {
+        return PartialView("_LeaderboardPartial");
+    }
+
+    public IActionResult UpdateStreamPartial()
+    {
+        return PartialView("_UpdateStreamPartial");
+    }
+
     public IActionResult Privacy()
     {
         return View();
