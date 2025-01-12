@@ -17,6 +17,9 @@ public class Tournament
     [Required]
     public int Year { get; set; }
 
+    [Required]
+    public bool IsActive { get; set; }
+
     // Navigation properties
     public virtual ICollection<Division> Divisions { get; set; } = new List<Division>();
     public virtual ICollection<Event> Events { get; set; } = new List<Event>();

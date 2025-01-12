@@ -40,8 +40,18 @@ BEGIN
         Name NVARCHAR(100) NOT NULL,
         [Date] DATETIME2 NOT NULL,
         [Year] INT NOT NULL,
+        IsActive BIT NOT NULL DEFAULT 0,
         CONSTRAINT PK_Tournaments PRIMARY KEY (Id)
     );
+END
+GO
+
+-- Add unique filtered index to ensure only one active tournament
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'UX_Tournaments_IsActive' AND object_id = OBJECT_ID('Tournaments'))
+BEGIN
+    CREATE UNIQUE NONCLUSTERED INDEX UX_Tournaments_IsActive
+    ON Tournaments(IsActive)
+    WHERE IsActive = 1;
 END
 GO
 
