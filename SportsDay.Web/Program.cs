@@ -75,6 +75,12 @@ builder.Services.AddAuthentication()
 
 var app = builder.Build();
 
+// Initialize the database
+using (var scope = app.Services.CreateScope())
+{
+    await SportsDay.Web.Data.DbInitializer.Initialize(scope.ServiceProvider);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
