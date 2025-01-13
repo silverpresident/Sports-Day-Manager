@@ -1,8 +1,8 @@
 using System;
 
-namespace SportsDay.Lib
+namespace SportsDay.Lib.Extensions
 {
-    public static class StringExtensions
+    public static class IntegerExtensions
     {
         public static string ToOrdinal(this int number)
         {
