@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SportsDay.Lib.Models;
 
-public class EventUpdate
+public class EventUpdate : BaseEntity
 {
     [Key]
     public Guid Id { get; set; }
@@ -11,9 +11,6 @@ public class EventUpdate
     [Required]
     [StringLength(500)]
     public string Message { get; set; } = string.Empty;
-
-    [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required]
     public Guid EventId { get; set; }

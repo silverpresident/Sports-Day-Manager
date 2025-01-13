@@ -17,6 +17,10 @@ BEGIN
         Color NVARCHAR(20) NOT NULL,
         ColorName NVARCHAR(20) NOT NULL,
         LogoUrl NVARCHAR(255) NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Houses PRIMARY KEY (Id)
     );
 END
@@ -41,6 +45,10 @@ BEGIN
         Name NVARCHAR(100) NOT NULL,
         [TournamentDate] DATETIME2 NOT NULL,
         IsActive BIT NOT NULL DEFAULT 0,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Tournaments PRIMARY KEY (Id)
     );
 END
@@ -71,6 +79,10 @@ BEGIN
         TournamentId UNIQUEIDENTIFIER NOT NULL,
         ScheduledTime DATETIME2 NULL,
         Status NVARCHAR(20) NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Events PRIMARY KEY (Id),
         CONSTRAINT FK_Events_Divisions FOREIGN KEY (DivisionId) REFERENCES Divisions(Id),
         CONSTRAINT FK_Events_Tournaments FOREIGN KEY (TournamentId) REFERENCES Tournaments(Id)
@@ -92,6 +104,10 @@ BEGIN
         Gender NVARCHAR(10) NOT NULL,
         ClassGroup INT NOT NULL,
         Notes NVARCHAR(500) NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Participants PRIMARY KEY (Id),
         CONSTRAINT FK_Participants_Houses FOREIGN KEY (HouseId) REFERENCES Houses(Id),
         CONSTRAINT FK_Participants_Divisions FOREIGN KEY (DivisionId) REFERENCES Divisions(Id)
@@ -112,6 +128,10 @@ BEGIN
         Points INT NOT NULL,
         IsNewRecord BIT NOT NULL,
         TournamentId UNIQUEIDENTIFIER NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Results PRIMARY KEY (Id),
         CONSTRAINT FK_Results_Events FOREIGN KEY (EventId) REFERENCES Events(Id),
         CONSTRAINT FK_Results_Participants FOREIGN KEY (ParticipantId) REFERENCES Participants(Id),
@@ -132,6 +152,10 @@ BEGIN
         ExpiresAt DATETIME2 NULL,
         IsEnabled BIT NOT NULL,
         TournamentId UNIQUEIDENTIFIER NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Announcements PRIMARY KEY (Id),
         CONSTRAINT FK_Announcements_Tournaments FOREIGN KEY (TournamentId) REFERENCES Tournaments(Id)
     );
@@ -147,6 +171,10 @@ BEGIN
         CreatedAt DATETIME2 NOT NULL,
         EventId UNIQUEIDENTIFIER NOT NULL,
         TournamentId UNIQUEIDENTIFIER NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_EventUpdates PRIMARY KEY (Id),
         CONSTRAINT FK_EventUpdates_Events FOREIGN KEY (EventId) REFERENCES Events(Id),
         CONSTRAINT FK_EventUpdates_Tournaments FOREIGN KEY (TournamentId) REFERENCES Tournaments(Id)

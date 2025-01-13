@@ -40,6 +40,8 @@ public class TournamentsController : Controller
             // Set default values
             tournament.Id = Guid.NewGuid();
             tournament.IsActive = false;
+            tournament.CreatedBy = "system";
+            tournament.CreatedAt = DateTime.UtcNow;
 
             // TODO: Add tournament creation logic
             return RedirectToAction(nameof(Index));
@@ -68,6 +70,8 @@ public class TournamentsController : Controller
 
         if (ModelState.IsValid)
         {
+            tournament.UpdatedBy = "system";
+            tournament.UpdatedAt = DateTime.UtcNow;
             // TODO: Add tournament update logic
             return RedirectToAction(nameof(Index));
         }

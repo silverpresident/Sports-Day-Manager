@@ -87,6 +87,8 @@ public class EventsController : Controller
         if (ModelState.IsValid)
         {
             evt.Id = Guid.NewGuid();
+            evt.CreatedBy = "system";
+            evt.CreatedAt = DateTime.UtcNow;
             _context.Events.Add(evt);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -121,6 +123,8 @@ public class EventsController : Controller
         {
             try
             {
+                evt.UpdatedBy = "system";
+                evt.UpdatedAt = DateTime.UtcNow;
                 _context.Update(evt);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

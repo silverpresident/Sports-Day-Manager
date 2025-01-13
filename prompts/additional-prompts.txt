@@ -7,3 +7,12 @@ In the Lib project, Create a service to manage the ActiveTournament.
 
 
 fix the ui of the admin area, implement he views and controllers. Use bootstrap and bootstrap icon. USe the specified theme colours and and make the display elegant.
+
+
+Update applicable models to extend a BaseEntity whichadds common fieldsinlcuing CreatedAt, UpdatedAt, CreatedBy and UpdatedBy
+Update the relevant controller to reflect this changeUPdate the setup.sql to refect this as well. 
+Have CreatedAt and updatedby default to "system"
+
+
+
+Create a "Publish Points Standing" action ont he tournament controller which generate an announcement witht he pointstanding for each house in each section as the content.

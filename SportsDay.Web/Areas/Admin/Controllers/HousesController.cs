@@ -38,6 +38,8 @@ public class HousesController : Controller
     {
         if (ModelState.IsValid)
         {
+            house.CreatedBy = "system";
+            house.CreatedAt = DateTime.UtcNow;
             _context.Houses.Add(house);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -68,6 +70,8 @@ public class HousesController : Controller
         {
             try
             {
+                house.UpdatedBy = "system";
+                house.UpdatedAt = DateTime.UtcNow;
                 _context.Update(house);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

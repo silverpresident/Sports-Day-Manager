@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SportsDay.Lib.Models;
 
-public class Participant
+public class Participant : BaseEntity
 {
     public Guid Id { get; set; }
 

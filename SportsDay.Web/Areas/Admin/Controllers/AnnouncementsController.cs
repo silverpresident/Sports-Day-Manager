@@ -78,6 +78,8 @@ public class AnnouncementsController : Controller
         if (ModelState.IsValid)
         {
             announcement.Id = Guid.NewGuid();
+            announcement.CreatedBy = "system";
+            announcement.CreatedAt = DateTime.UtcNow;
             _context.Announcements.Add(announcement);
             await _context.SaveChangesAsync();
 
@@ -113,6 +115,8 @@ public class AnnouncementsController : Controller
         {
             try
             {
+                announcement.UpdatedBy = "system";
+                announcement.UpdatedAt = DateTime.UtcNow;
                 _context.Update(announcement);
                 await _context.SaveChangesAsync();
 

@@ -4,7 +4,7 @@ using SportsDay.Lib.Enums;
 
 namespace SportsDay.Lib.Models;
 
-public class Announcement
+public class Announcement : BaseEntity
 {
     [Key]
     public Guid Id { get; set; }
@@ -15,9 +15,6 @@ public class Announcement
 
     [Required]
     public AnnouncementPriority Priority { get; set; }
-
-    [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? ExpiresAt { get; set; }
 

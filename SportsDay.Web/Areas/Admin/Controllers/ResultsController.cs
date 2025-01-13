@@ -78,6 +78,8 @@ public class ResultsController : Controller
             }
 
             result.Id = Guid.NewGuid();
+            result.CreatedBy = "system";
+            result.CreatedAt = DateTime.UtcNow;
 
             // Check if this is a new record
             var recordHolder = await _context.Participants.FindAsync(result.ParticipantId);
@@ -183,6 +185,8 @@ public class ResultsController : Controller
                         : 0;
                 }
 
+                result.UpdatedBy = "system";
+                result.UpdatedAt = DateTime.UtcNow;
                 _context.Update(result);
                 await _context.SaveChangesAsync();
 

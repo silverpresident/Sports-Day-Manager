@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SportsDay.Lib.Models;
 
-public class Tournament
+public class Tournament : BaseEntity
 {
     public Guid Id { get; set; }
 

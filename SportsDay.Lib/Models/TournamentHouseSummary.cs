@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SportsDay.Lib.Models
 {
-    public class TournamentHouseSummary
+    public class TournamentHouseSummary : BaseEntity
     {
         public TournamentHouseSummary(Tournament tournament, House house, Division division)
         {

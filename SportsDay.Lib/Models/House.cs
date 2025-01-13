@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SportsDay.Lib.Models;
 
-public class House
+public class House : BaseEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]

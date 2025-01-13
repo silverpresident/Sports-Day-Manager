@@ -4,7 +4,7 @@ using SportsDay.Lib.Enums;
 
 namespace SportsDay.Lib.Models;
 
-public class Event
+public class Event : BaseEntity
 {
     [Key]
     public Guid Id { get; set; }
