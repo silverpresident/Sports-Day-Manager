@@ -83,11 +83,14 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Participants')
 BEGIN
     CREATE TABLE Participants (
         Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
-        Name NVARCHAR(100) NOT NULL,
+        FirstName NVARCHAR(100) NOT NULL,
+        LastName NVARCHAR(100) NOT NULL,
+        GenderGroup NVARCHAR(10) NOT NULL,
+        AgeGroup NVARCHAR(10) NOT NULL,
         HouseId INT NOT NULL,
         DivisionId UNIQUEIDENTIFIER NOT NULL,
         Gender NVARCHAR(10) NOT NULL,
-        Class INT NOT NULL,
+        ClassGroup INT NOT NULL,
         Notes NVARCHAR(500) NULL,
         CONSTRAINT PK_Participants PRIMARY KEY (Id),
         CONSTRAINT FK_Participants_Houses FOREIGN KEY (HouseId) REFERENCES Houses(Id),

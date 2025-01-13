@@ -80,17 +80,18 @@ public class ResultsController : Controller
             result.Id = Guid.NewGuid();
 
             // Check if this is a new record
+            var recordHolder = await _context.Participants.FindAsync(result.ParticipantId);
             if (evt.Type == EventType.Distance && result.SpeedOrDistance > (evt.Record ?? 0m))
             {
                 result.IsNewRecord = true;
                 evt.Record = result.SpeedOrDistance;
-                evt.RecordHolderName = (await _context.Participants.FindAsync(result.ParticipantId))?.Name;
+                evt.RecordHolderName = recordHolder?.FullName;
             }
             else if (evt.Type == EventType.Speed && result.SpeedOrDistance < (evt.Record ?? decimal.MaxValue))
             {
                 result.IsNewRecord = true;
                 evt.Record = result.SpeedOrDistance;
-                evt.RecordHolderName = (await _context.Participants.FindAsync(result.ParticipantId))?.Name;
+                evt.RecordHolderName = recordHolder?.FullName;
             }
 
             // Calculate points based on placement
@@ -124,7 +125,7 @@ public class ResultsController : Controller
 
             // Send real-time updates
             await _hubContext.Clients.All.SendAsync("ReceiveResult", evt.Name, 
-                (await _context.Participants.FindAsync(result.ParticipantId))?.Name, 
+                recordHolder?.FullName, 
                 result.Placement?.ToString() ?? result.SpeedOrDistance?.ToString());
 
             return RedirectToAction(nameof(Index));
@@ -186,8 +187,9 @@ public class ResultsController : Controller
                 await _context.SaveChangesAsync();
 
                 // Send real-time update
+                var resultParticipant = await _context.Participants.FindAsync(result.ParticipantId);
                 await _hubContext.Clients.All.SendAsync("ReceiveResult", evt.Name, 
-                    (await _context.Participants.FindAsync(result.ParticipantId))?.Name, 
+                    resultParticipant?.FullName, 
                     result.Placement?.ToString() ?? result.SpeedOrDistance?.ToString());
 
                 return RedirectToAction(nameof(Index));
@@ -235,10 +237,11 @@ public class ResultsController : Controller
         // Get participants
         var participants = await _context.Participants
             .Include(p => p.House)
-            .OrderBy(p => p.Name)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
-        ViewBag.Participants = new SelectList(participants, "Id", "Name", null, "House.Name");
+        ViewBag.Participants = new SelectList(participants, "Id", "FullName", null, "House.Name");
 
         // Get houses
         var houses = await _context.Houses

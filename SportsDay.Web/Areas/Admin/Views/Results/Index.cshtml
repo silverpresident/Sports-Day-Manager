@@ -1,4 +1,5 @@
 @model IEnumerable<SportsDay.Lib.Models.Result>
+@using Humanizer
 @{
     ViewData["Title"] = "Results";
     var activeTournament = ViewBag.ActiveTournament as Tournament;
@@ -34,7 +35,7 @@
                         </h5>
                         <small class="text-white-50">
                             @evt.Division.Name Division - 
-                            @(evt.Class == 0 ? "Open" : $"Class {evt.Class}")
+                            @(evt.AgeGroup == "0" ? "Open" : $"Class {evt.AgeGroup}")
                         </small>
                     </div>
                     <div class="d-flex align-items-center gap-3">
@@ -97,7 +98,7 @@
                             @foreach (var result in eventGroup.OrderBy(r => r.Placement))
                             {
                                 <tr>
-                                    <td>@result.Participant.Name</td>
+                                    <td>@result.Participant.FullName</td>
                                     <td>
                                         <span class="badge" style="background-color: @result.House.Color">
                                             @result.House.Name

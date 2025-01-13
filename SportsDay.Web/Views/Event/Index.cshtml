@@ -71,7 +71,7 @@
                                     <td>@evt.Name</td>
                                     <td>@evt.Division?.Name</td>
                                     <td>
-                                        @(evt.Class == 0 ? "Open" : $"Class {evt.Class}")
+                                        @(evt.AgeGroup == "0" ? "Open" : $"Class {evt.AgeGroup}")
                                     </td>
                                     <td>
                                         <i class="bi bi-clock me-1"></i>@evt.ScheduledTime?.ToString("MMM dd, HH:mm")

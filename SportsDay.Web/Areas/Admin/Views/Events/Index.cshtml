@@ -31,7 +31,7 @@
     @foreach (var divisionGroup in eventsByDivision)
     {
         var division = divisionGroup.Key;
-        var eventsByClass = divisionGroup.GroupBy(e => e.Class).OrderBy(g => g.Key);
+        var eventsByClass = divisionGroup.GroupBy(e => e.AgeGroup).OrderBy(g => g.Key);
 
         <div class="card mb-4">
             <div class="card-header bg-success text-white">
@@ -51,7 +51,7 @@
                         <div class="p-3 bg-light">
                             <h6 class="mb-0">
                                 <i class="bi bi-layers me-2"></i>
-                                @(classGroup.Key == 0 ? "Open Events" : $"Class {classGroup.Key} Events")
+                                @(classGroup.Key == "0" ? "Open Events" : $"Class {classGroup.Key} Events")
                             </h6>
                         </div>
                         <div class="table-responsive">

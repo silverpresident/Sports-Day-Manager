@@ -9,8 +9,15 @@ public class Participant
     public Guid Id { get; set; }
 
     [Required]
-    [StringLength(100)]
-    public string Name { get; set; } = string.Empty;
+    [StringLength(50)]
+    public string FirstName { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(50)]
+    public string LastName { get; set; } = string.Empty;
+
+    [NotMapped]
+    public string FullName => $"{FirstName} {LastName}";
 
     [Required]
     public int HouseId { get; set; }
@@ -28,6 +35,14 @@ public class Participant
 
     [StringLength(500)]
     public string? Notes { get; set; }
+    [Required]
+    [StringLength(10)]
+    public string GenderGroup { get; set; } = string.Empty;
+    [Required]
+    [StringLength(10)]
+    public string AgeGroup { get; set; } = string.Empty;
+    public int ClassGroup { get; set; }
+
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
 }

@@ -53,10 +53,10 @@
                             foreach (var participant in Model)
                             {
                                 <tr>
-                                    <td>@participant.Name</td>
-                                    <td>@participant.Gender</td>
+                                    <td>@participant.FullName</td>
+                                    <td>@participant.GenderGroup</td>
                                     <td>@participant.Division?.Name</td>
-                                    <td>Class @participant.Class</td>
+                                    <td>Class @participant.AgeGroup</td>
                                     <td>
                                         @if (!string.IsNullOrEmpty(participant.Notes))
                                         {

@@ -164,7 +164,7 @@
 
     <script>
         // Event data
-        const events = @Html.Raw(Json.Serialize(ViewBag.Events.Items.Select(i => new
+        const events = @Html.Raw(Json.Serialize(ViewBag.Events.Items.Select((Func<dynamic, object>)(i => new
         {
             id = i.Value,
             text = i.Text,
@@ -174,7 +174,7 @@
             points = i.GetType().GetProperty("PointSystem").GetValue(i),
             record = i.GetType().GetProperty("Record").GetValue(i),
             recordHolder = i.GetType().GetProperty("RecordHolderName").GetValue(i)
-        })));
+        }))));
 
         // Update form based on selected event
         document.getElementById('eventSelect').addEventListener('change', function() {

@@ -1,4 +1,5 @@
 @model SportsDay.Lib.Models.House
+@using Humanizer
 @{
     ViewData["Title"] = $"{Model.Name} Details";
 }
@@ -121,12 +122,12 @@
                                     foreach (var participant in Model.Participants.OrderBy(p => p.Name))
                                     {
                                         <tr>
-                                            <td>@participant.Name</td>
+                                            <td>@participant.FullName</td>
                                             <td>@participant.Division.Name</td>
                                             <td>
-                                                @(participant.Class == 0 ? "Open" : $"Class {participant.Class}")
+                                                @(participant.ClassGroup == 0 ? "Open" : $"Class {participant.AgeGroup}")
                                             </td>
-                                            <td>@participant.Gender</td>
+                                            <td>@participant.GenderGroup</td>
                                         </tr>
                                     }
                                 }
@@ -176,7 +177,7 @@
                                     {
                                         <tr>
                                             <td>@result.Event.Name</td>
-                                            <td>@result.Participant.Name</td>
+                                            <td>@result.Participant.FullName</td>
                                             <td>
                                                 @if (result.Placement.HasValue)
                                                 {

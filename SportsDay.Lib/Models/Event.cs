@@ -17,6 +17,14 @@ public class Event
     public EventClass Class { get; set; }
 
     [Required]
+    [StringLength(10)]
+    public string AgeGroup { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(10)]
+    public string GenderGroup { get; set; } = string.Empty;
+    
+    [Required]
     [StringLength(50)]
     public string Category { get; set; } = string.Empty;
 
