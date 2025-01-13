@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        @await Html.PartialAsync("_AnnouncementsPartial", ViewBag.Announcements)
+                        @await Html.PartialAsync("_AnnouncementsPartial", (IEnumerable<SportsDay.Lib.Models.Announcement>)ViewBag.Announcements)
                     </div>
                 </div>
 
@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        @await Html.PartialAsync("_UpdateStreamPartial", ViewBag.Updates)
+                        @await Html.PartialAsync("_UpdateStreamPartial", (IEnumerable<SportsDay.Lib.Models.EventUpdate>)ViewBag.Updates)
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                         <i class="bi bi-bar-chart-fill me-2"></i>Leaderboard
                     </div>
                     <div class="card-body p-0">
-                        @await Html.PartialAsync("_LeaderboardPartial", ViewBag.Summaries)
+                        @await Html.PartialAsync("_LeaderboardPartial", (IEnumerable<SportsDay.Lib.Models.TournamentHouseSummary>)ViewBag.Summaries)
                     </div>
                 </div>
 

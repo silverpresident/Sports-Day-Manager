@@ -119,7 +119,7 @@
                             <tbody>
                                 @if (Model.Participants.Any())
                                 {
-                                    foreach (var participant in Model.Participants.OrderBy(p => p.Name))
+                                    foreach (var participant in Model.Participants.OrderBy(p => p.LastName))
                                     {
                                         <tr>
                                             <td>@participant.FullName</td>

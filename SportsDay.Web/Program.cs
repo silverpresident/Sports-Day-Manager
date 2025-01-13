@@ -20,12 +20,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 builder.Services.AddControllersWithViews();
 
-// Add SignalR with Azure SignalR Service
-builder.Services.AddSignalR().AddAzureSignalR(options =>
+// Add SignalR
+builder.Services.AddSignalR();
+/*.AddAzureSignalR(options =>
 {
     options.ConnectionString = builder.Configuration["Azure:SignalR:ConnectionString"];
     options.ServerStickyMode = ServerStickyMode.Required;
 });
+*/
 
 // Add custom services
 builder.Services.AddScoped<ITournamentService, TournamentService>();
