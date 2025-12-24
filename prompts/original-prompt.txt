@@ -8,7 +8,7 @@ You are a senior software developer tasked with creating a C# .NET MVC web appli
 1. Read and analyze the following project description:
 <project_description>
 Sports Day Manager Description
-Build a C# dotnet MVC app project using the latest LTS version of c# dotnet. The app must use entity frame workidentity to allow user authentication and authorization. Once logged in users should be able access administative function.  The name of the project is "Sports Day Manager". The display title is "St Jago High School Sports Day" 
+Build a C# dotnet MVC app project using the latest LTS version of c# dotnet. The app must use entity frame workidentity to allow user authentication and authorization. Once logged in users should be able access administrative function.  The name of the project is "Sports Day Manager". The display title is "St Jago High School Sports Day" 
 The project will be backed by an SQL Server database hosted on azure
 The theme colour of the project should be a green and gold.
 
@@ -19,7 +19,7 @@ A app project that handles the ui and admin
 
 UI/UX
 -Use bootstrap, jquery and other relevant frameworks and libraries to improve the user interface and user experience.
--Include and use the bootstrap icon icon pack as well as font awesome. Prefer to use bootstarp icons but use fontawesome if no bootstrap icon is available.
+-Include and use the bootstrap icon icon pack as well as font awesome. Prefer to use bootstarp icons and only use fontawesome if no bootstrap icon is available.
 -CRUD views should be nicely contained in a bootstrap card.
 -On the list(index) views, action buttons within tables should appear in the first td in the table rows not the last.
 -Every where action buttons should use icons, and text only where necessary
@@ -31,21 +31,21 @@ The following pages should be publicly available showing information for the cur
 -A list of the participants from each house
 -A list of events, schedule, status and participants in the events. 
 -A list of records showing previous records stored for each event and any new record attained in the current tournament.
--The deails of each event. This shoulds also show the points available for the events as well as the results of the participants.
--On the home page  should be a partial view section for announcements. The section should automatically reload every 2 minutes.
+-The details of each event. This shoulds also show the points available for the events as well as the results of the participants.
+-On the home page  should be a partial view section for announcements. The section should automatically reload every 5 minutes.
 On this same page there should be a partial view showing a leader board showing the list of teams and total points in each division.
 On this same page there should be a partial view showing a leader board showing the top 5 participans in each division.
 On this same page there should be a partial view showing a update stream. Updates must display the time it was created.
--Use signalR to push realtime update to the app. Use the Azure signalR integration.
+-Use signalR to push realtime update to the app. Use the Selfhosted signalR integration.
 
 NON PUBLIC APP
 Use an admin area to separate the admin ui from the public ui
 The rest of the app is accessed by logging in.
 add a reference to the lib project
-A logged in user should be able to add, edit, delete and view a list of tournaments.
-A logged in user should be able to add, edit, delete and view a list of divisions.
-A logged in user should be able to add, edit, delete and view a list of houses. 
-A logged in user should be able to add, edit, delete and view a list of events. 
+A logged in user (Administrator only) should be able to add, edit, delete and view a list of tournaments.
+A logged in user (Administrator only) should be able to add, edit, delete and view a list of divisions.
+A logged in user (Administrator only) should be able to add, edit, delete and view a list of houses. 
+A logged in user (Administrator only) should be able to add, edit, delete and view a list of events. 
 A logged in user should be able to add, edit, delete and view a list of participants.
 A logged in user should be able to add, edit, delete and view a list of event registrations. 
 A logged in user should be able to add, edit, delete and view a list of event self registrations. 
@@ -54,7 +54,8 @@ A logged in user should be able to add, edit, delete and view a list of users an
 A logged in user should be able to add, edit, delete and view a list of announcements. 
 A logged in user should be able to add, edit, delete and view a list of event updates.
 A logged in user should be able to see a running tally of point for each house.
-A logged in user should be able to see a running tally of point for each division.
+A logged in user should be able to see a running tally of point for each house in each division.
+A logged in user should be able to see a running tally of point for each participant.
 A logged in user should be able to see a list of event with results and one for those with no results.
 
 GENERAL OVERVIEW
@@ -64,10 +65,11 @@ Each division within a tournament has a number of participants and events. Each 
 A participant receives point for placement in an event.
 A house has the total points received by its participantsin each division as well as overall.
 Always display the house with it's color.
-Use Azure signalR to push updates to the app.
+Use signalR to push updates to the app.
 
 Create a VS Code workspace file and a Visual Studio solution file.
 Create the relevant readme and gitignore files.
+Create the relevant .clinerules file.
 Stick to the default "dbo" database schema
 All primary key ids must use GUID, except for house which must be an integer.
 use appsettings.json and not web.config. Generally prefer json settings files over XML
@@ -78,7 +80,6 @@ use appsettings.json and not web.config. Generally prefer json settings files ov
 Use SQL script to handle database creation and setup; also create a cleanup.sql to reset the database to a completely empty state so i can rerun the setup.
 Create a readme file that contains instructions on what i need to set up on Azure to make all this work.
 Create a teraform file which can be used to provision the resources.
-You may include a .NET ASpire
 Create a appsettings.Example.json with a example of the appsetting.json file contents
 Make sure the gitignore file ignores appsettings files but not the .Example.json files.
 Create a default admin user with password "admin2025"
@@ -107,13 +108,13 @@ Add the following houses to the database
 
 EVENT CLASS
 Each division has a number of groups called classes. A class is not a database entity merely an integer value from 0 to 4.
-In each division there is an "Open" (class 0) event which allows paricipants from any class.
+In each division there is an "Open" (class 0) event which allows participants from any class.
 Each participant has a class and can only register for events in that class or for open events.
 The classes are "Open", "Class 1", "Class 2", "Class 3" and "Class 4"
 
 EVENT
 Each event has Name, Class, category, type, record, record holder name, point system and belongs to a division.
-The tournamanets has athletics events. 
+The tournaments has athletics events. 
 Each event uses one of the following point systems for the winner and subsequent placements "9,7,6,5,4,3,2,1", "12,10,9,8,7,6,1"
 An event type is either a "distance" or "speed" event
 A record in an event is either the distance or speed attained.
@@ -141,11 +142,7 @@ Mark down should be used to format the body for display
 
 PARTICIPANT
 Each participant has a Name, House, Division, Gender, Class.
-Each participant has a Note used for storing arbitrary informtion by the administrator.
-
-
-
-
+Each participant has a Note used for storing arbitrary information by the administrator.
 </project_description>
 
 
@@ -162,9 +159,13 @@ Each participant has a Note used for storing arbitrary informtion by the adminis
      - Schedule.cs
      - Tournament.cs
    - Services/
+   - Hubs/
    - Data/
-     - ApplicationDbContext.cs
-     - Configurations/
+     - SportsDayDbContext.cs
+   - Configurations/
+   - Common/
+   - Workers/
+   - Extensions/
 
 2. SportsDay.Web (MVC Application)
    - Areas/
@@ -173,7 +174,6 @@ Each participant has a Note used for storing arbitrary informtion by the adminis
    - Controllers/
    - Views/
    - wwwroot/
-   - Hubs/
 </project_structure>
 
 <database_design>
@@ -209,7 +209,7 @@ Tables:
    - HouseId (FK)
    - Position
    - Points
-   - TimeOrDistance
+   - TimeOrDistance (decimal 12,4)
 
 5. Tournaments
    - Id (Guid, PK)
@@ -241,6 +241,9 @@ Tables:
 2. Roles:
    - Administrator
    - Judge
+   - Announcer
+   - HouseLeader
+   - Participant
    - Viewer
 
 3. Google SSO:
@@ -286,7 +289,8 @@ Tables:
 
 <real_time_updates>
 1. SignalR Implementation
-   - ResultsHub for live updates
+   - TournamentHub for live updates
+   - ChatHub for live chat
    - Connection management
    - Azure SignalR service integration
 
@@ -314,7 +318,7 @@ Tables:
 1. Required Resources
    - Azure App Service
    - Azure SQL Database
-   - Azure SignalR Service
+   - Selfhosted SignalR Service
    - Azure Key Vault
    - Application Insights
 
@@ -346,6 +350,8 @@ Tables:
    - User manual
    - .gitignore
    - appsettings.Example.json templates
+   - /docs folder
+   - /plans folder
 </documentation>
 
 </sports_day_manager_plan>
