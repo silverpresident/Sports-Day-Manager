@@ -13,6 +13,11 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
 - SignalR integration for real-time updates
 - Public dashboard with leaderboards and announcements
 - Admin area with authentication (currently commented out for development)
+- **Service layer implementation completed**:
+  - Created HouseService with IHouseService interface
+  - All services now registered via ServiceCollectionExtensions.AddSportsDayServices()
+  - Both public and admin HouseControllers refactored to use service layer
+  - Admin controllers now track CreatedBy/UpdatedBy with logged-in user's name
 
 ## Current Focus
 
@@ -31,7 +36,6 @@ The project is in a stable state with core functionality working. The system can
 2. Azure SignalR integration is commented out in Program.cs (using self-hosted SignalR)
 3. Some navigation properties in models may have incorrect relationship configurations
 4. Database initialization uses hardcoded admin credentials
-5. No comprehensive error handling or logging implemented yet
 
 ## Next Steps
 
@@ -51,9 +55,6 @@ Potential areas for enhancement:
 
 ## Technical Debt
 
-- Need to implement proper service layer for all business logic
-- Missing interfaces for several services
-- Some controllers directly access DbContext instead of using services
-- Incomplete separation of concerns in some areas
 - Need to add proper ViewModel classes for complex views
 - Missing anti-forgery token validation on some POST actions
+- Consider creating additional services for Events, Results, and Announcements

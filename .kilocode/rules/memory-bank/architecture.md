@@ -38,7 +38,15 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  Services                                        │   │
 │  │  - ITournamentService / TournamentService        │   │
+│  │  - IHouseService / HouseService                  │   │
+│  │  - IHouseLeaderService / HouseLeaderService      │   │
+│  │  - IParticipantService / ParticipantService      │   │
 │  │  - (Future: IEventService, IResultService)       │   │
+│  └─────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  Extensions                                      │   │
+│  │  - ServiceCollectionExtensions                   │   │
+│  │  - IntegerExtensions                             │   │
 │  └─────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  Models (Domain Entities)                        │   │
@@ -83,6 +91,10 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Data/SportsDayDbContext.cs` - EF Core database context
 - `Data/DbInitializer.cs` - Database seeding and initialization
 - `Services/TournamentService.cs` - Tournament management logic
+- `Services/HouseService.cs` - House management logic
+- `Services/ParticipantService.cs` - Participant management logic
+- `Services/HouseLeaderService.cs` - House leader management logic
+- `Extensions/ServiceCollectionExtensions.cs` - Service registration extension method
 - `Models/BaseEntity.cs` - Base class for all entities with audit fields
 
 ### SportsDay.Web (ASP.NET Core MVC)
@@ -180,7 +192,12 @@ Participant (1) ──→ (N) Result
 ### Service Layer Pattern
 - Business logic encapsulated in services
 - Controllers delegate to services
-- Example: `TournamentService` handles tournament CRUD and activation
+- All services registered via `ServiceCollectionExtensions.AddSportsDayServices()`
+- Examples:
+  - `TournamentService` handles tournament CRUD and activation
+  - `HouseService` handles house CRUD operations
+  - `ParticipantService` handles participant management
+  - `HouseLeaderService` handles house leader operations
 
 ### Hub Pattern (SignalR)
 - `SportsHub` manages real-time connections
@@ -191,6 +208,13 @@ Participant (1) ──→ (N) Result
 - All entities inherit from `BaseEntity`
 - Provides audit fields: CreatedAt, CreatedBy, UpdatedAt, UpdatedBy
 - Consistent tracking across all entities
+- Controllers set CreatedBy/UpdatedBy to logged-in user's name via `User.Identity?.Name`
+
+### Extension Method Pattern
+- Service registration centralized in `ServiceCollectionExtensions`
+- `AddSportsDayServices()` registers all application services
+- Simplifies `Program.cs` configuration
+- Makes service registration maintainable and testable
 
 ## Critical Implementation Paths
 
