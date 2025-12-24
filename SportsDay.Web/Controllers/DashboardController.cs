@@ -48,7 +48,7 @@ public class DashboardController : Controller
         var summaries = await _context.TournamentHouseSummaries
             .Include(s => s.Tournament)
             .Include(s => s.House)
-                .ThenInclude(h => h.Participants)
+                .ThenInclude(h => h.Participants!)
             .Include(s => s.Division)
             .Where(s => s.TournamentId == activeTournament.Id)
             .ToListAsync();
@@ -107,7 +107,7 @@ public class DashboardController : Controller
         var summaries = await _context.TournamentHouseSummaries
             .Include(s => s.Tournament)
             .Include(s => s.House)
-                .ThenInclude(h => h.Participants)
+                .ThenInclude(h => h.Participants!)
             .Include(s => s.Division)
             .Where(s => s.TournamentId == activeTournament.Id)
             .ToListAsync();

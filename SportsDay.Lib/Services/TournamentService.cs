@@ -22,7 +22,7 @@ namespace SportsDay.Lib.Services
             return await _context.Tournaments.ToListAsync();
         }
 
-        public async Task<Tournament> GetTournamentByIdAsync(Guid id)
+        public async Task<Tournament?> GetTournamentByIdAsync(Guid id)
         {
             return await _context.Tournaments.FindAsync(id);
         }
@@ -64,7 +64,7 @@ namespace SportsDay.Lib.Services
             }
         }
 
-        public async Task<Tournament> GetActiveTournamentAsync()
+        public async Task<Tournament?> GetActiveTournamentAsync()
         {
             return await _context.Tournaments.FirstOrDefaultAsync(t => t.IsActive);
         }

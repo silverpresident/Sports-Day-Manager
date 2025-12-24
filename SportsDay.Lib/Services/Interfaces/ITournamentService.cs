@@ -10,11 +10,11 @@ namespace SportsDay.Lib.Services.Interfaces
     public interface ITournamentService
     {
         Task<List<Tournament>> GetTournamentsAsync();
-        Task<Tournament> GetTournamentByIdAsync(Guid id);
+        Task<Tournament?> GetTournamentByIdAsync(Guid id);
         Task CreateTournamentAsync(Tournament tournament);
         Task UpdateTournamentAsync(Tournament tournament);
         Task DeleteTournamentAsync(Guid id);
         Task SetActiveTournamentAsync(Guid id);
-        Task<Tournament> GetActiveTournamentAsync();
+        Task<Tournament?> GetActiveTournamentAsync();
     }
 }

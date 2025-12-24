@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<SportsDay.Lib.Data.SportsDayDbContext>(options =>
+builder.Services.AddDbContext<SportsDayDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -43,7 +43,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
-    options.Password.RequiredLength = 8;
+    options.Password.RequiredLength = 5;
     options.Password.RequiredUniqueChars = 1;
 
     // Lockout settings
@@ -72,8 +72,8 @@ builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
         var googleAuthSection = builder.Configuration.GetSection("Authentication:Google");
-        options.ClientId = googleAuthSection["ClientId"];
-        options.ClientSecret = googleAuthSection["ClientSecret"];
+        options.ClientId = googleAuthSection["ClientId"] ?? string.Empty;
+        options.ClientSecret = googleAuthSection["ClientSecret"] ?? string.Empty;
     });
 
 var app = builder.Build();
@@ -81,7 +81,7 @@ var app = builder.Build();
 // Initialize the database
 using (var scope = app.Services.CreateScope())
 {
-    await SportsDay.Lib.Data.DbInitializer.Initialize(scope.ServiceProvider);
+    await DbInitializer.Initialize(scope.ServiceProvider);
 }
 
 // Configure the HTTP request pipeline.
