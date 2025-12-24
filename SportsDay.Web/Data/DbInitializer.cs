@@ -18,7 +18,7 @@ namespace SportsDay.Web.Data
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
                 // Apply any pending migrations
-                context.Database.Migrate();
+                //context.Database.Migrate();
 
                 // Execute SQL script from setup.sql
                 var sqlScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SQL", "setup.sql");
