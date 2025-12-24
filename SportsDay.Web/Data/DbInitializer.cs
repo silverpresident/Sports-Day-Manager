@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SportsDay.Lib.Data;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -13,12 +14,14 @@ namespace SportsDay.Web.Data
         {
             using (var scope = serviceProvider.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var sportsDayDbContext = scope.ServiceProvider.GetRequiredService<SportsDayDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
                 // Apply any pending migrations
-                //context.Database.Migrate();
+                applicationDbContext.Database.Migrate();
+                sportsDayDbContext.Database.Migrate();
 
                 // Execute SQL script from setup.sql
                /* var sqlScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SQL", "setup.sql");

@@ -3,7 +3,7 @@ using SportsDay.Lib.Models;
 
 namespace SportsDay.Lib.Data;
 
-public class SportsDayDbContext : DbContext
+public class SportsDayDbContext : IdentityDbContext
 {
     public SportsDayDbContext(DbContextOptions<SportsDayDbContext> options)
         : base(options)
