@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Azure.SignalR;
 using SportsDay.Lib.Data;
-using SportsDay.Lib.Services;
+using SportsDay.Lib.Extensions;
 using SportsDay.Web.Hubs;
-using SportsDay.Lib.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +30,7 @@ builder.Services.AddSignalR();
 */
 
 // Add custom services
-builder.Services.AddScoped<ITournamentService, TournamentService>();
-builder.Services.AddScoped<IHouseLeaderService, HouseLeaderService>();
-builder.Services.AddScoped<IParticipantService, ParticipantService>();
+builder.Services.AddSportsDayServices();
 
 // Configure Identity options
 builder.Services.Configure<IdentityOptions>(options =>
@@ -114,6 +111,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 // Map SignalR hub
-app.MapHub<SportsHub>("/sportshub");
+app.MapHub<SportsHub>("/SportsHub");
 
 app.Run();
