@@ -99,5 +99,26 @@ public class SportsDayDbContext : IdentityDbContext
             .WithOne(r => r.Participant)
             .HasForeignKey(r => r.ParticipantId)
             .OnDelete(DeleteBehavior.Cascade);
+
+            
+        // Configure enums as strings
+        modelBuilder.Entity<Announcement>()
+            .Property(r => r.Priority)
+            .HasConversion<string>();
+        modelBuilder.Entity<Participant>()
+            .Property(r => r.GenderGroup)
+            .HasConversion<string>();
+        modelBuilder.Entity<Participant>()
+            .Property(r => r.EventClassGroup)
+            .HasConversion<string>();
+        modelBuilder.Entity<Event>()
+            .Property(r => r.EventClass)
+            .HasConversion<string>();
+        modelBuilder.Entity<Event>()
+            .Property(r => r.GenderGroup)
+            .HasConversion<string>();
+        modelBuilder.Entity<Event>()
+            .Property(r => r.Status)
+            .HasConversion<string>();
     }
 }

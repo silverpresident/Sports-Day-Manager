@@ -161,7 +161,7 @@ public class EventsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateStatus(Guid id, string status)
+    public async Task<IActionResult> UpdateStatus(Guid id, EventStatus status)
     {
         var evt = await _context.Events.FindAsync(id);
         if (evt == null)
@@ -169,7 +169,7 @@ public class EventsController : Controller
             return NotFound();
         }
 
-        evt.Status = status;
+        evt.Status = status.ToString();
         await _context.SaveChangesAsync();
 
         // Create event update
@@ -185,7 +185,7 @@ public class EventsController : Controller
         await _context.SaveChangesAsync();
 
         // Send real-time update
-        await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", evt.Name, status);
+        await _hubContext.Clients.All.SendAsync("ReceiveEventUpdate", evt.Name, status.ToString());
 
         return RedirectToAction(nameof(Index));
     }
@@ -193,13 +193,13 @@ public class EventsController : Controller
     private async Task PopulateViewBagAsync(Guid tournamentId)
     {
         // Get divisions for active tournament
-        /* var divisions = await _context.Events.Select(e => e.Division).Distinct()
+        var divisions = await _context.Events.Select(e => e.Division).Distinct()
             .Where(d => d.TournamentId == tournamentId)
             .OrderBy(d => d.Name)
             .ToListAsync();
 
         ViewBag.Divisions = new SelectList(divisions, "Id", "Name");
- */
+
         // Event classes
         ViewBag.Classes = new SelectList(Enum.GetValues(typeof(EventClass))
             .Cast<EventClass>()
@@ -226,12 +226,12 @@ public class EventsController : Controller
         };
 
         // Event statuses
-        ViewBag.Statuses = new List<SelectListItem>
-        {
-            new SelectListItem { Value = "Scheduled", Text = "Scheduled" },
-            new SelectListItem { Value = "InProgress", Text = "In Progress" },
-            new SelectListItem { Value = "Completed", Text = "Completed" },
-            new SelectListItem { Value = "Cancelled", Text = "Cancelled" }
-        };
+        ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(EventStatus)) 
+            .Cast<EventStatus>()
+            .Select(s => new SelectListItem
+            {
+                Value = s.ToString(),
+                Text = s.ToString()
+            }), "Value", "Text");
     }
 }

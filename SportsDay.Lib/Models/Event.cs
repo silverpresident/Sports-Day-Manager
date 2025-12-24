@@ -16,16 +16,13 @@ public class Event : BaseEntity
     [Required]
     public EventClass Class { get; set; }
 
-    [Required]
-    public DivisionType Division { get; set; }
 
     [Required]
     [StringLength(10)]
     public string AgeGroup { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(10)]
-    public string GenderGroup { get; set; } = string.Empty;
+    public DivisionType GenderGroup { get; set; } 
     
     [Required]
     [StringLength(50)]
@@ -48,7 +45,7 @@ public class Event : BaseEntity
 
     public DateTime? ScheduledTime { get; set; }
 
-    public string Status { get; set; } = "Scheduled"; // Scheduled, InProgress, Completed, Cancelled
+    public EventStatus Status { get; set; } = EventStatus.Scheduled; // Scheduled, InProgress, Completed, Cancelled
 
     // Navigation properties
     [ForeignKey("TournamentId")]

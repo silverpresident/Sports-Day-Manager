@@ -24,8 +24,6 @@ public class Participant : BaseEntity
     public int HouseId { get; set; }
     public House? House { get; set; }
 
-    [Required]
-    public DivisionType Division { get; set; }
 
     [Required]
     public Guid TournamentId { get; set; }
@@ -36,12 +34,16 @@ public class Participant : BaseEntity
     [StringLength(500)]
     public string? Notes { get; set; }
     [Required]
-    [StringLength(10)]
-    public string GenderGroup { get; set; } = string.Empty;
+    public DivisionType GenderGroup { get; set; } 
+
+    
+    public DateTime DateOfBirth { get; set; }
+    public int AgeYears { get; set; }
+
     [Required]
-    [StringLength(10)]
+    [StringLength(50)]
     public string AgeGroup { get; set; } = string.Empty;
-    public int ClassGroup { get; set; }
+    public EventClass EventClassGroup { get; set; }
 
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
