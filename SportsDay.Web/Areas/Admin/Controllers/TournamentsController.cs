@@ -22,6 +22,22 @@ namespace SportsDay.Web.Areas.Admin.Controllers
             return View(tournaments);
         }
 
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tournament = await _tournamentService.GetTournamentByIdAsync(id.Value);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            return View(tournament);
+        }
+
         public IActionResult Create()
         {
             return View();
