@@ -47,7 +47,7 @@ public class HousesController : Controller
         {
             try
             {
-                house.CreatedBy = "system";
+                house.CreatedBy = User.Identity?.Name ?? "system";
                 await _houseService.CreateAsync(house);
                 TempData["Success"] = $"House {house.Name} created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -92,7 +92,7 @@ public class HousesController : Controller
         {
             try
             {
-                house.UpdatedBy = "system";
+                house.UpdatedBy = User.Identity?.Name ?? "system";
                 await _houseService.UpdateAsync(house);
                 TempData["Success"] = $"House {house.Name} updated successfully.";
                 return RedirectToAction(nameof(Index));
