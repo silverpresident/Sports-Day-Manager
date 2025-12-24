@@ -1,5 +1,6 @@
 @model IEnumerable<SportsDay.Lib.Models.Result>
 @using Humanizer
+@using SportsDay.Lib.Enums
 @{
     ViewData["Title"] = "Results";
     var activeTournament = ViewBag.ActiveTournament as Tournament;
@@ -57,10 +58,10 @@
                             @{
                                 var (statusIcon, statusClass) = evt.Status switch
                                 {
-                                    "Scheduled" => ("bi-calendar", "bg-primary"),
-                                    "InProgress" => ("bi-play-circle", "bg-warning text-dark"),
-                                    "Completed" => ("bi-check-circle", "bg-success"),
-                                    "Cancelled" => ("bi-x-circle", "bg-danger"),
+                                    EventStatus.Scheduled => ("bi-calendar", "bg-primary"),
+                                    EventStatus.InProgress => ("bi-play-circle", "bg-warning text-dark"),
+                                    EventStatus.Completed => ("bi-check-circle", "bg-success"),
+                                    EventStatus.Cancelled => ("bi-x-circle", "bg-danger"),
                                     _ => ("bi-question-circle", "bg-secondary")
                                 };
                             }

@@ -42,9 +42,9 @@ public class EventsController : Controller
         var eventsQuery = _context.Events
             .Where(e => e.TournamentId == activeTournament.Id);
 
-        if (!string.IsNullOrEmpty(statusFilter))
+        if (!string.IsNullOrEmpty(statusFilter) && Enum.TryParse<EventStatus>(statusFilter, out var parsedStatus))
         {
-            eventsQuery = eventsQuery.Where(e => e.Status == statusFilter);
+            eventsQuery = eventsQuery.Where(e => e.Status == parsedStatus);
         }
 
         var events = await eventsQuery
@@ -175,7 +175,7 @@ public class EventsController : Controller
             return NotFound();
         }
 
-        evt.Status = status.ToString();
+        evt.Status = status;
         await _context.SaveChangesAsync();
 
         // Create event update

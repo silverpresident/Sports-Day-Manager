@@ -16,7 +16,6 @@ public class Event : BaseEntity
     [Required]
     public EventClass ClassGroup { get; set; }
 
-
     [Required]
     [StringLength(10)]
     public string AgeGroup { get; set; } = string.Empty;
@@ -26,7 +25,13 @@ public class Event : BaseEntity
     public int ParticipantLimit { get; set; } = 0; // 0 means no limit
 
     [Required]
-    public DivisionType GenderGroup { get; set; } 
+    public DivisionType GenderGroup { get; set; }
+    
+    [NotMapped]
+    public DivisionType Division => GenderGroup;
+    
+    [NotMapped]
+    public DivisionType DivisionId => GenderGroup;
     
     [Required]
     [StringLength(50)]

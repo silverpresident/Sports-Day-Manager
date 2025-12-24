@@ -8,6 +8,8 @@ A C# .NET MVC web application for managing St Jago High School sports day events
 - Real-time updates using Azure SignalR
 - Tournament management
 - House (team) management
+- **House Leader Self-Registration** - Users can register as house leaders
+- **Participant Self-Registration** - House leaders can register and manage participants
 - Event scheduling and registration
 - Results tracking and leaderboards
 - Real-time announcements

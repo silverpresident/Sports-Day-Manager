@@ -1,5 +1,6 @@
 @model SportsDay.Lib.Models.Event
 @using Humanizer
+@using SportsDay.Lib.Enums
 @{
     ViewData["Title"] = $"{Model.Name} Details";
 }
@@ -103,7 +104,7 @@
             </div>
 
             <!-- Quick Actions -->
-            @if (Model.Status != "Completed" && Model.Status != "Cancelled")
+            @if (Model.Status != EventStatus.Completed && Model.Status != EventStatus.Cancelled)
             {
                 <div class="card">
                     <div class="card-header bg-success text-white">
@@ -111,21 +112,21 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            @if (Model.Status == "Scheduled")
+                            @if (Model.Status == EventStatus.Scheduled)
                             {
                                 <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="status" value="InProgress" />
+                                    <input type="hidden" name="status" value="@EventStatus.InProgress" />
                                     <button type="submit" class="btn btn-warning w-100">
                                         <i class="bi bi-play-circle me-2"></i>Start Event
                                     </button>
                                 </form>
                             }
-                            else if (Model.Status == "InProgress")
+                            else if (Model.Status == EventStatus.InProgress)
                             {
                                 <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="status" value="Completed" />
+                                    <input type="hidden" name="status" value="@EventStatus.Completed" />
                                     <button type="submit" class="btn btn-success w-100">
                                         <i class="bi bi-check-circle me-2"></i>Complete Event
                                     </button>
@@ -133,7 +134,7 @@
                             }
                             <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
                                 @Html.AntiForgeryToken()
-                                <input type="hidden" name="status" value="Cancelled" />
+                                <input type="hidden" name="status" value="@EventStatus.Cancelled" />
                                 <button type="submit" class="btn btn-outline-danger w-100">
                                     <i class="bi bi-x-circle me-2"></i>Cancel Event
                                 </button>

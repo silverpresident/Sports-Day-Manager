@@ -232,8 +232,8 @@ public class ResultsController : Controller
     {
         // Get events for active tournament
         var events = await _context.Events
-            .Where(e => e.TournamentId == tournamentId && e.Status == "InProgress")
-            .OrderBy(e => e.Division)
+            .Where(e => e.TournamentId == tournamentId && e.Status == EventStatus.InProgress)
+            .OrderBy(e => e.GenderGroup)
             .ThenBy(e => e.Name)
             .ToListAsync();
 

@@ -35,9 +35,12 @@ public class Participant : BaseEntity
 
     [StringLength(500)]
     public string? Notes { get; set; }
+    
     [Required]
-    public DivisionType GenderGroup { get; set; } 
-
+    public DivisionType GenderGroup { get; set; }
+    
+    [NotMapped]
+    public DivisionType Division => GenderGroup;
     
     public DateTime DateOfBirth { get; set; }
     public int AgeInYears { get; set; }
@@ -45,7 +48,11 @@ public class Participant : BaseEntity
     [Required]
     [StringLength(50)]
     public string AgeGroup { get; set; } = string.Empty;
+    
     public EventClass EventClassGroup { get; set; }
+    
+    [NotMapped]
+    public EventClass ClassGroup => EventClassGroup;
 
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();

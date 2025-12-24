@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SportsDay.Lib.Models
 {
@@ -13,10 +14,16 @@ namespace SportsDay.Lib.Models
         [Required]
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
-
+    
         [Required]
         public DateTime TournamentDate { get; set; }
-
+        
+        [NotMapped]
+        public DateTime StartDate => TournamentDate;
+        
+        [NotMapped]
+        public DateTime EndDate => TournamentDate;
+    
         public bool IsActive { get; set; }
 
         // Navigation properties

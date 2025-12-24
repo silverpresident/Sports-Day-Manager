@@ -1,4 +1,5 @@
 @model IEnumerable<SportsDay.Lib.Models.Event>
+@using SportsDay.Lib.Enums
 @{
     ViewData["Title"] = "Events";
 }
@@ -80,9 +81,9 @@
                                         @{
                                             var (statusIcon, statusClass, statusText) = evt.Status switch
                                             {
-                                                "Scheduled" => ("bi-calendar", "text-primary", "Scheduled"),
-                                                "InProgress" => ("bi-play-circle", "text-warning", "In Progress"),
-                                                "Completed" => ("bi-check-circle", "text-success", "Completed"),
+                                                EventStatus.Scheduled => ("bi-calendar", "text-primary", "Scheduled"),
+                                                EventStatus.InProgress => ("bi-play-circle", "text-warning", "In Progress"),
+                                                EventStatus.Completed => ("bi-check-circle", "text-success", "Completed"),
                                                 _ => ("bi-question-circle", "text-secondary", "Unknown")
                                             };
                                         }
