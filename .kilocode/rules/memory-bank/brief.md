@@ -1,42 +1,69 @@
-# Sports Day Manager
+# Sports Day Manager - Project Brief
 
-## High-Level Overview
+## Project Overview
 
-The Sports Day Manager is a comprehensive web application designed to manage St. Jago High School's annual sports day tournament. It provides a public-facing interface for spectators and participants to view real-time information, and a secure administrative backend for staff to manage all aspects of the event.
+Sports Day Manager is a comprehensive web application for managing St. Jago High School's annual sports day tournament. The system provides real-time event tracking, results management, and live leaderboards for a multi-house athletic competition.
 
-### Key Features:
+## Core Purpose
 
-*   **Public Portal:**
-    *   Real-time leaderboards for houses and individual participants.
-    *   Live stream of event updates and announcements.
-    *   Detailed schedules, event information, and results.
-    *   View lists of participating houses and their members.
+Enable efficient management and real-time tracking of a school sports day tournament with:
+- Multiple houses (teams) competing across various athletic events
+- Real-time score updates and leaderboards
+- Public viewing interface for spectators
+- Secure administrative backend for event management
+- Live announcements and event updates
 
-*   **Admin Area:**
-    *   Secure login for authorized administrators.
-    *   Full CRUD (Create, Read, Update, Delete) functionality for:
-        *   Tournaments
-        *   Houses
-        *   Events
-        *   Participants
-        *   Results
-        *   Announcements
-    *   Management of user roles and permissions.
+## Key Stakeholders
 
-*   **Real-Time Functionality:**
-    *   Uses SignalR to instantly push updates (e.g., new results, announcements) to all connected clients without requiring a page refresh.
+- **Administrators**: Full system access for tournament setup and management
+- **Judges/Officials**: Result entry and event status updates
+- **House Leaders**: Limited access for participant registration
+- **Spectators**: Public access to view live results and leaderboards
+- **Participants**: Athletes competing in events
 
-### Technical Stack:
+## Primary Features
 
-*   **Backend:** C# .NET, ASP.NET Core MVC
-*   **Data Access:** Entity Framework Core with a SQL Server database.
-*   **Frontend:** Bootstrap, jQuery, and Bootstrap Icons.
-*   **Authentication:** ASP.NET Core Identity, with support for Google OAuth.
-*   **Deployment:** Designed for hosting on Microsoft Azure, with infrastructure defined using Terraform.
+### Public Interface
+- Live leaderboards (overall and by division)
+- Real-time event updates stream
+- Announcements board
+- Event schedules and details
+- House information and participants
+- Records tracking (current and historical)
 
-### Project Structure:
+### Administrative Interface
+- Tournament management (create, activate, manage)
+- House management (6 houses: Beckford, Bell, Campbell, Nutall, Smith, Wortley)
+- Event management (scheduling, categories, point systems)
+- Participant registration and management
+- Results entry with automatic point calculation
+- Announcement creation and management
+- User and role management
 
-The solution is organized into two main projects:
+## Technical Foundation
 
-1.  **`SportsDay.Lib`**: A class library containing the core business logic, including models (entities), services, the database context, and SignalR hubs.
-2.  **`SportsDay.Web`**: The ASP.NET Core MVC application that provides both the public UI and the protected admin area.
+- **Framework**: .NET 10.0 with ASP.NET Core MVC
+- **Database**: SQL Server (Azure SQL Database)
+- **Authentication**: ASP.NET Core Identity with Google OAuth
+- **Real-time**: SignalR for live updates
+- **Deployment**: Microsoft Azure (App Services, SQL Database, SignalR Service)
+- **Infrastructure**: Terraform for Azure resource provisioning
+
+## Business Rules
+
+1. Only one tournament can be active at a time
+2. Houses are permanent entities (6 houses with specific colors)
+3. Events have predefined point systems (9,7,6,5,4,3,2,1 or 12,10,9,8,7,6,1)
+4. Participants compete in divisions (Boys, Girls, Open) and classes (Open, Class 1-4)
+5. Records are tracked per event and automatically flagged when broken
+6. Points accumulate at house level across all divisions
+7. Real-time updates push to all connected clients via SignalR
+
+## Success Criteria
+
+- Seamless real-time updates during live events
+- Accurate point calculation and leaderboard updates
+- Intuitive interface for both administrators and spectators
+- Reliable performance during high-traffic tournament days
+- Secure authentication and authorization
+- Mobile-responsive design for on-field access
