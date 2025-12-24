@@ -11,7 +11,7 @@ namespace SportsDay.Lib.Models
 
         public BaseEntity()
         {
-            CreatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
             CreatedBy = "system";
             UpdatedBy = "system";
         }

@@ -1,104 +1,114 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportsDay.Lib.Models;
-using SportsDay.Lib.Services;
+using SportsDay.Lib.Services.Interfaces;
+using System;
+using System.Threading.Tasks;
 
-namespace SportsDay.Web.Areas.Admin.Controllers;
-
-[Area("Admin")]
-//[Authorize(Roles = "Administrator")]
-public class TournamentsController : Controller
+namespace SportsDay.Web.Areas.Admin.Controllers
 {
-    private readonly ITournamentService _tournamentService;
-
-    public TournamentsController(ITournamentService tournamentService)
+    [Area("Admin")]
+    public class TournamentsController : Controller
     {
-        _tournamentService = tournamentService;
-    }
+        private readonly ITournamentService _tournamentService;
 
-    public async Task<IActionResult> Index()
-    {
-        var tournaments = await _tournamentService.GetAllTournamentsAsync();
-        return View(tournaments);
-    }
-
-    public IActionResult Create()
-    {
-        return View(new Tournament 
-        { 
-            TournamentDate = DateTime.Today,
-            Name = $"Sports Day {DateTime.Today.Year}"
-        });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Tournament tournament)
-    {
-        if (ModelState.IsValid)
+        public TournamentsController(ITournamentService tournamentService)
         {
-            // Set default values
-            tournament.Id = Guid.NewGuid();
-            tournament.IsActive = false;
-            tournament.CreatedBy = "system";
-            tournament.CreatedAt = DateTime.UtcNow;
+            _tournamentService = tournamentService;
+        }
 
-            // TODO: Add tournament creation logic
+        public async Task<IActionResult> Index()
+        {
+            var tournaments = await _tournamentService.GetTournamentsAsync();
+            return View(tournaments);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Name,TournamentDate,IsActive")] Tournament tournament)
+        {
+            if (ModelState.IsValid)
+            {
+                await _tournamentService.CreateTournamentAsync(tournament);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(tournament);
+        }
+
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tournament = await _tournamentService.GetTournamentByIdAsync(id.Value);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            return View(tournament);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,TournamentDate,IsActive")] Tournament tournament)
+        {
+            if (id != tournament.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _tournamentService.UpdateTournamentAsync(tournament);
+                }
+                catch (Exception)
+                {
+                    // Log the exception
+                    return NotFound();
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(tournament);
+        }
+
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tournament = await _tournamentService.GetTournamentByIdAsync(id.Value);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            return View(tournament);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            await _tournamentService.DeleteTournamentAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        return View(tournament);
-    }
 
-    public async Task<IActionResult> Edit(Guid id)
-    {
-        var tournament = await _tournamentService.GetTournamentByIdAsync(id);
-        if (tournament == null)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetActive(Guid id)
         {
-            return NotFound();
-        }
-        return View(tournament);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Guid id, Tournament tournament)
-    {
-        if (id != tournament.Id)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            tournament.UpdatedBy = "system";
-            tournament.UpdatedAt = DateTime.UtcNow;
-            // TODO: Add tournament update logic
+            await _tournamentService.SetActiveTournamentAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        return View(tournament);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetActive(Guid id)
-    {
-        var result = await _tournamentService.SetActiveTournamentAsync(id);
-        if (!result)
-        {
-            TempData["Error"] = "Failed to set tournament as active.";
-        }
-        return RedirectToAction(nameof(Index));
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Deactivate(Guid id)
-    {
-        var result = await _tournamentService.DeactivateTournamentAsync(id);
-        if (!result)
-        {
-            TempData["Error"] = "Failed to deactivate tournament.";
-        }
-        return RedirectToAction(nameof(Index));
     }
 }

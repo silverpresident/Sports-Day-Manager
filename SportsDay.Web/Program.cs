@@ -5,6 +5,7 @@ using Microsoft.Azure.SignalR;
 using SportsDay.Lib.Data;
 using SportsDay.Lib.Services;
 using SportsDay.Web.Hubs;
+using SportsDay.Lib.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,7 +79,7 @@ var app = builder.Build();
 // Initialize the database
 using (var scope = app.Services.CreateScope())
 {
-    await SportsDay.Web.Data.DbInitializer.Initialize(scope.ServiceProvider);
+    await SportsDay.Lib.Data.DbInitializer.Initialize(scope.ServiceProvider);
 }
 
 // Configure the HTTP request pipeline.

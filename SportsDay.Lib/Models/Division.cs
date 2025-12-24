@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SportsDay.Lib.Models;
 
-public class Division
+public class Division : BaseEntity
 {
     public Guid Id { get; set; }
 
