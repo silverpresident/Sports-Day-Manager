@@ -30,7 +30,7 @@ public class EventsController : Controller
         _hubContext = hubContext;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string statusFilter)
     {
         var activeTournament = await _tournamentService.GetActiveTournamentAsync();
         if (activeTournament == null)
@@ -39,21 +39,27 @@ public class EventsController : Controller
             return RedirectToAction("Index", "Tournaments", new { area = "Admin" });
         }
 
-        var events = await _context.Events
-            .Include(e => e.Division)
-            .Where(e => e.TournamentId == activeTournament.Id)
-            .OrderBy(e => e.Division)
-            .ThenBy(e => e.Name)
+        var eventsQuery = _context.Events
+            .Where(e => e.TournamentId == activeTournament.Id);
+
+        if (!string.IsNullOrEmpty(statusFilter))
+        {
+            eventsQuery = eventsQuery.Where(e => e.Status == statusFilter);
+        }
+
+        var events = await eventsQuery
+            .OrderBy(e => e.Name)
             .ToListAsync();
 
         ViewBag.ActiveTournament = activeTournament;
+        ViewBag.CurrentFilter = statusFilter;
+
         return View(events);
     }
 
     public async Task<IActionResult> Details(Guid id)
     {
         var evt = await _context.Events
-            .Include(e => e.Division)
             .Include(e => e.Results)
                 .ThenInclude(r => r.Participant)
             .Include(e => e.Results)
@@ -190,15 +196,9 @@ public class EventsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task PopulateViewBagAsync(Guid tournamentId)
+    private Task PopulateViewBagAsync(Guid tournamentId)
     {
-        // Get divisions for active tournament
-        var divisions = await _context.Events.Select(e => e.Division).Distinct()
-            .Where(d => d.TournamentId == tournamentId)
-            .OrderBy(d => d.Name)
-            .ToListAsync();
-
-        ViewBag.Divisions = new SelectList(divisions, "Id", "Name");
+        ViewBag.Divisions = new SelectList(Enum.GetValues(typeof(DivisionType)).Cast<DivisionType>().Select(d => new { Id = (int)d, Name = d.ToString() }), "Id", "Name");
 
         // Event classes
         ViewBag.Classes = new SelectList(Enum.GetValues(typeof(EventClass))
@@ -233,5 +233,7 @@ public class EventsController : Controller
                 Value = s.ToString(),
                 Text = s.ToString()
             }), "Value", "Text");
+
+        return Task.CompletedTask;
     }
 }

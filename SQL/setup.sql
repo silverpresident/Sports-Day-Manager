@@ -26,17 +26,6 @@ BEGIN
 END
 GO
 
--- Create Divisions table
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Divisions')
-BEGIN
-    CREATE TABLE Divisions (
-        Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
-        Name NVARCHAR(50) NOT NULL,
-        CONSTRAINT PK_Divisions PRIMARY KEY (Id)
-    );
-END
-GO
-
 -- Create Tournaments table
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Tournaments')
 BEGIN
@@ -69,22 +58,24 @@ BEGIN
     CREATE TABLE Events (
         Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
         Name NVARCHAR(100) NOT NULL,
-        Class INT NOT NULL,
+        ClassGroup NVARCHAR(50) NOT NULL,
+        AgeGroup NVARCHAR(10) NOT NULL,
+        ParticipantMaxAge INT NOT NULL DEFAULT 0,
+        ParticipantLimit INT NOT NULL DEFAULT 0,
+        GenderGroup NVARCHAR(50) NOT NULL,
         Category NVARCHAR(50) NOT NULL,
-        Type INT NOT NULL,
+        Type NVARCHAR(50) NOT NULL,
         Record DECIMAL(18,2) NULL,
         RecordHolderName NVARCHAR(100) NULL,
-        PointSystem NVARCHAR(20) NOT NULL,
-        DivisionId UNIQUEIDENTIFIER NOT NULL,
+        PointSystem NVARCHAR(50) NOT NULL,
         TournamentId UNIQUEIDENTIFIER NOT NULL,
         ScheduledTime DATETIME2 NULL,
-        Status NVARCHAR(20) NOT NULL,
+        Status NVARCHAR(50) NOT NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
         CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
         UpdatedAt DATETIME2 NULL,
         UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Events PRIMARY KEY (Id),
-        CONSTRAINT FK_Events_Divisions FOREIGN KEY (DivisionId) REFERENCES Divisions(Id),
         CONSTRAINT FK_Events_Tournaments FOREIGN KEY (TournamentId) REFERENCES Tournaments(Id)
     );
 END
@@ -95,22 +86,24 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Participants')
 BEGIN
     CREATE TABLE Participants (
         Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
-        FirstName NVARCHAR(100) NOT NULL,
-        LastName NVARCHAR(100) NOT NULL,
-        GenderGroup NVARCHAR(10) NOT NULL,
-        AgeGroup NVARCHAR(10) NOT NULL,
+        FirstName NVARCHAR(50) NOT NULL,
+        LastName NVARCHAR(50) NOT NULL,
         HouseId INT NOT NULL,
-        DivisionId UNIQUEIDENTIFIER NOT NULL,
-        Gender NVARCHAR(10) NOT NULL,
-        ClassGroup INT NOT NULL,
+        TournamentId UNIQUEIDENTIFIER NOT NULL,
+        Points INT NOT NULL DEFAULT 0,
         Notes NVARCHAR(500) NULL,
+        GenderGroup NVARCHAR(50) NOT NULL,
+        DateOfBirth DATETIME2 NOT NULL,
+        AgeInYears INT NOT NULL DEFAULT 0,
+        AgeGroup NVARCHAR(50) NOT NULL,
+        EventClassGroup NVARCHAR(50) NOT NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
         CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
         UpdatedAt DATETIME2 NULL,
         UpdatedBy NVARCHAR(100) NULL,
         CONSTRAINT PK_Participants PRIMARY KEY (Id),
         CONSTRAINT FK_Participants_Houses FOREIGN KEY (HouseId) REFERENCES Houses(Id),
-        CONSTRAINT FK_Participants_Divisions FOREIGN KEY (DivisionId) REFERENCES Divisions(Id)
+        CONSTRAINT FK_Participants_Tournaments FOREIGN KEY (TournamentId) REFERENCES Tournaments(Id)
     );
 END
 GO
@@ -147,8 +140,8 @@ BEGIN
     CREATE TABLE Announcements (
         Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
         Body NVARCHAR(500) NOT NULL,
-        Priority INT NOT NULL,
-        CreatedAt DATETIME2 NOT NULL,
+        Tag NVARCHAR(100) NOT NULL,
+        Priority NVARCHAR(50) NOT NULL,
         ExpiresAt DATETIME2 NULL,
         IsEnabled BIT NOT NULL,
         TournamentId UNIQUEIDENTIFIER NOT NULL,
@@ -168,7 +161,6 @@ BEGIN
     CREATE TABLE EventUpdates (
         Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
         Message NVARCHAR(500) NOT NULL,
-        CreatedAt DATETIME2 NOT NULL,
         EventId UNIQUEIDENTIFIER NOT NULL,
         TournamentId UNIQUEIDENTIFIER NOT NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
@@ -182,24 +174,52 @@ BEGIN
 END
 GO
 
+-- Create HouseLeaders table
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'HouseLeaders')
+BEGIN
+    CREATE TABLE HouseLeaders (
+        Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+        HouseId INT NOT NULL,
+        UserId NVARCHAR(450) NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
+        CONSTRAINT PK_HouseLeaders PRIMARY KEY (Id),
+        CONSTRAINT FK_HouseLeaders_Houses FOREIGN KEY (HouseId) REFERENCES Houses(Id)
+    );
+END
+GO
+
+-- Create TournamentHouseSummaries table
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'TournamentHouseSummaries')
+BEGIN
+    CREATE TABLE TournamentHouseSummaries (
+        Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+        TournamentId UNIQUEIDENTIFIER NOT NULL,
+        HouseId INT NOT NULL,
+        Division NVARCHAR(50) NOT NULL,
+        Points INT NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',
+        UpdatedAt DATETIME2 NULL,
+        UpdatedBy NVARCHAR(100) NULL,
+        CONSTRAINT PK_TournamentHouseSummaries PRIMARY KEY (Id),
+        CONSTRAINT FK_TournamentHouseSummaries_Tournaments FOREIGN KEY (TournamentId) REFERENCES Tournaments(Id),
+        CONSTRAINT FK_TournamentHouseSummaries_Houses FOREIGN KEY (HouseId) REFERENCES Houses(Id)
+    );
+END
+GO
+
 -- Insert default houses if they don't exist
 IF NOT EXISTS (SELECT * FROM Houses)
 BEGIN
-    INSERT INTO Houses (Id, Name, Color,ColorName) VALUES
+    INSERT INTO Houses (Id, Name, Color, ColorName) VALUES
     (1, 'Beckford', '#FF0000', 'Red'),
     (2, 'Bell', '#006400', 'Green'),
     (3, 'Campbell', '#FFA500', 'Orange'),
     (4, 'Nutall', '#800080', 'Purple'),
     (5, 'Smith', '#0000FF', 'Blue'),
     (6, 'Wortley', '#FFFF00', 'Yellow');
-END
-GO
-
--- Insert default divisions if they don't exist
-IF NOT EXISTS (SELECT * FROM Divisions)
-BEGIN
-    INSERT INTO Divisions (Name) VALUES
-    ('BOYS'),
-    ('GIRLS');
 END
 GO
