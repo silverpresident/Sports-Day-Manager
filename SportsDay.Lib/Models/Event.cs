@@ -17,6 +17,9 @@ public class Event : BaseEntity
     public EventClass Class { get; set; }
 
     [Required]
+    public DivisionType Division { get; set; }
+
+    [Required]
     [StringLength(10)]
     public string AgeGroup { get; set; } = string.Empty;
 
@@ -41,9 +44,6 @@ public class Event : BaseEntity
     public string PointSystem { get; set; } = "9,7,6,5,4,3,2,1"; // Default point system
 
     [Required]
-    public Guid DivisionId { get; set; }
-
-    [Required]
     public Guid TournamentId { get; set; }
 
     public DateTime? ScheduledTime { get; set; }
@@ -51,9 +51,6 @@ public class Event : BaseEntity
     public string Status { get; set; } = "Scheduled"; // Scheduled, InProgress, Completed, Cancelled
 
     // Navigation properties
-    [ForeignKey("DivisionId")]
-    public virtual Division Division { get; set; } = null!;
-
     [ForeignKey("TournamentId")]
     public virtual Tournament Tournament { get; set; } = null!;
 

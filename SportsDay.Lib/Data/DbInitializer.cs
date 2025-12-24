@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SportsDay.Web.Data
+namespace SportsDay.Lib.Data
 {
     public static class DbInitializer
     {

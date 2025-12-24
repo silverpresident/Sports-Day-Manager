@@ -3,18 +3,17 @@
 <div class="list-group list-group-flush">
     @if (Model != null && Model.Any())
     {
-        var divisions = Model.Select(s => s.Division).Distinct().OrderBy(d => d.Name);
+        var divisions = Model.Select(s => s.Division).Distinct().OrderBy(d => d);
         
         foreach (var division in divisions)
         {
-            if (division != null)
-            {
-                var summaries = Model.Where(s => s.DivisionId == division.Id)
+
+                var summaries = Model.Where(s => s.Division == division)
                                     .OrderByDescending(s => s.Points)
                                     .ToList();
 
                 <div class="list-group-item">
-                    <h6 class="mb-3">@division.Name Division</h6>
+                    <h6 class="mb-3">@division Division</h6>
                     
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
@@ -45,7 +44,7 @@
                     @if (summaries.Any())
                     {
                         var topParticipants = summaries.SelectMany(s => s.House?.Participants ?? Enumerable.Empty<Participant>())
-                                                      .Where(p => p.DivisionId == division.Id)
+                                                      .Where(p => p.Division == division)
                                                       .OrderByDescending(p => p.Points)
                                                       .Take(5)
                                                       .ToList();
@@ -70,7 +69,6 @@
                         }
                     }
                 </div>
-            }
         }
     }
     else

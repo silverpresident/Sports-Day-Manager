@@ -18,7 +18,6 @@ namespace SportsDay.Lib.Models
         public bool IsActive { get; set; }
 
         // Navigation properties
-        public virtual ICollection<Division> Divisions { get; set; } = new List<Division>();
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
         public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
         public virtual ICollection<Result> Results { get; set; } = new List<Result>();

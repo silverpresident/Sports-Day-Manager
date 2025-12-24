@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Home";
     var activeTournament = ViewBag.ActiveTournament as Tournament;
 }
@@ -62,7 +62,7 @@
                             <div>
                                 <i class="bi bi-people me-2"></i>Divisions
                             </div>
-                            <div>@activeTournament.Divisions.Count active</div>
+                            <div>@ViewBag.DivisionCount active</div>
                         </div>
                     </div>
                 </div>

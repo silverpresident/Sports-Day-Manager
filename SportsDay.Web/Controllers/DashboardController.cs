@@ -57,6 +57,7 @@ public class DashboardController : Controller
         ViewBag.Announcements = announcements;
         ViewBag.Updates = updates;
         ViewBag.Summaries = summaries;
+        ViewBag.DivisionCount = summaries.Select(s => s.Division).Distinct().Count();
 
         return View();
     }

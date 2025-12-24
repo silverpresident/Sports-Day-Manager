@@ -42,7 +42,7 @@ public class EventsController : Controller
         var events = await _context.Events
             .Include(e => e.Division)
             .Where(e => e.TournamentId == activeTournament.Id)
-            .OrderBy(e => e.Division.Name)
+            .OrderBy(e => e.Division)
             .ThenBy(e => e.Name)
             .ToListAsync();
 
@@ -193,13 +193,13 @@ public class EventsController : Controller
     private async Task PopulateViewBagAsync(Guid tournamentId)
     {
         // Get divisions for active tournament
-        var divisions = await _context.Divisions
+        /* var divisions = await _context.Events.Select(e => e.Division).Distinct()
             .Where(d => d.TournamentId == tournamentId)
             .OrderBy(d => d.Name)
             .ToListAsync();
 
         ViewBag.Divisions = new SelectList(divisions, "Id", "Name");
-
+ */
         // Event classes
         ViewBag.Classes = new SelectList(Enum.GetValues(typeof(EventClass))
             .Cast<EventClass>()

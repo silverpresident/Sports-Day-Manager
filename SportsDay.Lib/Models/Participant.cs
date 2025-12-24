@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SportsDay.Lib.Enums;
 
 namespace SportsDay.Lib.Models;
 
@@ -24,8 +25,7 @@ public class Participant : BaseEntity
     public House? House { get; set; }
 
     [Required]
-    public Guid DivisionId { get; set; }
-    public Division? Division { get; set; }
+    public DivisionType Division { get; set; }
 
     [Required]
     public Guid TournamentId { get; set; }
