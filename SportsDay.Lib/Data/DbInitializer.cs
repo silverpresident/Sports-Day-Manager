@@ -14,13 +14,11 @@ namespace SportsDay.Web.Data
         {
             using (var scope = serviceProvider.CreateScope())
             {
-                var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var sportsDayDbContext = scope.ServiceProvider.GetRequiredService<SportsDayDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
                 // Apply any pending migrations
-                applicationDbContext.Database.Migrate();
                 sportsDayDbContext.Database.Migrate();
 
                 // Execute SQL script from setup.sql

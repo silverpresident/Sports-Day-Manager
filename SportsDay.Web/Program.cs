@@ -5,21 +5,18 @@ using Microsoft.Azure.SignalR;
 using SportsDay.Lib.Data;
 using SportsDay.Lib.Services;
 using SportsDay.Web.Hubs;
-using SportsDay.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<SportsDayDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<SportsDay.Lib.Data.SportsDayDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<SportsDayDbContext>();
 
 builder.Services.AddControllersWithViews();
 
