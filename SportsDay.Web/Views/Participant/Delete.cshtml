@@ -1,0 +1,78 @@
+@model SportsDay.Lib.Models.Participant
+@using SportsDay.Lib.Models
+
+@{
+    ViewData["Title"] = "Delete Participant";
+    var houseLeader = ViewBag.HouseLeader as HouseLeader;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Delete Participant
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <strong>Warning:</strong> You are about to delete this participant.
+                    </div>
+
+                    <h4 class="mb-3">Participant Details:</h4>
+                    
+                    <dl class="row">
+                        <dt class="col-sm-4">Name:</dt>
+                        <dd class="col-sm-8"><strong>@Model.FullName</strong></dd>
+
+                        <dt class="col-sm-4">House:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge" style="background-color: @Model.House?.Color; color: white;">
+                                @Model.House?.Name
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Gender Division:</dt>
+                        <dd class="col-sm-8">@Model.GenderGroup</dd>
+
+                        <dt class="col-sm-4">Event Class:</dt>
+                        <dd class="col-sm-8">@Model.EventClassGroup</dd>
+
+                        <dt class="col-sm-4">Age Group:</dt>
+                        <dd class="col-sm-8">@Model.AgeGroup (@Model.AgeInYears years old)</dd>
+
+                        <dt class="col-sm-4">Points:</dt>
+                        <dd class="col-sm-8"><span class="badge bg-success">@Model.Points pts</span></dd>
+
+                        @if (!string.IsNullOrEmpty(Model.Notes))
+                        {
+                            <dt class="col-sm-4">Notes:</dt>
+                            <dd class="col-sm-8">@Model.Notes</dd>
+                        }
+                    </dl>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Note:</strong> This action cannot be undone. All results associated with this participant will also be deleted.
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-trash me-2"></i>Yes, Delete This Participant
+                            </button>
+                            <a asp-controller="HouseLeader" asp-action="Dashboard" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

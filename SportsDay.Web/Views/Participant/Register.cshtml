@@ -1,0 +1,101 @@
+@model SportsDay.Lib.Models.Participant
+@using SportsDay.Lib.Models
+
+@{
+    ViewData["Title"] = "Register Participant";
+    var houseLeader = ViewBag.HouseLeader as HouseLeader;
+    var activeTournament = ViewBag.ActiveTournament as Tournament;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header" style="background-color: @houseLeader?.House?.Color; color: white;">
+                    <h2 class="mb-0">
+                        <i class="bi bi-person-plus me-2"></i>Register Participant for @houseLeader?.House?.Name
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tournament:</strong> @activeTournament?.Name
+                    </div>
+
+                    <form asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="HouseId" />
+                        <input type="hidden" asp-for="TournamentId" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label">First Name</label>
+                                <input asp-for="FirstName" class="form-control" required />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label">Last Name</label>
+                                <input asp-for="LastName" class="form-control" required />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                                <input asp-for="DateOfBirth" type="date" class="form-control" required />
+                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="AgeGroup" class="form-label">Age Group</label>
+                                <input asp-for="AgeGroup" class="form-control" placeholder="e.g., 13-15" required />
+                                <span asp-validation-for="AgeGroup" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="GenderGroup" class="form-label">Gender Division</label>
+                                <select asp-for="GenderGroup" asp-items="ViewBag.GenderGroups" class="form-select" required>
+                                    <option value="">-- Select Gender Division --</option>
+                                </select>
+                                <span asp-validation-for="GenderGroup" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EventClassGroup" class="form-label">Event Class</label>
+                                <select asp-for="EventClassGroup" asp-items="ViewBag.EventClasses" class="form-select" required>
+                                    <option value="">-- Select Event Class --</option>
+                                </select>
+                                <span asp-validation-for="EventClassGroup" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Notes (Optional)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Register Participant
+                            </button>
+                            <a asp-controller="HouseLeader" asp-action="Dashboard" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

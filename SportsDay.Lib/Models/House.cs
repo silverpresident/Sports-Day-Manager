@@ -29,4 +29,5 @@ public class House : BaseEntity
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
     public virtual ICollection<TournamentHouseSummary> TournamentSummaries { get; set; } = new List<TournamentHouseSummary>();
+    public virtual ICollection<HouseLeader> HouseLeaders { get; set; } = new List<HouseLeader>();
 }

@@ -32,6 +32,8 @@ builder.Services.AddSignalR();
 
 // Add custom services
 builder.Services.AddScoped<ITournamentService, TournamentService>();
+builder.Services.AddScoped<IHouseLeaderService, HouseLeaderService>();
+builder.Services.AddScoped<IParticipantService, ParticipantService>();
 
 // Configure Identity options
 builder.Services.Configure<IdentityOptions>(options =>

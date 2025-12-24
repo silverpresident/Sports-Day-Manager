@@ -1,0 +1,46 @@
+@model SportsDay.Lib.Models.HouseLeader
+
+@{
+    ViewData["Title"] = "Unregister as House Leader";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Unregister as House Leader
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <strong>Warning:</strong> You are about to unregister as house leader for <strong>@Model.House?.Name</strong>.
+                    </div>
+
+                    <p class="lead">Are you sure you want to proceed?</p>
+
+                    <ul class="mb-4">
+                        <li>You will no longer be able to register or manage participants for @Model.House?.Name</li>
+                        <li>Existing participants you registered will remain in the system</li>
+                        <li>You can re-register as a house leader at any time</li>
+                    </ul>
+
+                    <form asp-action="Unregister" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Yes, Unregister Me
+                            </button>
+                            <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

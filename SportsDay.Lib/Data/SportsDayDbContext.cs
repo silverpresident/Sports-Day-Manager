@@ -82,9 +82,9 @@ public class SportsDayDbContext : IdentityDbContext
             .HasForeignKey(s => s.HouseId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<HouseLeader>()
-            .HasOne(hl => hl.HouseId)
-            .WithMany(h => h.UserId)
+        modelBuilder.Entity<House>()
+            .HasMany(h => h.HouseLeaders)
+            .WithOne(hl => hl.House)
             .HasForeignKey(hl => hl.HouseId)
             .OnDelete(DeleteBehavior.Cascade);
 
