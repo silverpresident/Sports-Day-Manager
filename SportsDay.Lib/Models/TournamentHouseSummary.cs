@@ -18,6 +18,8 @@ namespace SportsDay.Lib.Models
 
         protected TournamentHouseSummary() { } // For EF Core
 
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         public Guid TournamentId { get; set; }

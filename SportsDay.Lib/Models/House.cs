@@ -7,7 +7,7 @@ namespace SportsDay.Lib.Models;
 public class House : BaseEntity
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     [Required]

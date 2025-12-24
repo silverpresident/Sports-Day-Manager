@@ -6,6 +6,8 @@ namespace SportsDay.Lib.Models
 {
     public class Tournament : BaseEntity
     {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Required]
