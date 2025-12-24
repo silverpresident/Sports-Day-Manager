@@ -13,6 +13,8 @@ public class SportsDayDbContext : IdentityDbContext
 
     public DbSet<Tournament> Tournaments { get; set; } = null!;
     public DbSet<House> Houses { get; set; } = null!;
+
+    public DbSet<HouseLeader> HouseLeaders { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
     public DbSet<Participant> Participants { get; set; } = null!;
     public DbSet<Result> Results { get; set; } = null!;
@@ -80,6 +82,12 @@ public class SportsDayDbContext : IdentityDbContext
             .HasForeignKey(s => s.HouseId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<HouseLeader>()
+            .HasOne(hl => hl.House)
+            .WithMany(h => h.Leaders)
+            .HasForeignKey(hl => hl.HouseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Event relationships
         modelBuilder.Entity<Event>()
             .HasMany(e => e.Results)
@@ -112,7 +120,7 @@ public class SportsDayDbContext : IdentityDbContext
             .Property(r => r.EventClassGroup)
             .HasConversion<string>();
         modelBuilder.Entity<Event>()
-            .Property(r => r.EventClass)
+            .Property(r => r.ClassGroup)
             .HasConversion<string>();
         modelBuilder.Entity<Event>()
             .Property(r => r.GenderGroup)

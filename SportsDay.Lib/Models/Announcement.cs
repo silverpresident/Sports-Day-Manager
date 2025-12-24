@@ -13,6 +13,9 @@ public class Announcement : BaseEntity
     [StringLength(500)]
     public string Body { get; set; } = string.Empty;
 
+    [StringLength(100)]
+    public string Tag { get; set; } = string.Empty;
+
     [Required]
     public AnnouncementPriority Priority { get; set; }
 

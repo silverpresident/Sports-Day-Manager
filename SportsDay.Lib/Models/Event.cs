@@ -14,12 +14,16 @@ public class Event : BaseEntity
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    public EventClass Class { get; set; }
+    public EventClass ClassGroup { get; set; }
 
 
     [Required]
     [StringLength(10)]
     public string AgeGroup { get; set; } = string.Empty;
+
+    public int ParticipantMaxAge { get; set; } = 0;
+
+    public int ParticipantLimit { get; set; } = 0; // 0 means no limit
 
     [Required]
     public DivisionType GenderGroup { get; set; } 

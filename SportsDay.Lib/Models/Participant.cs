@@ -38,7 +38,7 @@ public class Participant : BaseEntity
 
     
     public DateTime DateOfBirth { get; set; }
-    public int AgeYears { get; set; }
+    public int AgeInYears { get; set; }
 
     [Required]
     [StringLength(50)]
