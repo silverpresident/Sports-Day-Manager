@@ -21,9 +21,9 @@ namespace SportsDay.Web.Data
                 //context.Database.Migrate();
 
                 // Execute SQL script from setup.sql
-                var sqlScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SQL", "setup.sql");
+               /* var sqlScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SQL", "setup.sql");
                 var sqlScript = File.ReadAllText(sqlScriptPath);
-                context.Database.ExecuteSqlRaw(sqlScript);
+                context.Database.ExecuteSqlRaw(sqlScript);*/
 
                 // Create default roles if they don't exist
                 string[] roles = { "Administrator","Judge", "Viewer" };
