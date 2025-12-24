@@ -1,12 +1,4 @@
 -- Create database if it doesn't exist
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'SportsDay')
-BEGIN
-    CREATE DATABASE SportsDay;
-END
-GO
-
-USE SportsDay;
-GO
 
 -- Create Houses table
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Houses')
