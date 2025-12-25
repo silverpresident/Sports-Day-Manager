@@ -1,39 +1,106 @@
 @model SportsDay.Lib.Models.Tournament
-
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Tournament";
 }
 
-<h1>Delete</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-trash-fill text-danger me-2"></i>Delete Tournament
+            </h1>
+            <p class="text-muted mt-2">Confirm deletion of tournament</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Tournament</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TournamentDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TournamentDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone.
+                    </div>
+                    
+                    <p class="lead">Are you sure you want to delete this tournament?</p>
+                    
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">
+                                    <i class="bi bi-tag me-1"></i>Name
+                                </dt>
+                                <dd class="col-sm-8">
+                                    <strong>@Model.Name</strong>
+                                </dd>
+                                
+                                <dt class="col-sm-4">
+                                    <i class="bi bi-calendar-event me-1"></i>Date
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.TournamentDate.HasValue)
+                                    {
+                                        <span>@Model.TournamentDate.Value.ToString("dddd, MMMM d, yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not set</span>
+                                    }
+                                </dd>
+                                
+                                <dt class="col-sm-4">
+                                    <i class="bi bi-check-circle me-1"></i>Status
+                                </dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-circle me-1"></i>Inactive
+                                        </span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-danger mb-4">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <strong>This will permanently delete:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>All events associated with this tournament</li>
+                            <li>All participant registrations</li>
+                            <li>All recorded results</li>
+                            <li>All announcements</li>
+                            <li>All event updates</li>
+                        </ul>
+                    </div>
+                    
+                    <form asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Yes, Delete Tournament
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

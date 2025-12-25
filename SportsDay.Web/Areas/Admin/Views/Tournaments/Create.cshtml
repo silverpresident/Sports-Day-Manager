@@ -1,41 +1,96 @@
 @model SportsDay.Lib.Models.Tournament
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Tournament";
 }
 
-<h1>Create</h1>
-
-<h4>Tournament</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TournamentDate" class="control-label"></label>
-                <input asp-for="TournamentDate" class="form-control" />
-                <span asp-validation-for="TournamentDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-plus-circle-fill text-success me-2"></i>Create Tournament
+            </h1>
+            <p class="text-muted mt-2">Set up a new sports day tournament</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-trophy me-2"></i>Tournament Details
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">
+                                <i class="bi bi-tag me-1"></i>Tournament Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="e.g., Sports Day 2025" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TournamentDate" class="form-label">
+                                <i class="bi bi-calendar-event me-1"></i>Tournament Date
+                            </label>
+                            <input asp-for="TournamentDate" type="date" class="form-control" />
+                            <span asp-validation-for="TournamentDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="IsActive" id="isActiveSwitch" />
+                                <label class="form-check-label" for="isActiveSwitch">
+                                    <i class="bi bi-check-circle me-1"></i>Set as Active Tournament
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>Only one tournament can be active at a time. Activating this will deactivate any currently active tournament.
+                            </small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Create Tournament
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <i class="bi bi-lightbulb me-2"></i>Tips
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li class="mb-2">
+                            <strong>Tournament Name:</strong> Use a descriptive name that includes the year, e.g., "Sports Day 2025"
+                        </li>
+                        <li class="mb-2">
+                            <strong>Tournament Date:</strong> Set the date when the sports day will take place
+                        </li>
+                        <li class="mb-2">
+                            <strong>Active Status:</strong> The active tournament is displayed on the public dashboard
+                        </li>
+                        <li>
+                            <strong>Next Steps:</strong> After creating the tournament, you can add events and register participants
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

@@ -1,36 +1,172 @@
 @model SportsDay.Lib.Models.Tournament
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Tournament Details";
 }
 
-<h1>Details</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-trophy-fill text-success me-2"></i>@Model.Name
+            </h1>
+            <p class="text-muted mt-2">Tournament Details</p>
+        </div>
+        <div class="btn-group">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-success">
+                <i class="bi bi-pencil me-2"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>Tournament</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TournamentDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TournamentDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-info-circle me-2"></i>Tournament Information
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">
+                            <i class="bi bi-tag me-1"></i>Name
+                        </dt>
+                        <dd class="col-sm-8">
+                            <strong>@Model.Name</strong>
+                        </dd>
+                        
+                        <dt class="col-sm-4">
+                            <i class="bi bi-calendar-event me-1"></i>Date
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.TournamentDate.HasValue)
+                            {
+                                <span>@Model.TournamentDate.Value.ToString("dddd, MMMM d, yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </dd>
+                        
+                        <dt class="col-sm-4">
+                            <i class="bi bi-check-circle me-1"></i>Status
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-circle me-1"></i>Inactive
+                                </span>
+                            }
+                        </dd>
+                        
+                        <dt class="col-sm-4">
+                            <i class="bi bi-fingerprint me-1"></i>ID
+                        </dt>
+                        <dd class="col-sm-8">
+                            <code>@Model.Id</code>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-success text-start">
+                            <i class="bi bi-pencil me-2"></i>Edit Tournament Details
+                        </a>
+                        @if (Model.IsActive)
+                        {
+                            <form asp-action="SetActive" asp-route-id="@Model.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-warning w-100 text-start">
+                                    <i class="bi bi-pause-circle me-2"></i>Deactivate Tournament
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="SetActive" asp-route-id="@Model.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-success w-100 text-start">
+                                    <i class="bi bi-play-circle me-2"></i>Activate Tournament
+                                </button>
+                            </form>
+                        }
+                        <a asp-area="Admin" asp-controller="Events" asp-action="Index" class="btn btn-outline-primary text-start">
+                            <i class="bi bi-calendar-event me-2"></i>View Events
+                        </a>
+                        <a asp-area="Admin" asp-controller="Results" asp-action="Index" class="btn btn-outline-info text-start">
+                            <i class="bi bi-list-ol me-2"></i>View Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header bg-danger text-white">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Danger Zone
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Permanently delete this tournament and all associated data.</p>
+                    <button type="button" class="btn btn-outline-danger" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#deleteModal">
+                        <i class="bi bi-trash me-2"></i>Delete Tournament
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                @if (Model.TournamentDate.HasValue)
+                {
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-calendar me-1"></i>@Model.TournamentDate.Value.ToString("MMMM d, yyyy")
+                    </p>
+                }
+                <p class="mb-0 text-danger">
+                    <i class="bi bi-exclamation-circle me-2"></i>This will delete all associated events, participants, and results. This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Delete Tournament
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
