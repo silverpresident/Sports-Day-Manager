@@ -26,6 +26,14 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - Import functionality to copy templates into active tournament
   - SQL scripts for table creation and population with Jamaican track and field events
   - Comprehensive UI with filtering, bulk selection, and import capabilities
+- **Developer Module implemented** (December 2025):
+  - IDeveloperService interface and DeveloperService implementation
+  - Admin DeveloperController with data generation and cleanup actions
+  - Developer dashboard view with statistics and action buttons
+  - Only available in DEBUG/Development mode (compile-time and runtime protection)
+  - Generate Events, Participants, Participation, and Results
+  - Delete all Results, Participation, Participants, and Events
+  - Documentation in docs/developer-module.md
 
 ## Current Focus
 
@@ -37,11 +45,15 @@ The project is in a stable state with core functionality working. The system can
 - Display live leaderboards by division
 - Show announcements and event updates
 - Broadcast real-time updates via SignalR
-- **Manage event templates** (NEW):
+- **Manage event templates**:
   - Create, edit, and delete reusable event templates
   - Import templates into tournaments (selective or bulk)
   - Pre-populated with 150+ Jamaican track and field events
   - Track historical records with year and notes
+- **Developer tools** (DEBUG mode only):
+  - Generate test data (events, participants, participation, results)
+  - Clean up test data with bulk delete operations
+  - View tournament statistics
 
 ## Known Issues
 
@@ -72,3 +84,4 @@ Potential areas for enhancement:
 - Missing anti-forgery token validation on some POST actions
 - Consider creating additional services for Events, Results, and Announcements
 - EventTemplateService created; consider similar pattern for Events, Results, Announcements
+- DeveloperService created for testing; consider expanding for more test scenarios

@@ -42,6 +42,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 │  │  - IHouseLeaderService / HouseLeaderService      │   │
 │  │  - IParticipantService / ParticipantService      │   │
 │  │  - IEventTemplateService / EventTemplateService  │   │
+│  │  - IDeveloperService / DeveloperService (DEBUG)  │   │
 │  │  - (Future: IEventService, IResultService)       │   │
 │  └─────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────┐   │
@@ -96,6 +97,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Services/ParticipantService.cs` - Participant management logic
 - `Services/HouseLeaderService.cs` - House leader management logic
 - `Services/EventTemplateService.cs` - Event template management logic
+- `Services/DeveloperService.cs` - Developer/testing data generation (DEBUG only)
 - `Extensions/ServiceCollectionExtensions.cs` - Service registration extension method
 - `Models/BaseEntity.cs` - Base class for all entities with audit fields
 
@@ -119,6 +121,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Areas/Admin/Controllers/EventsController.cs` - Event management
 - `Areas/Admin/Controllers/EventTemplatesController.cs` - Event template management
 - `Areas/Admin/Controllers/ResultsController.cs` - Result entry
+- `Areas/Admin/Controllers/DeveloperController.cs` - Developer tools (DEBUG only)
 
 ## Data Model
 
@@ -209,6 +212,7 @@ Participant (1) ──→ (N) Result
   - `ParticipantService` handles participant management
   - `HouseLeaderService` handles house leader operations
   - `EventTemplateService` handles event template CRUD and import operations
+  - `DeveloperService` handles test data generation and cleanup (DEBUG only)
 
 ### Hub Pattern (SignalR)
 - `SportsHub` manages real-time connections

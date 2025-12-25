@@ -1,0 +1,358 @@
+@using SportsDay.Lib.Services.Interfaces
+@{
+    ViewData["Title"] = "Developer Tools";
+    var activeTournament = ViewBag.ActiveTournament as SportsDay.Lib.Models.Tournament;
+    var stats = ViewBag.Stats as DeveloperStats;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-code-slash text-warning me-2"></i>Developer Tools
+            </h1>
+            <p class="text-muted mt-2">Data generation and cleanup for testing (DEBUG mode only)</p>
+        </div>
+        @if (activeTournament != null)
+        {
+            <div class="badge bg-success p-2">
+                <i class="bi bi-trophy-fill me-2"></i>Active Tournament: @activeTournament.Name
+            </div>
+        }
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Warning Banner -->
+    <div class="alert alert-warning mb-4">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Warning:</strong> These tools are for development and testing purposes only. 
+        Actions performed here will modify tournament data. Use with caution!
+    </div>
+
+    <!-- Statistics Cards -->
+    @if (stats != null)
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-md-4 col-lg-2">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-2">Events</h6>
+                                <h2 class="mb-0">@stats.EventCount</h2>
+                            </div>
+                            <div class="icon-shape">
+                                <i class="bi bi-calendar-event fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card bg-info text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-2">Participants</h6>
+                                <h2 class="mb-0">@stats.ParticipantCount</h2>
+                            </div>
+                            <div class="icon-shape">
+                                <i class="bi bi-people fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-2">Results</h6>
+                                <h2 class="mb-0">@stats.ResultCount</h2>
+                            </div>
+                            <div class="icon-shape">
+                                <i class="bi bi-list-ol fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card bg-warning text-dark h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-2">Events w/ Results</h6>
+                                <h2 class="mb-0">@stats.EventsWithResultsCount</h2>
+                            </div>
+                            <div class="icon-shape">
+                                <i class="bi bi-check-circle fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card bg-secondary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-2">Templates</h6>
+                                <h2 class="mb-0">@stats.EventTemplateCount</h2>
+                            </div>
+                            <div class="icon-shape">
+                                <i class="bi bi-file-earmark-text fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card bg-dark text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title mb-2">Houses</h6>
+                                <h2 class="mb-0">@stats.HouseCount</h2>
+                            </div>
+                            <div class="icon-shape">
+                                <i class="bi bi-house fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Generate Data Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-plus-circle me-2"></i>Generate Test Data
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Generate test data for the active tournament. Run these in order for best results.
+                    </p>
+                    
+                    <div class="d-grid gap-3">
+                        <!-- Generate Events -->
+                        <form asp-action="GenerateEvents" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-success w-100 text-start" 
+                                    onclick="return confirm('Generate events from all active templates?');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-calendar-plus me-2"></i>
+                                        <strong>1. Generate Events</strong>
+                                        <br>
+                                        <small class="text-muted">Import all active event templates into the tournament</small>
+                                    </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Generate Participants -->
+                        <form asp-action="GenerateParticipants" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-success w-100 text-start"
+                                    onclick="return confirm('Generate 2 random participants per house?');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-person-plus me-2"></i>
+                                        <strong>2. Generate Participants</strong>
+                                        <br>
+                                        <small class="text-muted">Create 2 random participants per house (ages 11-20)</small>
+                                    </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Generate Participation -->
+                        <form asp-action="GenerateParticipation" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-success w-100 text-start"
+                                    onclick="return confirm('Assign participants to events?');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-person-check me-2"></i>
+                                        <strong>3. Generate Participation</strong>
+                                        <br>
+                                        <small class="text-muted">Randomly assign eligible participants to events</small>
+                                    </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Generate Results -->
+                        <form asp-action="GenerateResults" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-success w-100 text-start"
+                                    onclick="return confirm('Generate random results for all events?');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-trophy me-2"></i>
+                                        <strong>4. Generate Results</strong>
+                                        <br>
+                                        <small class="text-muted">Create random placements and scores for participants</small>
+                                    </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Data Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <i class="bi bi-trash me-2"></i>Delete Test Data
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Remove test data from the active tournament. <strong>These actions cannot be undone!</strong>
+                    </p>
+                    
+                    <div class="d-grid gap-3">
+                        <!-- Delete Results -->
+                        <form asp-action="DeleteAllResults" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger w-100 text-start"
+                                    onclick="return confirm('Are you sure you want to delete ALL results? This cannot be undone!');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-x-circle me-2"></i>
+                                        <strong>Delete All Results</strong>
+                                        <br>
+                                        <small class="text-muted">Remove all result records from the tournament</small>
+                                    </span>
+                                    <span class="badge bg-danger">@(stats?.ResultCount ?? 0)</span>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Delete Participation -->
+                        <form asp-action="DeleteAllParticipation" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger w-100 text-start"
+                                    onclick="return confirm('Are you sure you want to delete ALL participation records? This cannot be undone!');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-person-x me-2"></i>
+                                        <strong>Delete All Participation</strong>
+                                        <br>
+                                        <small class="text-muted">Remove all event participation records</small>
+                                    </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Delete Participants -->
+                        <form asp-action="DeleteAllParticipants" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger w-100 text-start"
+                                    onclick="return confirm('Are you sure you want to delete ALL participants? This will also delete their results! This cannot be undone!');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-people-fill me-2"></i>
+                                        <strong>Delete All Participants</strong>
+                                        <br>
+                                        <small class="text-muted">Remove all participants (and their results)</small>
+                                    </span>
+                                    <span class="badge bg-danger">@(stats?.ParticipantCount ?? 0)</span>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Delete Events -->
+                        <form asp-action="DeleteAllEvents" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger w-100 text-start"
+                                    onclick="return confirm('Are you sure you want to delete ALL events? This will also delete all results! This cannot be undone!');">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-calendar-x me-2"></i>
+                                        <strong>Delete All Events</strong>
+                                        <br>
+                                        <small class="text-muted">Remove all events (and their results)</small>
+                                    </span>
+                                    <span class="badge bg-danger">@(stats?.EventCount ?? 0)</span>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <i class="bi bi-link-45deg me-2"></i>Quick Links
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" 
+                       class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a asp-area="Admin" asp-controller="Events" asp-action="Index" 
+                       class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-calendar-event me-2"></i>Events
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a asp-area="Admin" asp-controller="EventTemplates" asp-action="Index" 
+                       class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-file-earmark-text me-2"></i>Event Templates
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a asp-area="Admin" asp-controller="Results" asp-action="Index" 
+                       class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-list-ol me-2"></i>Results
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-shape {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

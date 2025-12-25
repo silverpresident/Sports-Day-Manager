@@ -15,6 +15,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IParticipantService, ParticipantService>();
         services.AddScoped<IEventTemplateService, EventTemplateService>();
 
+#if DEBUG
+        // Developer service only available in debug mode
+        services.AddScoped<IDeveloperService, DeveloperService>();
+#endif
+
         return services;
     }
 }
