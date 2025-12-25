@@ -18,7 +18,7 @@ namespace SportsDay.Lib.Data
             {
                 var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 var sportsDayDbContext = scope.ServiceProvider.GetRequiredService<SportsDayDbContext>();
-                
+
                 // Apply any pending migrations
                 try
                 {
@@ -53,7 +53,6 @@ namespace SportsDay.Lib.Data
 
         private static async Task SeedDefaultRolesAsync(IServiceProvider serviceProvider)
         {
-            var config = serviceProvider.GetRequiredService<IConfiguration>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             // Create default roles if they don't exist
@@ -80,31 +79,36 @@ namespace SportsDay.Lib.Data
                     continue;
                 }
                 // Create default user if it doesn't exist
-                if (await userManager.FindByEmailAsync(defaultUser.Email) == null)
+                var user = await userManager.FindByEmailAsync(defaultUser.Email);
+                if (user == null)
                 {
-                    if (string.IsNullOrEmpty(defaultUser.Password))
+                    if (defaultUser.Role == "Administrator")
                     {
-                        defaultUser.Password = "sdm-admin2025";
+                        await userManager.AddToRoleAsync(user, defaultUser.Role);
                     }
-                    if (string.IsNullOrEmpty(defaultUser.UserName))
-                    {
-                        var i = defaultUser.Email.IndexOf("@");
-                        defaultUser.UserName = defaultUser.Email.Substring(0, i);
-                    }
-
-                    var basicUser = new IdentityUser { UserName = defaultUser.UserName, Email = defaultUser.Email, EmailConfirmed = true };
-                    var result = await userManager.CreateAsync(basicUser, defaultUser.Password);
-                    if (result.Succeeded == false)
-                    {
-                        continue;
-                    }
-                    if (string.IsNullOrEmpty(defaultUser.Role))
-                    {
-                        defaultUser.Role = "Viewer";
-                    }
-                    await userManager.AddToRoleAsync(basicUser, defaultUser.Role);
-
+                    continue;
                 }
+                if (string.IsNullOrEmpty(defaultUser.Password))
+                {
+                    defaultUser.Password = "sdm-admin2025";
+                }
+                if (string.IsNullOrEmpty(defaultUser.UserName))
+                {
+                    var i = defaultUser.Email.IndexOf("@");
+                    defaultUser.UserName = defaultUser.Email.Substring(0, i);
+                }
+
+                var basicUser = new IdentityUser { UserName = defaultUser.UserName, Email = defaultUser.Email, EmailConfirmed = true };
+                var result = await userManager.CreateAsync(basicUser, defaultUser.Password);
+                if (result.Succeeded == false)
+                {
+                    continue;
+                }
+                if (string.IsNullOrEmpty(defaultUser.Role))
+                {
+                    defaultUser.Role = "Viewer";
+                }
+                await userManager.AddToRoleAsync(basicUser, defaultUser.Role);
             }
         }
 
