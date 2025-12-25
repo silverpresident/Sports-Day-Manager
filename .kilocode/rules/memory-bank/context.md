@@ -18,6 +18,14 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - All services now registered via ServiceCollectionExtensions.AddSportsDayServices()
   - Both public and admin HouseControllers refactored to use service layer
   - Admin controllers now track CreatedBy/UpdatedBy with logged-in user's name
+- **Event Templates feature implemented** (December 2025):
+  - Created EventTemplate entity model with RecordSettingYear and RecordNote fields
+  - EventTemplate stores reusable event configurations independent of tournaments
+  - IEventTemplateService interface and EventTemplateService implementation
+  - Admin EventTemplatesController with full CRUD operations
+  - Import functionality to copy templates into active tournament
+  - SQL scripts for table creation and population with Jamaican track and field events
+  - Comprehensive UI with filtering, bulk selection, and import capabilities
 
 ## Current Focus
 
@@ -29,6 +37,11 @@ The project is in a stable state with core functionality working. The system can
 - Display live leaderboards by division
 - Show announcements and event updates
 - Broadcast real-time updates via SignalR
+- **Manage event templates** (NEW):
+  - Create, edit, and delete reusable event templates
+  - Import templates into tournaments (selective or bulk)
+  - Pre-populated with 150+ Jamaican track and field events
+  - Track historical records with year and notes
 
 ## Known Issues
 
@@ -58,3 +71,4 @@ Potential areas for enhancement:
 - Need to add proper ViewModel classes for complex views
 - Missing anti-forgery token validation on some POST actions
 - Consider creating additional services for Events, Results, and Announcements
+- EventTemplateService created; consider similar pattern for Events, Results, Announcements

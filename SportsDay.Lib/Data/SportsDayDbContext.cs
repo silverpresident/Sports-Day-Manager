@@ -16,6 +16,7 @@ public class SportsDayDbContext : IdentityDbContext
 
     public DbSet<HouseLeader> HouseLeaders { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
+    public DbSet<EventTemplate> EventTemplates { get; set; } = null!;
     public DbSet<Participant> Participants { get; set; } = null!;
     public DbSet<Result> Results { get; set; } = null!;
     public DbSet<Announcement> Announcements { get; set; } = null!;
@@ -127,6 +128,17 @@ public class SportsDayDbContext : IdentityDbContext
             .HasConversion<string>();
         modelBuilder.Entity<Event>()
             .Property(r => r.Status)
+            .HasConversion<string>();
+
+        // EventTemplate enum conversions
+        modelBuilder.Entity<EventTemplate>()
+            .Property(et => et.ClassGroup)
+            .HasConversion<string>();
+        modelBuilder.Entity<EventTemplate>()
+            .Property(et => et.GenderGroup)
+            .HasConversion<string>();
+        modelBuilder.Entity<EventTemplate>()
+            .Property(et => et.Type)
             .HasConversion<string>();
     }
 }

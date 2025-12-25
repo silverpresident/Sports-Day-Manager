@@ -1,0 +1,303 @@
+@model SportsDay.Lib.Models.EventTemplate
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Event Template Details";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-file-earmark-text-fill text-success me-2"></i>@Model.Name
+            </h1>
+            <p class="text-muted mt-2">Event Template Details</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-success">
+                <i class="bi bi-pencil me-2"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Basic Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-info-circle me-2"></i>Basic Information
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl>
+                                <dt><i class="bi bi-card-text me-2"></i>Event Name</dt>
+                                <dd class="fs-5">@Model.Name</dd>
+                                
+                                <dt><i class="bi bi-toggle-on me-2"></i>Status</dt>
+                                <dd>
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success fs-6">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary fs-6">Inactive</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl>
+                                <dt><i class="bi bi-text-paragraph me-2"></i>Description</dt>
+                                <dd>@(string.IsNullOrEmpty(Model.Description) ? "No description" : Model.Description)</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classification -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-diagram-3 me-2"></i>Classification
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <dl>
+                                <dt><i class="bi bi-gender-ambiguous me-2"></i>Gender Group</dt>
+                                <dd><span class="badge bg-info fs-6">@Model.GenderGroup</span></dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-4">
+                            <dl>
+                                <dt><i class="bi bi-layers me-2"></i>Class Group</dt>
+                                <dd>
+                                    <span class="badge bg-primary fs-6">
+                                        @(Model.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)Model.ClassGroup}")
+                                    </span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-4">
+                            <dl>
+                                <dt><i class="bi bi-calendar me-2"></i>Age Group</dt>
+                                <dd><span class="badge bg-secondary fs-6">@Model.AgeGroup</span></dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <dl>
+                                <dt><i class="bi bi-tag me-2"></i>Category</dt>
+                                <dd>
+                                    <span class="badge @(Model.Category == "Track" ? "bg-info" : "bg-warning text-dark") fs-6">
+                                        @Model.Category
+                                    </span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-4">
+                            <dl>
+                                <dt><i class="bi bi-speedometer2 me-2"></i>Event Type</dt>
+                                <dd><span class="badge bg-dark fs-6">@Model.Type</span></dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-4">
+                            <dl>
+                                <dt><i class="bi bi-list-ol me-2"></i>Point System</dt>
+                                <dd><code class="fs-6">@Model.PointSystem</code></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participant Settings -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-people me-2"></i>Participant Settings
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl>
+                                <dt><i class="bi bi-calendar-check me-2"></i>Maximum Age</dt>
+                                <dd>
+                                    @if (Model.ParticipantMaxAge > 0)
+                                    {
+                                        <span>@Model.ParticipantMaxAge years</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No age limit</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl>
+                                <dt><i class="bi bi-person-lines-fill me-2"></i>Participant Limit</dt>
+                                <dd>
+                                    @if (Model.ParticipantLimit > 0)
+                                    {
+                                        <span>@Model.ParticipantLimit participants</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No limit</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Record Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <i class="bi bi-trophy me-2"></i>Record Information
+                </div>
+                <div class="card-body">
+                    @if (Model.Record.HasValue)
+                    {
+                        <div class="row">
+                            <div class="col-md-4">
+                                <dl>
+                                    <dt><i class="bi bi-award me-2"></i>Current Record</dt>
+                                    <dd>
+                                        <span class="badge bg-warning text-dark fs-5">@Model.Record.Value</span>
+                                        <small class="text-muted ms-2">
+                                            @(Model.Type == EventType.Speed ? "(time)" : "(distance)")
+                                        </small>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl>
+                                    <dt><i class="bi bi-person me-2"></i>Record Holder</dt>
+                                    <dd>@(string.IsNullOrEmpty(Model.RecordHolder) ? "Unknown" : Model.RecordHolder)</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4">
+                                <dl>
+                                    <dt><i class="bi bi-calendar-event me-2"></i>Record Year</dt>
+                                    <dd>@(Model.RecordSettingYear.HasValue ? Model.RecordSettingYear.Value.ToString() : "Unknown")</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.RecordNote))
+                        {
+                            <hr />
+                            <dl>
+                                <dt><i class="bi bi-sticky me-2"></i>Record Note</dt>
+                                <dd>@Model.RecordNote</dd>
+                            </dl>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-info-circle me-2"></i>No record information available for this event template.
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Audit Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <i class="bi bi-clock-history me-2"></i>Audit Information
+                </div>
+                <div class="card-body">
+                    <dl class="mb-0">
+                        <dt><i class="bi bi-plus-circle me-2"></i>Created</dt>
+                        <dd>
+                            @Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")
+                            <br /><small class="text-muted">by @Model.CreatedBy</small>
+                        </dd>
+                        
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <dt><i class="bi bi-pencil me-2"></i>Last Updated</dt>
+                            <dd>
+                                @Model.UpdatedAt.Value.ToString("MMMM dd, yyyy HH:mm")
+                                <br /><small class="text-muted">by @Model.UpdatedBy</small>
+                            </dd>
+                        }
+                        
+                        <dt><i class="bi bi-fingerprint me-2"></i>Template ID</dt>
+                        <dd><code class="small">@Model.Id</code></dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-lightning me-2"></i>Quick Actions
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-success">
+                            <i class="bi bi-pencil me-2"></i>Edit Template
+                        </a>
+                        <form asp-action="ToggleActive" asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn @(Model.IsActive ? "btn-outline-warning" : "btn-outline-success") w-100">
+                                <i class="bi @(Model.IsActive ? "bi-toggle-off" : "bi-toggle-on") me-2"></i>
+                                @(Model.IsActive ? "Deactivate" : "Activate") Template
+                            </button>
+                        </form>
+                        <a asp-action="Import" class="btn btn-outline-primary">
+                            <i class="bi bi-download me-2"></i>Import to Tournament
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" 
+                                data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Delete Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the template <strong>@Model.Name</strong>?</p>
+                <p class="mb-0 text-danger">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Delete Template
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

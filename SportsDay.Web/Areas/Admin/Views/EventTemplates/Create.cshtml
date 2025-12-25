@@ -1,0 +1,268 @@
+@model SportsDay.Lib.Models.EventTemplate
+@{
+    ViewData["Title"] = "Create Event Template";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-plus-circle-fill text-success me-2"></i>Create Event Template
+            </h1>
+            <p class="text-muted mt-2">Add a new reusable event template</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-file-earmark-text me-2"></i>Template Details
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Please correct the following errors:
+                        </div>
+
+                        <!-- Basic Information -->
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-info-circle me-2"></i>Basic Information
+                        </h6>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label asp-for="Name" class="form-label">
+                                    <i class="bi bi-card-text me-2"></i>Event Name <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Name" class="form-control" placeholder="e.g., 100m, High Jump, 4x100m Relay" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="IsActive" class="form-label">
+                                    <i class="bi bi-toggle-on me-2"></i>Status
+                                </label>
+                                <div class="form-check form-switch mt-2">
+                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                    <label class="form-check-label" asp-for="IsActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">
+                                <i class="bi bi-text-paragraph me-2"></i>Description
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="2" 
+                                      placeholder="Optional description of the event"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Classification -->
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-diagram-3 me-2"></i>Classification
+                        </h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="GenderGroup" class="form-label">
+                                    <i class="bi bi-gender-ambiguous me-2"></i>Gender Group <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="GenderGroup" asp-items="ViewBag.GenderGroups" class="form-select">
+                                    <option value="">Select Gender</option>
+                                </select>
+                                <span asp-validation-for="GenderGroup" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="ClassGroup" class="form-label">
+                                    <i class="bi bi-layers me-2"></i>Class Group <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="ClassGroup" asp-items="ViewBag.ClassGroups" class="form-select">
+                                    <option value="">Select Class</option>
+                                </select>
+                                <span asp-validation-for="ClassGroup" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="AgeGroup" class="form-label">
+                                    <i class="bi bi-calendar me-2"></i>Age Group <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="AgeGroup" class="form-control" placeholder="e.g., U14, U16, Open" />
+                                <span asp-validation-for="AgeGroup" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="Category" class="form-label">
+                                    <i class="bi bi-tag me-2"></i>Category <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="Category" asp-items="ViewBag.Categories" class="form-select">
+                                    <option value="">Select Category</option>
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Type" class="form-label">
+                                    <i class="bi bi-speedometer2 me-2"></i>Event Type <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="Type" asp-items="ViewBag.EventTypes" class="form-select">
+                                    <option value="">Select Type</option>
+                                </select>
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="PointSystem" class="form-label">
+                                    <i class="bi bi-list-ol me-2"></i>Point System <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="PointSystem" asp-items="ViewBag.PointSystems" class="form-select">
+                                    <option value="">Select Point System</option>
+                                </select>
+                                <span asp-validation-for="PointSystem" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Participant Limits -->
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-people me-2"></i>Participant Settings
+                        </h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ParticipantMaxAge" class="form-label">
+                                    <i class="bi bi-calendar-check me-2"></i>Maximum Age
+                                </label>
+                                <input asp-for="ParticipantMaxAge" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="ParticipantMaxAge" class="text-danger"></span>
+                                <div class="form-text">Set to 0 for no age limit</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ParticipantLimit" class="form-label">
+                                    <i class="bi bi-person-lines-fill me-2"></i>Participant Limit
+                                </label>
+                                <input asp-for="ParticipantLimit" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="ParticipantLimit" class="text-danger"></span>
+                                <div class="form-text">Set to 0 for no limit</div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Record Information -->
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-trophy me-2"></i>Record Information (Optional)
+                        </h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="Record" class="form-label">
+                                    <i class="bi bi-award me-2"></i>Current Record
+                                </label>
+                                <input asp-for="Record" class="form-control" type="number" step="0.01" 
+                                       placeholder="Record value" />
+                                <span asp-validation-for="Record" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="RecordHolder" class="form-label">
+                                    <i class="bi bi-person me-2"></i>Record Holder
+                                </label>
+                                <input asp-for="RecordHolder" class="form-control" placeholder="Name of record holder" />
+                                <span asp-validation-for="RecordHolder" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="RecordSettingYear" class="form-label">
+                                    <i class="bi bi-calendar-event me-2"></i>Record Year
+                                </label>
+                                <input asp-for="RecordSettingYear" class="form-control" type="number" 
+                                       min="1900" max="@DateTime.Now.Year" placeholder="Year record was set" />
+                                <span asp-validation-for="RecordSettingYear" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RecordNote" class="form-label">
+                                <i class="bi bi-sticky me-2"></i>Record Note
+                            </label>
+                            <textarea asp-for="RecordNote" class="form-control" rows="2" 
+                                      placeholder="Additional notes about the record"></textarea>
+                            <span asp-validation-for="RecordNote" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Create Template
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>Template Information
+                    </h5>
+                    <p class="card-text">
+                        Event templates are reusable configurations that can be imported into tournaments.
+                    </p>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Templates are independent of tournaments
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Can be imported multiple times
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Record information is preserved
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>Inactive templates won't be imported
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success me-2"></i>Point systems are configurable
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-lightbulb me-2"></i>Tips
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2">
+                            <strong>Speed events:</strong> Lower times are better (e.g., 100m sprint)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Distance events:</strong> Higher values are better (e.g., Long Jump)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Standard points:</strong> 9,7,6,5,4,3,2,1 for individual events
+                        </li>
+                        <li>
+                            <strong>Relay points:</strong> 12,10,9,8,7,6,1 for relay events
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

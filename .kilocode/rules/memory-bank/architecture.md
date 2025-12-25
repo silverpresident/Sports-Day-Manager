@@ -41,6 +41,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 │  │  - IHouseService / HouseService                  │   │
 │  │  - IHouseLeaderService / HouseLeaderService      │   │
 │  │  - IParticipantService / ParticipantService      │   │
+│  │  - IEventTemplateService / EventTemplateService  │   │
 │  │  - (Future: IEventService, IResultService)       │   │
 │  └─────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────┐   │
@@ -50,8 +51,8 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 │  └─────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  Models (Domain Entities)                        │   │
-│  │  - Tournament, Event, Participant, Result        │   │
-│  │  - House, Announcement, EventUpdate              │   │
+│  │  - Tournament, Event, EventTemplate, Participant │   │
+│  │  - Result, House, Announcement, EventUpdate      │   │
 │  │  - TournamentHouseSummary, HouseLeader           │   │
 │  └─────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────┐   │
@@ -94,6 +95,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Services/HouseService.cs` - House management logic
 - `Services/ParticipantService.cs` - Participant management logic
 - `Services/HouseLeaderService.cs` - House leader management logic
+- `Services/EventTemplateService.cs` - Event template management logic
 - `Extensions/ServiceCollectionExtensions.cs` - Service registration extension method
 - `Models/BaseEntity.cs` - Base class for all entities with audit fields
 
@@ -115,6 +117,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Hubs/SportsHub.cs` - SignalR hub for real-time updates
 - `Controllers/DashboardController.cs` - Public dashboard
 - `Areas/Admin/Controllers/EventsController.cs` - Event management
+- `Areas/Admin/Controllers/EventTemplatesController.cs` - Event template management
 - `Areas/Admin/Controllers/ResultsController.cs` - Result entry
 
 ## Data Model
@@ -137,6 +140,13 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - Tracks record, record holder, point system
 - Status: Scheduled, InProgress, Completed, Cancelled
 - Type: Distance or Speed
+
+**EventTemplate** (GUID)
+- Independent of tournaments (reusable templates)
+- Same classification as Event: ClassGroup, GenderGroup, Category, Type
+- Stores record information: Record, RecordHolder, RecordSettingYear, RecordNote
+- IsActive flag for filtering during import
+- Can be imported into tournaments to create Event instances
 
 **Participant** (GUID)
 - Belongs to a Tournament and House
@@ -198,6 +208,7 @@ Participant (1) ──→ (N) Result
   - `HouseService` handles house CRUD operations
   - `ParticipantService` handles participant management
   - `HouseLeaderService` handles house leader operations
+  - `EventTemplateService` handles event template CRUD and import operations
 
 ### Hub Pattern (SignalR)
 - `SportsHub` manages real-time connections
@@ -249,6 +260,18 @@ Participant (1) ──→ (N) Result
 4. Points stored in Result entity
 5. TournamentHouseSummary aggregates points by division
 
+### Event Template Import Flow
+1. Admin navigates to Event Templates > Import
+2. Selects templates to import (individual, by class, by gender, or all)
+3. System retrieves next available event number for tournament
+4. For each selected template, creates new Event with:
+   - Copied properties from template (name, classification, record info)
+   - Assigned tournament ID and event number
+   - Status set to Scheduled
+5. Events saved to database
+6. SignalR notification sent to connected clients
+7. Admin redirected to Events list
+
 ## Authentication & Authorization
 
 ### Identity Implementation
@@ -269,6 +292,7 @@ Participant (1) ──→ (N) Result
 - Houses (int PK)
 - Tournaments (GUID PK, unique index on IsActive=1)
 - Events (GUID PK, FK to Tournament)
+- EventTemplates (GUID PK, no FK - independent of tournaments)
 - Participants (GUID PK, FK to Tournament and House)
 - Results (GUID PK, FK to Event, Participant, House, Tournament)
 - Announcements (GUID PK, FK to Tournament)

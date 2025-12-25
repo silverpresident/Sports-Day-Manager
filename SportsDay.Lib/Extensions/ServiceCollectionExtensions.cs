@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IHouseService, HouseService>();
         services.AddScoped<IHouseLeaderService, HouseLeaderService>();
         services.AddScoped<IParticipantService, ParticipantService>();
+        services.AddScoped<IEventTemplateService, EventTemplateService>();
 
         return services;
     }

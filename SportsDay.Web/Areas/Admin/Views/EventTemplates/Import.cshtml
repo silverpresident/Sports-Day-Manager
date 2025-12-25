@@ -1,0 +1,326 @@
+@model IEnumerable<SportsDay.Lib.Models.EventTemplate>
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Import Event Templates";
+    var activeTournament = ViewBag.ActiveTournament as SportsDay.Lib.Models.Tournament;
+    var templatesByClass = Model.GroupBy(t => t.ClassGroup).OrderBy(g => g.Key);
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-download text-success me-2"></i>Import Event Templates
+            </h1>
+            <p class="text-muted mt-2">
+                Import templates into: <strong>@activeTournament?.Name</strong>
+            </p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Templates
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>No active event templates found. 
+            <a asp-action="Index" class="alert-link">Manage templates</a> to create or activate templates.
+        </div>
+    }
+    else
+    {
+        <form asp-action="ImportSelected" method="post" id="importForm">
+            @Html.AntiForgeryToken()
+            
+            <!-- Action Bar -->
+            <div class="card mb-4 sticky-top" style="top: 10px; z-index: 100;">
+                <div class="card-body bg-light">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="selectAll" />
+                                <label class="form-check-label" for="selectAll">
+                                    <strong>Select All Templates</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                <span id="selectedCount">0</span> of @Model.Count() templates selected
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-file-earmark-text me-1"></i>@Model.Count() Active Templates
+                            </span>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="submit" class="btn btn-success" id="importSelectedBtn" disabled>
+                                <i class="bi bi-download me-2"></i>Import Selected
+                            </button>
+                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#importAllModal">
+                                <i class="bi bi-cloud-download me-2"></i>Import All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates by Class -->
+            @foreach (var classGroup in templatesByClass)
+            {
+                var className = classGroup.Key == EventClass.Open ? "Open" : $"Class {(int)classGroup.Key}";
+                var templatesByGender = classGroup.GroupBy(t => t.GenderGroup).OrderBy(g => g.Key);
+
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <input type="checkbox" class="form-check-input me-2 class-select" 
+                                       data-class="@classGroup.Key" id="class-@classGroup.Key" />
+                                <label class="form-check-label" for="class-@classGroup.Key">
+                                    <h5 class="card-title mb-0 d-inline">
+                                        <i class="bi bi-layers me-2"></i>@className Events
+                                    </h5>
+                                </label>
+                            </div>
+                            <span class="badge bg-light text-dark">
+                                @classGroup.Count() Templates
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        @foreach (var genderGroup in templatesByGender)
+                        {
+                            <div class="border-bottom">
+                                <div class="p-3 bg-light">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input gender-select" 
+                                               data-class="@classGroup.Key" data-gender="@genderGroup.Key" 
+                                               id="gender-@classGroup.Key-@genderGroup.Key" />
+                                        <label class="form-check-label" for="gender-@classGroup.Key-@genderGroup.Key">
+                                            <h6 class="mb-0 d-inline">
+                                                <i class="bi bi-gender-ambiguous me-2"></i>@genderGroup.Key
+                                            </h6>
+                                            <span class="badge bg-secondary ms-2">@genderGroup.Count()</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 40px;"></th>
+                                                <th>
+                                                    <i class="bi bi-card-text me-2"></i>Name
+                                                </th>
+                                                <th>
+                                                    <i class="bi bi-tag me-2"></i>Category
+                                                </th>
+                                                <th>
+                                                    <i class="bi bi-speedometer2 me-2"></i>Type
+                                                </th>
+                                                <th>
+                                                    <i class="bi bi-list-ol me-2"></i>Points
+                                                </th>
+                                                <th>
+                                                    <i class="bi bi-trophy me-2"></i>Record
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var template in genderGroup.OrderBy(t => t.Name))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" class="form-check-input template-checkbox" 
+                                                               name="selectedTemplates" value="@template.Id"
+                                                               data-class="@classGroup.Key" data-gender="@genderGroup.Key" />
+                                                    </td>
+                                                    <td>
+                                                        <strong>@template.Name</strong>
+                                                        @if (!string.IsNullOrEmpty(template.Description))
+                                                        {
+                                                            <br /><small class="text-muted">@template.Description</small>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge @(template.Category == "Track" ? "bg-info" : "bg-warning text-dark")">
+                                                            @template.Category
+                                                        </span>
+                                                    </td>
+                                                    <td>@template.Type</td>
+                                                    <td><code>@template.PointSystem</code></td>
+                                                    <td>
+                                                        @if (template.Record.HasValue)
+                                                        {
+                                                            <span class="badge bg-warning text-dark">@template.Record.Value</span>
+                                                            @if (!string.IsNullOrEmpty(template.RecordHolder))
+                                                            {
+                                                                <br /><small class="text-muted">@template.RecordHolder</small>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </form>
+    }
+</div>
+
+<!-- Import All Modal -->
+<div class="modal fade" id="importAllModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-cloud-download me-2"></i>Import All Templates
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to import <strong>all @Model.Count() active templates</strong> into the tournament?</p>
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    This will create @Model.Count() new events in <strong>@activeTournament?.Name</strong>.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </button>
+                <form asp-action="ImportAll" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-cloud-download me-2"></i>Import All Templates
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const classCheckboxes = document.querySelectorAll('.class-select');
+            const genderCheckboxes = document.querySelectorAll('.gender-select');
+            const templateCheckboxes = document.querySelectorAll('.template-checkbox');
+            const importSelectedBtn = document.getElementById('importSelectedBtn');
+            const selectedCountSpan = document.getElementById('selectedCount');
+
+            function updateSelectedCount() {
+                const checkedCount = document.querySelectorAll('.template-checkbox:checked').length;
+                selectedCountSpan.textContent = checkedCount;
+                importSelectedBtn.disabled = checkedCount === 0;
+            }
+
+            function updateParentCheckboxes() {
+                // Update gender checkboxes
+                genderCheckboxes.forEach(genderCb => {
+                    const classVal = genderCb.dataset.class;
+                    const genderVal = genderCb.dataset.gender;
+                    const templates = document.querySelectorAll(
+                        `.template-checkbox[data-class="${classVal}"][data-gender="${genderVal}"]`
+                    );
+                    const checkedTemplates = document.querySelectorAll(
+                        `.template-checkbox[data-class="${classVal}"][data-gender="${genderVal}"]:checked`
+                    );
+                    genderCb.checked = templates.length === checkedTemplates.length && templates.length > 0;
+                    genderCb.indeterminate = checkedTemplates.length > 0 && checkedTemplates.length < templates.length;
+                });
+
+                // Update class checkboxes
+                classCheckboxes.forEach(classCb => {
+                    const classVal = classCb.dataset.class;
+                    const templates = document.querySelectorAll(`.template-checkbox[data-class="${classVal}"]`);
+                    const checkedTemplates = document.querySelectorAll(`.template-checkbox[data-class="${classVal}"]:checked`);
+                    classCb.checked = templates.length === checkedTemplates.length && templates.length > 0;
+                    classCb.indeterminate = checkedTemplates.length > 0 && checkedTemplates.length < templates.length;
+                });
+
+                // Update select all checkbox
+                const allTemplates = templateCheckboxes.length;
+                const allChecked = document.querySelectorAll('.template-checkbox:checked').length;
+                selectAllCheckbox.checked = allTemplates === allChecked && allTemplates > 0;
+                selectAllCheckbox.indeterminate = allChecked > 0 && allChecked < allTemplates;
+            }
+
+            // Select All
+            selectAllCheckbox.addEventListener('change', function() {
+                templateCheckboxes.forEach(cb => cb.checked = this.checked);
+                updateSelectedCount();
+                updateParentCheckboxes();
+            });
+
+            // Class select
+            classCheckboxes.forEach(classCb => {
+                classCb.addEventListener('change', function() {
+                    const classVal = this.dataset.class;
+                    document.querySelectorAll(`.template-checkbox[data-class="${classVal}"]`)
+                        .forEach(cb => cb.checked = this.checked);
+                    updateSelectedCount();
+                    updateParentCheckboxes();
+                });
+            });
+
+            // Gender select
+            genderCheckboxes.forEach(genderCb => {
+                genderCb.addEventListener('change', function() {
+                    const classVal = this.dataset.class;
+                    const genderVal = this.dataset.gender;
+                    document.querySelectorAll(
+                        `.template-checkbox[data-class="${classVal}"][data-gender="${genderVal}"]`
+                    ).forEach(cb => cb.checked = this.checked);
+                    updateSelectedCount();
+                    updateParentCheckboxes();
+                });
+            });
+
+            // Individual template checkboxes
+            templateCheckboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    updateSelectedCount();
+                    updateParentCheckboxes();
+                });
+            });
+
+            // Initial count
+            updateSelectedCount();
+        });
+
+        // Auto-hide alerts
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 4000);
+    </script>
+}

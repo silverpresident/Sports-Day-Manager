@@ -1,0 +1,324 @@
+@model IEnumerable<SportsDay.Lib.Models.EventTemplate>
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Event Templates";
+    var templatesByClass = Model.GroupBy(t => t.ClassGroup).OrderBy(g => g.Key);
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-file-earmark-text-fill text-success me-2"></i>Event Templates
+            </h1>
+            <p class="text-muted mt-2">
+                Manage reusable event templates for tournaments
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Import" class="btn btn-outline-success">
+                <i class="bi bi-download me-2"></i>Import to Tournament
+            </a>
+            <a asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus-circle me-2"></i>New Template
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="bi bi-layers me-1"></i>Class
+                    </label>
+                    <select name="classFilter" class="form-select" asp-items="ViewBag.ClassFilters">
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="bi bi-gender-ambiguous me-1"></i>Gender
+                    </label>
+                    <select name="genderFilter" class="form-select" asp-items="ViewBag.GenderFilters">
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">
+                        <i class="bi bi-tag me-1"></i>Category
+                    </label>
+                    <select name="categoryFilter" class="form-select" asp-items="ViewBag.CategoryFilters">
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-outline-success me-2">
+                        <i class="bi bi-funnel me-1"></i>Filter
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.Count()</h3>
+                    <small>Total Templates</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.Count(t => t.IsActive)</h3>
+                    <small>Active Templates</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.Count(t => t.Category == "Track")</h3>
+                    <small>Track Events</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.Count(t => t.Category == "Field")</h3>
+                    <small>Field Events</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>No event templates found. 
+            <a asp-action="Create" class="alert-link">Create your first template</a>.
+        </div>
+    }
+    else
+    {
+        @foreach (var classGroup in templatesByClass)
+        {
+            var className = classGroup.Key == EventClass.Open ? "Open" : $"Class {(int)classGroup.Key}";
+            var templatesByGender = classGroup.GroupBy(t => t.GenderGroup).OrderBy(g => g.Key);
+
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-layers me-2"></i>@className Events
+                        </h5>
+                        <span class="badge bg-light text-dark">
+                            @classGroup.Count() Templates
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @foreach (var genderGroup in templatesByGender)
+                    {
+                        <div class="border-bottom">
+                            <div class="p-3 bg-light">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-gender-ambiguous me-2"></i>@genderGroup.Key
+                                </h6>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40px;">
+                                                <i class="bi bi-check-square"></i>
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-card-text me-2"></i>Name
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-tag me-2"></i>Category
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-speedometer2 me-2"></i>Type
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-list-ol me-2"></i>Points
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-trophy me-2"></i>Record
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-toggle-on me-2"></i>Status
+                                            </th>
+                                            <th class="text-end">
+                                                <i class="bi bi-gear me-2"></i>Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var template in genderGroup.OrderBy(t => t.Name))
+                                        {
+                                            <tr class="@(!template.IsActive ? "table-secondary" : "")">
+                                                <td>
+                                                    @if (template.IsActive)
+                                                    {
+                                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-x-circle text-muted"></i>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <strong>@template.Name</strong>
+                                                    @if (!string.IsNullOrEmpty(template.Description))
+                                                    {
+                                                        <br /><small class="text-muted">@template.Description</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <span class="badge @(template.Category == "Track" ? "bg-info" : "bg-warning text-dark")">
+                                                        @template.Category
+                                                    </span>
+                                                </td>
+                                                <td>@template.Type</td>
+                                                <td><code>@template.PointSystem</code></td>
+                                                <td>
+                                                    @if (template.Record.HasValue)
+                                                    {
+                                                        <div>
+                                                            <span class="badge bg-warning text-dark">@template.Record.Value</span>
+                                                            @if (!string.IsNullOrEmpty(template.RecordHolder))
+                                                            {
+                                                                <br /><small class="text-muted">@template.RecordHolder</small>
+                                                            }
+                                                            @if (template.RecordSettingYear.HasValue)
+                                                            {
+                                                                <small class="text-muted">(@template.RecordSettingYear)</small>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (template.IsActive)
+                                                    {
+                                                        <span class="badge bg-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-secondary">Inactive</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-end gap-1">
+                                                        <a asp-action="Details" asp-route-id="@template.Id" 
+                                                           class="btn btn-sm btn-outline-success" title="View details">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a asp-action="Edit" asp-route-id="@template.Id" 
+                                                           class="btn btn-sm btn-outline-success" title="Edit template">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <form asp-action="ToggleActive" asp-route-id="@template.Id" method="post" class="d-inline">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-sm @(template.IsActive ? "btn-outline-warning" : "btn-outline-success")" 
+                                                                    title="@(template.IsActive ? "Deactivate" : "Activate")">
+                                                                <i class="bi @(template.IsActive ? "bi-toggle-off" : "bi-toggle-on")"></i>
+                                                            </button>
+                                                        </form>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#deleteModal@(template.Id.ToString().Replace("-", ""))"
+                                                                title="Delete template">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="deleteModal@(template.Id.ToString().Replace("-", ""))" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title">
+                                                                <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                                                            </h5>
+                                                            <button type="button" class="btn-close btn-close-white" 
+                                                                    data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to delete the template <strong>@template.Name</strong>?</p>
+                                                            <p class="mb-0 text-danger">
+                                                                <i class="bi bi-exclamation-circle me-2"></i>
+                                                                This action cannot be undone.
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                <i class="bi bi-x-circle me-2"></i>Cancel
+                                                            </button>
+                                                            <form asp-action="Delete" asp-route-id="@template.Id" method="post">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger">
+                                                                    <i class="bi bi-trash me-2"></i>Delete Template
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Set selected filter values
+        document.querySelector('select[name="classFilter"]').value = '@ViewBag.CurrentClassFilter';
+        document.querySelector('select[name="genderFilter"]').value = '@ViewBag.CurrentGenderFilter';
+        document.querySelector('select[name="categoryFilter"]').value = '@ViewBag.CurrentCategoryFilter';
+
+        // Auto-hide alerts
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 4000);
+    </script>
+}
