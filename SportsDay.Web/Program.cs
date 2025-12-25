@@ -29,6 +29,9 @@ builder.Services.AddSignalR();
 });
 */
 
+// Add memory caching for dashboard and other services
+builder.Services.AddMemoryCache();
+
 // Add custom services
 builder.Services.AddSportsDayServices();
 

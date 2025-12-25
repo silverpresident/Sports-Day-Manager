@@ -1,10 +1,10 @@
+@model SportsDay.Lib.ViewModels.PublicDashboardViewModel
 @{
     ViewData["Title"] = "Home";
-    var activeTournament = ViewBag.ActiveTournament as Tournament;
 }
 
 <div class="container-fluid">
-    @if (activeTournament == null)
+    @if (Model.ActiveTournament == null)
     {
         <div class="alert alert-warning" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>No active tournament. Please contact an administrator.
@@ -14,6 +14,45 @@
     {
         <div class="row">
             <div class="col-lg-8">
+                <!-- Tournament Header -->
+                <div class="card mb-4 bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="mb-1">
+                                    <i class="bi bi-trophy-fill me-2"></i>@Model.ActiveTournament.Name
+                                </h2>
+                                @if (Model.ActiveTournament.TournamentDate.HasValue)
+                                {
+                                    <p class="mb-0">
+                                        <i class="bi bi-calendar-event me-2"></i>@Model.ActiveTournament.TournamentDate.Value.ToString("dddd, MMMM d, yyyy")
+                                    </p>
+                                }
+                            </div>
+                            <div class="text-end">
+                                <div class="badge bg-light text-success fs-6 mb-1">
+                                    @Model.CompletedEvents / @Model.TotalEvents Events Complete
+                                </div>
+                                @if (Model.NewRecords > 0)
+                                {
+                                    <div class="badge bg-warning text-dark fs-6">
+                                        <i class="bi bi-star-fill me-1"></i>@Model.NewRecords New Records!
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        @if (Model.TotalEvents > 0)
+                        {
+                            <div class="progress mt-3" style="height: 10px;">
+                                @{
+                                    var progressPercent = (double)Model.CompletedEvents / Model.TotalEvents * 100;
+                                }
+                                <div class="progress-bar bg-light" role="progressbar" style="width: @progressPercent.ToString("F1")%"></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
                 <!-- Announcements Section -->
                 <div class="card mb-4">
                     <div class="card-header bg-success text-white">
@@ -24,8 +63,8 @@
                             <small>Auto-refreshes every 2 minutes</small>
                         </div>
                     </div>
-                    <div class="card-body">
-                        @await Html.PartialAsync("_AnnouncementsPartial", (IEnumerable<SportsDay.Lib.Models.Announcement>)ViewBag.Announcements)
+                    <div class="card-body" id="announcements-container">
+                        @await Html.PartialAsync("_AnnouncementsPartial", Model.Announcements)
                     </div>
                 </div>
 
@@ -39,30 +78,49 @@
                             <small>Real-time updates</small>
                         </div>
                     </div>
-                    <div class="card-body">
-                        @await Html.PartialAsync("_UpdateStreamPartial", (IEnumerable<SportsDay.Lib.Models.EventUpdate>)ViewBag.Updates)
+                    <div class="card-body" id="updates-container">
+                        @await Html.PartialAsync("_UpdateStreamPartial", Model.Updates)
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                <!-- Tournament Info -->
-                <div class="card mb-4">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-trophy-fill me-2"></i>@activeTournament.Name
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <i class="bi bi-calendar-event me-2"></i>Date
+                <!-- Quick Stats -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="card bg-primary text-white h-100">
+                            <div class="card-body text-center py-3">
+                                <i class="bi bi-calendar-event fs-2"></i>
+                                <h3 class="mb-0">@Model.TotalEvents</h3>
+                                <small>Events</small>
                             </div>
-                            <div>@activeTournament.TournamentDate.ToString("MMMM dd, yyyy")</div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <i class="bi bi-people me-2"></i>Divisions
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-info text-white h-100">
+                            <div class="card-body text-center py-3">
+                                <i class="bi bi-people fs-2"></i>
+                                <h3 class="mb-0">@Model.TotalParticipants</h3>
+                                <small>Athletes</small>
                             </div>
-                            <div>@ViewBag.DivisionCount active</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-warning text-dark h-100">
+                            <div class="card-body text-center py-3">
+                                <i class="bi bi-list-ol fs-2"></i>
+                                <h3 class="mb-0">@Model.TotalResults</h3>
+                                <small>Results</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-danger text-white h-100">
+                            <div class="card-body text-center py-3">
+                                <i class="bi bi-trophy fs-2"></i>
+                                <h3 class="mb-0">@Model.NewRecords</h3>
+                                <small>Records</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,8 +130,8 @@
                     <div class="card-header bg-success text-white">
                         <i class="bi bi-bar-chart-fill me-2"></i>Leaderboard
                     </div>
-                    <div class="card-body p-0">
-                        @await Html.PartialAsync("_LeaderboardPartial", (IEnumerable<SportsDay.Lib.Models.TournamentHouseSummary>)ViewBag.Summaries)
+                    <div class="card-body p-0" id="leaderboard-container">
+                        @await Html.PartialAsync("_LeaderboardPartial", Model.Summaries)
                     </div>
                 </div>
 
@@ -85,13 +143,13 @@
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
                             <a asp-controller="House" asp-action="Index" class="list-group-item list-group-item-action">
-                                <i class="bi bi-house me-2"></i>Houses
+                                <i class="bi bi-house me-2 text-success"></i>Houses
                             </a>
                             <a asp-controller="Event" asp-action="Index" class="list-group-item list-group-item-action">
-                                <i class="bi bi-calendar-event me-2"></i>Events Schedule
+                                <i class="bi bi-calendar-event me-2 text-success"></i>Events Schedule
                             </a>
                             <a asp-controller="Record" asp-action="Index" class="list-group-item list-group-item-action">
-                                <i class="bi bi-trophy me-2"></i>Records
+                                <i class="bi bi-trophy me-2 text-success"></i>Records
                             </a>
                         </div>
                     </div>
@@ -105,12 +163,54 @@
     <script>
         // Initialize SignalR connection
         var connection = new signalR.HubConnectionBuilder()
-            .withUrl("/sportshub")
+            .withUrl("/SportsHub")
             .withAutomaticReconnect()
             .build();
 
-        connection.start().catch(function (err) {
-            console.error(err.toString());
+        connection.start().then(function () {
+            console.log("SignalR connected");
+        }).catch(function (err) {
+            console.error("SignalR connection error:", err.toString());
         });
+
+        // Handle real-time updates
+        connection.on("ReceiveAnnouncement", function () {
+            refreshAnnouncements();
+        });
+
+        connection.on("ReceiveUpdate", function () {
+            refreshUpdates();
+        });
+
+        connection.on("ReceiveResult", function () {
+            refreshLeaderboard();
+            refreshUpdates();
+        });
+
+        // Refresh functions
+        function refreshAnnouncements() {
+            $.get('@Url.Action("GetAnnouncements", "Dashboard")', function (data) {
+                $('#announcements-container').html(data);
+            });
+        }
+
+        function refreshUpdates() {
+            $.get('@Url.Action("GetUpdates", "Dashboard")', function (data) {
+                $('#updates-container').html(data);
+            });
+        }
+
+        function refreshLeaderboard() {
+            $.get('@Url.Action("GetLeaderboard", "Dashboard")', function (data) {
+                $('#leaderboard-container').html(data);
+            });
+        }
+
+        // Auto-refresh every 2 minutes as fallback
+        setInterval(function () {
+            refreshAnnouncements();
+            refreshUpdates();
+            refreshLeaderboard();
+        }, 120000);
     </script>
 }

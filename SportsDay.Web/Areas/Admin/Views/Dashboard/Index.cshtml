@@ -1,6 +1,5 @@
-@model dynamic
+@model SportsDay.Lib.ViewModels.AdminDashboardViewModel
 @using Humanizer
-@using System.Linq
 @{
     ViewData["Title"] = "Dashboard";
 }
@@ -13,12 +12,26 @@
             </h1>
             <p class="text-muted mt-2">Sports Day Management Overview</p>
         </div>
-        @if (Model.ActiveTournament != null)
-        {
-            <div class="badge bg-success p-2">
-                <i class="bi bi-trophy-fill me-2"></i>Active Tournament: @Model.ActiveTournament.Name
-            </div>
-        }
+        <div class="d-flex align-items-center gap-2">
+            @if (Model.ActiveTournament != null)
+            {
+                <div class="badge bg-success p-2">
+                    <i class="bi bi-trophy-fill me-2"></i>Active: @Model.ActiveTournament.Name
+                </div>
+            }
+            else
+            {
+                <div class="badge bg-warning text-dark p-2">
+                    <i class="bi bi-exclamation-triangle me-2"></i>No Active Tournament
+                </div>
+            }
+            <form asp-action="RefreshCache" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-outline-secondary" title="Refresh cached data">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Statistics Cards -->
@@ -36,6 +49,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a asp-area="Admin" asp-controller="Tournaments" asp-action="Index" class="text-white small">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
         <div class="col-md-4 col-lg-2">
@@ -50,6 +68,11 @@
                             <i class="bi bi-calendar-event fs-1"></i>
                         </div>
                     </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a asp-area="Admin" asp-controller="Events" asp-action="Index" class="text-white small">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -66,6 +89,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <span class="small">Registered athletes</span>
+                </div>
             </div>
         </div>
         <div class="col-md-4 col-lg-2">
@@ -80,6 +106,11 @@
                             <i class="bi bi-list-ol fs-1"></i>
                         </div>
                     </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a asp-area="Admin" asp-controller="Results" asp-action="Index" class="text-dark small">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -96,14 +127,120 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a asp-area="Admin" asp-controller="Announcements" asp-action="Index" class="text-white small">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title mb-2">Houses</h6>
+                            <h2 class="mb-0">@Model.TotalHouses</h2>
+                        </div>
+                        <div class="icon-shape">
+                            <i class="bi bi-house fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a asp-area="Admin" asp-controller="Houses" asp-action="Index" class="text-white small">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
+    @if (Model.ActiveTournament != null && Model.ActiveTournamentStats != null)
+    {
+        <!-- Active Tournament Stats -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-graph-up me-2"></i>Active Tournament Progress: @Model.ActiveTournament.Name
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-shape bg-success text-white me-3">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Completed Events</div>
+                                <div class="fw-bold fs-5">@Model.ActiveTournamentStats.CompletedEvents / @Model.ActiveTournamentStats.EventCount</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-shape bg-warning text-dark me-3">
+                                <i class="bi bi-play-circle"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">In Progress</div>
+                                <div class="fw-bold fs-5">@Model.ActiveTournamentStats.InProgressEvents</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-shape bg-info text-white me-3">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Scheduled</div>
+                                <div class="fw-bold fs-5">@Model.ActiveTournamentStats.ScheduledEvents</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-shape bg-danger text-white me-3">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">New Records</div>
+                                <div class="fw-bold fs-5">@Model.ActiveTournamentStats.NewRecords</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.ActiveTournamentStats.EventCount > 0)
+                {
+                    <div class="mt-3">
+                        <div class="progress" style="height: 25px;">
+                            @{
+                                var completedPercent = (double)Model.ActiveTournamentStats.CompletedEvents / Model.ActiveTournamentStats.EventCount * 100;
+                                var inProgressPercent = (double)Model.ActiveTournamentStats.InProgressEvents / Model.ActiveTournamentStats.EventCount * 100;
+                            }
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @completedPercent.ToString("F1")%">
+                                @if (completedPercent > 10)
+                                {
+                                    <span>@Model.ActiveTournamentStats.CompletedEvents Completed</span>
+                                }
+                            </div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: @inProgressPercent.ToString("F1")%">
+                                @if (inProgressPercent > 10)
+                                {
+                                    <span>@Model.ActiveTournamentStats.InProgressEvents In Progress</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions and Recent Updates -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-lightning-charge me-2"></i>Quick Actions
                 </div>
@@ -122,15 +259,27 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a asp-area="Admin" asp-controller="Participants" asp-action="Create" 
+                            <a asp-area="Admin" asp-controller="EventTemplates" asp-action="Import" 
                                class="btn btn-outline-success w-100 text-start">
-                                <i class="bi bi-person-plus me-2"></i>Add Participant
+                                <i class="bi bi-download me-2"></i>Import Events
                             </a>
                         </div>
                         <div class="col-md-6">
                             <a asp-area="Admin" asp-controller="Results" asp-action="Create" 
                                class="btn btn-outline-success w-100 text-start">
                                 <i class="bi bi-clipboard-plus me-2"></i>Record Result
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-area="Admin" asp-controller="Announcements" asp-action="Create" 
+                               class="btn btn-outline-success w-100 text-start">
+                                <i class="bi bi-megaphone me-2"></i>New Announcement
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-area="" asp-controller="Dashboard" asp-action="Index" 
+                               class="btn btn-outline-primary w-100 text-start" target="_blank">
+                                <i class="bi bi-display me-2"></i>View Public Site
                             </a>
                         </div>
                     </div>
@@ -140,7 +289,7 @@
 
         <!-- Recent Updates -->
         <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-bell me-2"></i>Recent Updates
                 </div>
@@ -152,12 +301,15 @@
                             {
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">@update.Event.Name</h6>
+                                        <h6 class="mb-1">
+                                            <i class="bi bi-calendar-event text-success me-1"></i>
+                                            @update.Event?.Name
+                                        </h6>
                                         <small class="text-muted">
-                                            <i class="bi bi-clock me-1"></i>@update.CreatedAt.ToString("HH:mm")
+                                            <i class="bi bi-clock me-1"></i>@update.CreatedAt.Humanize()
                                         </small>
                                     </div>
-                                    <p class="mb-1">@update.Message</p>
+                                    <p class="mb-1 text-muted">@update.Message</p>
                                 </div>
                             }
                         }
@@ -176,13 +328,16 @@
 
     <!-- Recent Results -->
     <div class="card">
-        <div class="card-header bg-success text-white">
-            <i class="bi bi-list-ol me-2"></i>Recent Results
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-list-ol me-2"></i>Recent Results</span>
+            <a asp-area="Admin" asp-controller="Results" asp-action="Index" class="btn btn-sm btn-light">
+                View All
+            </a>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead>
+                    <thead class="table-light">
                         <tr>
                             <th scope="col">Event</th>
                             <th scope="col">Participant</th>
@@ -198,24 +353,29 @@
                             foreach (var result in Model.RecentResults)
                             {
                                 <tr>
-                                    <td>@result.Event.Name</td>
-                                    <td>@result.Participant.FullName</td>
+                                    <td>@result.Event?.Name</td>
+                                    <td>@result.Participant?.FullName</td>
                                     <td>
-                                        <span class="badge" style="background-color: @result.House.Color">
-                                            @result.House.Name
-                                        </span>
+                                        @if (result.House != null)
+                                        {
+                                            <span class="badge" style="background-color: @result.House.Color">
+                                                @result.House.Name
+                                            </span>
+                                        }
                                     </td>
                                     <td>
                                         @if (result.Placement.HasValue)
                                         {
                                             <span class="badge bg-success">@result.Placement.Value.ToOrdinal()</span>
                                         }
-                                        else
+                                        else if (result.SpeedOrDistance.HasValue)
                                         {
-                                            @result.SpeedOrDistance
+                                            <span>@result.SpeedOrDistance.Value</span>
                                         }
                                     </td>
-                                    <td>@result.Points pts</td>
+                                    <td>
+                                        <span class="fw-bold">@result.Points pts</span>
+                                    </td>
                                     <td>
                                         @if (result.IsNewRecord)
                                         {
@@ -250,6 +410,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: 8px;
     }
 </style>
 

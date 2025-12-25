@@ -1,118 +1,81 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SportsDay.Lib.Data;
+using Microsoft.Extensions.Logging;
 using SportsDay.Lib.Models;
-using SportsDay.Lib.Services;
-using SportsDay.Web.Models;
 using SportsDay.Lib.Services.Interfaces;
+using SportsDay.Lib.ViewModels;
+using SportsDay.Web.Models;
 
 namespace SportsDay.Web.Controllers;
 
 public class DashboardController : Controller
 {
     private readonly ILogger<DashboardController> _logger;
-    private readonly SportsDayDbContext _context;
-    private readonly ITournamentService _tournamentService;
+    private readonly IDashboardService _dashboardService;
 
     public DashboardController(
         ILogger<DashboardController> logger,
-        SportsDayDbContext context,
-        ITournamentService tournamentService)
+        IDashboardService dashboardService)
     {
         _logger = logger;
-        _context = context;
-        _tournamentService = tournamentService;
+        _dashboardService = dashboardService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-        if (activeTournament == null)
+        try
         {
-            return View();
+            _logger.LogInformation("Loading public dashboard");
+            var viewModel = await _dashboardService.GetPublicDashboardAsync();
+            return View(viewModel);
         }
-
-        var announcements = await _context.Announcements
-            .Where(a => a.TournamentId == activeTournament.Id && a.IsEnabled)
-            .Where(a => !a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.Now)
-            .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
-
-        var updates = await _context.EventUpdates
-            .Where(u => u.TournamentId == activeTournament.Id)
-            .OrderByDescending(u => u.CreatedAt)
-            .Take(20)  // Show last 20 updates
-            .ToListAsync();
-
-        var summaries = await _context.TournamentHouseSummaries
-            .Include(s => s.Tournament)
-            .Include(s => s.House)
-                .ThenInclude(h => h.Participants!)
-            .Include(s => s.Division)
-            .Where(s => s.TournamentId == activeTournament.Id)
-            .ToListAsync();
-
-        ViewBag.ActiveTournament = activeTournament;
-        ViewBag.Announcements = announcements;
-        ViewBag.Updates = updates;
-        ViewBag.Summaries = summaries;
-        ViewBag.DivisionCount = summaries.Select(s => s.Division).Distinct().Count();
-
-        return View();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading public dashboard");
+            return View(new PublicDashboardViewModel());
+        }
     }
 
     public async Task<IActionResult> GetAnnouncements()
     {
-        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-        if (activeTournament == null)
+        try
         {
+            var viewModel = await _dashboardService.GetPublicDashboardAsync();
+            return PartialView("_AnnouncementsPartial", viewModel.Announcements);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading announcements");
             return PartialView("_AnnouncementsPartial", new List<Announcement>());
         }
-
-        var announcements = await _context.Announcements
-            .Where(a => a.TournamentId == activeTournament.Id && a.IsEnabled)
-            .Where(a => !a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.Now)
-            .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
-
-        return PartialView("_AnnouncementsPartial", announcements);
     }
 
     public async Task<IActionResult> GetUpdates()
     {
-        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-        if (activeTournament == null)
+        try
         {
+            var viewModel = await _dashboardService.GetPublicDashboardAsync();
+            return PartialView("_UpdateStreamPartial", viewModel.Updates);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading updates");
             return PartialView("_UpdateStreamPartial", new List<EventUpdate>());
         }
-
-        var updates = await _context.EventUpdates
-            .Where(u => u.TournamentId == activeTournament.Id)
-            .OrderByDescending(u => u.CreatedAt)
-            .Take(20)  // Show last 20 updates
-            .ToListAsync();
-
-        return PartialView("_UpdateStreamPartial", updates);
     }
 
     public async Task<IActionResult> GetLeaderboard()
     {
-        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-        if (activeTournament == null)
+        try
         {
+            var viewModel = await _dashboardService.GetPublicDashboardAsync();
+            return PartialView("_LeaderboardPartial", viewModel.Summaries);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading leaderboard");
             return PartialView("_LeaderboardPartial", new List<TournamentHouseSummary>());
         }
-
-        var summaries = await _context.TournamentHouseSummaries
-            .Include(s => s.Tournament)
-            .Include(s => s.House)
-                .ThenInclude(h => h.Participants!)
-            .Include(s => s.Division)
-            .Where(s => s.TournamentId == activeTournament.Id)
-            .ToListAsync();
-
-        return PartialView("_LeaderboardPartial", summaries);
     }
 
     public IActionResult Privacy()

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SportsDay.Lib.Data;
-using SportsDay.Lib.Services;
+using Microsoft.Extensions.Logging;
 using SportsDay.Lib.Services.Interfaces;
 
 namespace SportsDay.Web.Areas.Admin.Controllers;
@@ -11,41 +9,40 @@ namespace SportsDay.Web.Areas.Admin.Controllers;
 //[Authorize(Roles = "Administrator")]
 public class DashboardController : Controller
 {
-    private readonly SportsDayDbContext _context;
-    private readonly ITournamentService _tournamentService;
+    private readonly IDashboardService _dashboardService;
+    private readonly ILogger<DashboardController> _logger;
 
-    public DashboardController(SportsDayDbContext context, ITournamentService tournamentService)
+    public DashboardController(
+        IDashboardService dashboardService,
+        ILogger<DashboardController> logger)
     {
-        _context = context;
-        _tournamentService = tournamentService;
+        _dashboardService = dashboardService;
+        _logger = logger;
     }
 
     public async Task<IActionResult> Index()
     {
-        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-        
-        var viewModel = new
+        try
         {
-            ActiveTournament = activeTournament,
-            TotalTournaments = await _context.Tournaments.CountAsync(),
-            TotalEvents = await _context.Events.CountAsync(),
-            TotalParticipants = await _context.Participants.CountAsync(),
-            TotalResults = await _context.Results.CountAsync(),
-            ActiveAnnouncements = await _context.Announcements.CountAsync(a => a.IsEnabled && (!a.ExpiresAt.HasValue || a.ExpiresAt > DateTime.Now)),
-            RecentUpdates = await _context.EventUpdates
-                .Include(u => u.Event)
-                .OrderByDescending(u => u.CreatedAt)
-                .Take(5)
-                .ToListAsync(),
-            RecentResults = await _context.Results
-                .Include(r => r.Event)
-                .Include(r => r.Participant)
-                .Include(r => r.House)
-                .OrderByDescending(r => r.Id)
-                .Take(5)
-                .ToListAsync()
-        };
+            _logger.LogInformation("Loading admin dashboard");
+            var viewModel = await _dashboardService.GetAdminDashboardAsync();
+            return View(viewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading admin dashboard");
+            TempData["Error"] = "An error occurred while loading the dashboard.";
+            return View(new SportsDay.Lib.ViewModels.AdminDashboardViewModel());
+        }
+    }
 
-        return View(viewModel);
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult RefreshCache()
+    {
+        _logger.LogInformation("Manually invalidating dashboard cache");
+        _dashboardService.InvalidateCache();
+        TempData["Success"] = "Dashboard cache has been refreshed.";
+        return RedirectToAction(nameof(Index));
     }
 }

@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IHouseLeaderService, HouseLeaderService>();
         services.AddScoped<IParticipantService, ParticipantService>();
         services.AddScoped<IEventTemplateService, EventTemplateService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
 #if DEBUG
         // Developer service only available in debug mode
