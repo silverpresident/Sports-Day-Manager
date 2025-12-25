@@ -22,12 +22,9 @@
                                 <h2 class="mb-1">
                                     <i class="bi bi-trophy-fill me-2"></i>@Model.ActiveTournament.Name
                                 </h2>
-                                @if (Model.ActiveTournament.TournamentDate.HasValue)
-                                {
-                                    <p class="mb-0">
-                                        <i class="bi bi-calendar-event me-2"></i>@Model.ActiveTournament.TournamentDate.Value.ToString("dddd, MMMM d, yyyy")
-                                    </p>
-                                }
+                                <p class="mb-0">
+                                    <i class="bi bi-calendar-event me-2"></i>@Model.ActiveTournament.TournamentDate.ToString("dddd, MMMM d, yyyy")
+                                </p>
                             </div>
                             <div class="text-end">
                                 <div class="badge bg-light text-success fs-6 mb-1">

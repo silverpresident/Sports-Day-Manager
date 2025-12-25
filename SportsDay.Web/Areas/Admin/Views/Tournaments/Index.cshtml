@@ -47,14 +47,7 @@
                                         <strong>@item.Name</strong>
                                     </td>
                                     <td>
-                                        @if (item.TournamentDate.HasValue)
-                                        {
-                                            <span>@item.TournamentDate.Value.ToString("dddd, MMMM d, yyyy")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">Not set</span>
-                                        }
+                                        <span>@item.TournamentDate.ToString("dddd, MMMM d, yyyy")</span>
                                     </td>
                                     <td>
                                         @if (item.IsActive)
@@ -122,12 +115,9 @@
                                             </div>
                                             <div class="modal-body">
                                                 <p>Are you sure you want to delete <strong>@item.Name</strong>?</p>
-                                                @if (item.TournamentDate.HasValue)
-                                                {
-                                                    <p class="text-muted mb-2">
-                                                        <i class="bi bi-calendar me-1"></i>@item.TournamentDate.Value.ToString("MMMM d, yyyy")
-                                                    </p>
-                                                }
+                                                <p class="text-muted mb-2">
+                                                    <i class="bi bi-calendar me-1"></i>@item.TournamentDate.ToString("MMMM d, yyyy")
+                                                </p>
                                                 <p class="mb-0 text-danger">
                                                     <i class="bi bi-exclamation-circle me-2"></i>This will delete all associated events, participants, and results. This action cannot be undone.
                                                 </p>

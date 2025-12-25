@@ -44,14 +44,7 @@
                                     <i class="bi bi-calendar-event me-1"></i>Date
                                 </dt>
                                 <dd class="col-sm-8">
-                                    @if (Model.TournamentDate.HasValue)
-                                    {
-                                        <span>@Model.TournamentDate.Value.ToString("dddd, MMMM d, yyyy")</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Not set</span>
-                                    }
+                                    <span>@Model.TournamentDate.ToString("dddd, MMMM d, yyyy")</span>
                                 </dd>
                                 
                                 <dt class="col-sm-4">
