@@ -75,12 +75,6 @@ builder.Services.AddAuthentication()
 
 var app = builder.Build();
 
-// Initialize the database
-using (var scope = app.Services.CreateScope())
-{
-    await DbInitializer.Initialize(scope.ServiceProvider);
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -112,5 +106,22 @@ app.MapRazorPages();
 
 // Map SignalR hub
 app.MapHub<SportsHub>("/SportsHub");
+
+// Initialize the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<SportsDayDbContext>();
+        //await context.Database.MigrateAsync();
+        await DbInitializer.Initialize(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while initializing the database.");
+    }
+}
 
 app.Run();

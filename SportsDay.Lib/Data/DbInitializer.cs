@@ -27,7 +27,7 @@ namespace SportsDay.Lib.Data
                 context.Database.ExecuteSqlRaw(sqlScript);*/
 
                 // Create default roles if they don't exist
-                string[] roles = { "Administrator", "Judge", "Announcer", "Viewer" };
+                string[] roles = { "Administrator", "Judge", "Announcer", "HouseLeader", "Viewer" };
                 foreach (var role in roles)
                 {
                     if (!await roleManager.RoleExistsAsync(role))

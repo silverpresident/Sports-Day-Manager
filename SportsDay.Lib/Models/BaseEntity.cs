@@ -10,7 +10,7 @@ namespace SportsDay.Lib.Models
         [StringLength(256)]
         public string CreatedBy { get; set; }
         [StringLength(256)]
-        public string UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
 
         public BaseEntity()
         {
