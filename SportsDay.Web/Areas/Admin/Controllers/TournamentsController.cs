@@ -38,6 +38,7 @@ namespace SportsDay.Web.Areas.Admin.Controllers
             return View(tournament);
         }
 
+//[Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             return View();
@@ -45,6 +46,7 @@ namespace SportsDay.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+//[Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([Bind("Id,Name,TournamentDate,IsActive")] Tournament tournament)
         {
             if (ModelState.IsValid)
@@ -55,6 +57,7 @@ namespace SportsDay.Web.Areas.Admin.Controllers
             return View(tournament);
         }
 
+//[Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -72,6 +75,7 @@ namespace SportsDay.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+//[Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,TournamentDate,IsActive")] Tournament tournament)
         {
             if (id != tournament.Id)
@@ -95,6 +99,7 @@ namespace SportsDay.Web.Areas.Admin.Controllers
             return View(tournament);
         }
 
+//[Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -111,6 +116,7 @@ namespace SportsDay.Web.Areas.Admin.Controllers
             return View(tournament);
         }
 
+//[Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

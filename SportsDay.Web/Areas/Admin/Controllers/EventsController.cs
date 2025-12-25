@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SportsDay.Lib.Data;
 using SportsDay.Lib.Models;
 using SportsDay.Lib.Services;
-using SportsDay.Web.Hubs;
+using SportsDay.Lib.Hubs;
 using SportsDay.Lib.Enums;
 using SportsDay.Lib.Services.Interfaces;
 

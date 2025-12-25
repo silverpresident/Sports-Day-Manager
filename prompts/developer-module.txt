@@ -1,0 +1,17 @@
+Create a developer Controller and page in the admin area.
+It should only be available in debug mode.
+
+It should have actions which are limited to the Active Tournament.
+ Create views and actions for
+- Generate Events adding events from the event template to the current tournament
+- Generate Participants
+    - add 2 participants for each house.
+    - Set up the participants with random names and ages between 11 and 20
+- Genrate Participation
+    - add participants to an Events
+- Generate results
+    - add results for the participants of events where no results are present
+- Delete all results
+- Delete all Participation
+- Delete all Participants
+- Delete all Events
