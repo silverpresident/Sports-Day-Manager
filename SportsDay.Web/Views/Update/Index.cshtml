@@ -1,0 +1,228 @@
+@{
+    ViewData["Title"] = "Live Updates";
+    var activeTournament = ViewBag.ActiveTournament as Tournament;
+    var updates = ViewBag.Updates as IEnumerable<EventUpdate>;
+}
+
+<div class="container-fluid">
+    @if (activeTournament == null)
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>No active tournament. Please contact an administrator.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="mb-1">
+                            <i class="bi bi-activity text-success me-2"></i>Live Updates
+                        </h2>
+                        <p class="text-muted mb-0">Real-time event updates for @activeTournament.Name</p>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted">
+                            <i class="bi bi-calendar-event me-1"></i>@activeTournament.TournamentDate.ToString("MMMM dd, yyyy")
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Updates Section -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-activity me-2"></i>Event Updates
+                            </div>
+                            <small>Real-time updates • Auto-refreshes</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if (updates != null && updates.Any())
+                        {
+                            <div class="update-stream">
+                                <div class="list-group list-group-flush" id="updateList">
+                                    @foreach (var update in updates)
+                                    {
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="bi bi-activity text-success me-2 mt-1"></i>
+                                                        <div>
+                                                            <div class="mb-1">@Html.Raw(update.Message)</div>
+                                                            @if (update.Event != null)
+                                                            {
+                                                                <small class="text-muted">
+                                                                    <i class="bi bi-calendar-event me-1"></i>@update.Event.Name
+                                                                </small>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-end ms-3">
+                                                    <small class="text-muted d-block">
+                                                        @update.CreatedAt.ToString("HH:mm")
+                                                    </small>
+                                                    <small class="text-muted">
+                                                        @update.CreatedAt.ToString("MMM dd")
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-activity text-muted fs-1 d-block mb-3"></i>
+                                <h5 class="text-muted">No updates yet</h5>
+                                <p class="text-muted mb-0">Updates will appear here as events progress</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <i class="bi bi-lightning-charge text-success fs-3 d-block mb-2"></i>
+                                <h6>Real-time Updates</h6>
+                                <p class="text-muted small mb-0">Updates appear instantly via SignalR</p>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="bi bi-arrow-clockwise text-success fs-3 d-block mb-2"></i>
+                                <h6>Auto-refresh</h6>
+                                <p class="text-muted small mb-0">Page refreshes every 2 minutes</p>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="bi bi-clock-history text-success fs-3 d-block mb-2"></i>
+                                <h6>Complete History</h6>
+                                <p class="text-muted small mb-0">All tournament updates in one place</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize SignalR connection
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/sportshub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().catch(function (err) {
+            console.error(err.toString());
+        });
+
+        // Handle real-time event updates
+        connection.on("ReceiveEventUpdate", function (eventName, status) {
+            var updateList = document.getElementById('updateList');
+            if (!updateList) {
+                // Create update list if it doesn't exist
+                var updateStream = document.querySelector('.update-stream');
+                if (updateStream) {
+                    updateStream.innerHTML = '<div class="list-group list-group-flush" id="updateList"></div>';
+                    updateList = document.getElementById('updateList');
+                }
+            }
+
+            if (updateList) {
+                var updateItem = document.createElement('div');
+                updateItem.className = 'list-group-item';
+                updateItem.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-activity text-success me-2 mt-1"></i>
+                                <div>
+                                    <div class="mb-1">${eventName} status changed to ${status}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end ms-3">
+                            <small class="text-muted d-block">
+                                ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                            </small>
+                            <small class="text-muted">
+                                ${new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                            </small>
+                        </div>
+                    </div>
+                `;
+
+                updateList.insertBefore(updateItem, updateList.firstChild);
+
+                // Add fade-in animation
+                updateItem.style.opacity = '0';
+                setTimeout(() => {
+                    updateItem.style.transition = 'opacity 0.5s';
+                    updateItem.style.opacity = '1';
+                }, 10);
+            }
+        });
+
+        // Handle real-time result updates
+        connection.on("ReceiveResult", function (eventName, participantName, result) {
+            var updateList = document.getElementById('updateList');
+            if (!updateList) {
+                var updateStream = document.querySelector('.update-stream');
+                if (updateStream) {
+                    updateStream.innerHTML = '<div class="list-group list-group-flush" id="updateList"></div>';
+                    updateList = document.getElementById('updateList');
+                }
+            }
+
+            if (updateList) {
+                var updateItem = document.createElement('div');
+                updateItem.className = 'list-group-item';
+                updateItem.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-trophy text-success me-2 mt-1"></i>
+                                <div>
+                                    <div class="mb-1">${participantName} scored ${result} in ${eventName}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end ms-3">
+                            <small class="text-muted d-block">
+                                ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                            </small>
+                            <small class="text-muted">
+                                ${new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                            </small>
+                        </div>
+                    </div>
+                `;
+
+                updateList.insertBefore(updateItem, updateList.firstChild);
+
+                // Add fade-in animation
+                updateItem.style.opacity = '0';
+                setTimeout(() => {
+                    updateItem.style.transition = 'opacity 0.5s';
+                    updateItem.style.opacity = '1';
+                }, 10);
+            }
+        });
+
+        // Auto-refresh every 2 minutes
+        setInterval(function() {
+            location.reload();
+        }, 120000);
+    </script>
+}

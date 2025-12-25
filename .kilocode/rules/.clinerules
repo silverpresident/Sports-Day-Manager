@@ -22,7 +22,7 @@ This is a .NET 10.0 volleyball tournament management system with three main proj
 ### Project Structure
 - Keep business logic in `SportsDay.Lib`
 - Admin UI controllers belong in `SportsDay.Web/Areas/Admin/Controllers`
-- Public API controllers belong in `SportsDay.Web/Controllers` with "ApiController" suffix
+- Public API controllers belong in `SportsDay.Web/Controllers` with "Controller" suffix
 - Models should be in appropriate `Models/` directories of the lib project
 - Services must have interfaces and implementations (e.g., `ITournamentService` and `TournamentService`)
 - Place interfaces in the Services\Interfaces folder
