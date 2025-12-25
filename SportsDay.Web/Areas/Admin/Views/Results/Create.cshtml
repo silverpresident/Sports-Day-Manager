@@ -173,7 +173,7 @@
             class_ = ((EventClass)i.GetType().GetProperty("Class").GetValue(i)).ToString(),
             points = i.GetType().GetProperty("PointSystem").GetValue(i),
             record = i.GetType().GetProperty("Record").GetValue(i),
-            recordHolder = i.GetType().GetProperty("RecordHolderName").GetValue(i)
+            recordHolder = i.GetType().GetProperty("RecordHolder").GetValue(i)
         }))));
 
         // Update form based on selected event

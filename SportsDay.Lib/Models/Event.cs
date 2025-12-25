@@ -10,8 +10,14 @@ public class Event : BaseEntity
     public Guid Id { get; set; }
 
     [Required]
+    public int EventNumber { get; set; }
+
+    [Required]
     [StringLength(100)]
     public string Name { get; set; } = string.Empty;
+
+    [Required]
+    public DivisionType GenderGroup { get; set; }
 
     [Required]
     public EventClass ClassGroup { get; set; }
@@ -23,9 +29,6 @@ public class Event : BaseEntity
     public int ParticipantMaxAge { get; set; } = 0;
 
     public int ParticipantLimit { get; set; } = 0; // 0 means no limit
-
-    [Required]
-    public DivisionType GenderGroup { get; set; }
     
     [NotMapped]
     public DivisionType Division => GenderGroup;
@@ -35,15 +38,15 @@ public class Event : BaseEntity
     
     [Required]
     [StringLength(50)]
-    public string Category { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty; //track or field
 
     [Required]
-    public EventType Type { get; set; }
+    public EventType Type { get; set; } //speed of distance
 
     public decimal? Record { get; set; }
 
     [StringLength(100)]
-    public string? RecordHolderName { get; set; }
+    public string? RecordHolder { get; set; }
 
     [Required]
     [StringLength(20)]

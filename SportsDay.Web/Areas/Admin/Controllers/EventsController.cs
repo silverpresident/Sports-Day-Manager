@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SportsDay.Lib.Data;
 using SportsDay.Lib.Models;
 using SportsDay.Lib.Services;
-using SportsDay.Lib.Hubs;
+using SportsDay.Web.Hubs;
 using SportsDay.Lib.Enums;
 using SportsDay.Lib.Services.Interfaces;
 
@@ -93,6 +93,12 @@ public class EventsController : Controller
     {
         if (ModelState.IsValid)
         {
+            var lastEvent = await _context.Events.OrderByDescending(e => e.EventNumber).FirstOrDefaultAsync();
+            if(lastEvent != null) 
+            {
+                evt.EventNumber = lastEvent.EventNumber + 1;
+            }
+
             evt.Id = Guid.NewGuid();
             evt.CreatedBy = "system";
             evt.CreatedAt = DateTime.UtcNow;

@@ -30,12 +30,21 @@
 
                         <input type="hidden" asp-for="TournamentId" />
 
-                        <div class="mb-4">
-                            <label asp-for="Name" class="form-label">
-                                <i class="bi bi-card-text me-2"></i>Event Name
-                            </label>
-                            <input asp-for="Name" class="form-control" placeholder="Enter event name" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                        <div class="row mb-4">
+                             <div class="col-md-6">
+                                <label asp-for="EventNumber" class="form-label">
+                                    <i class="bi bi-card-text me-2"></i>Event Number
+                                </label>
+                                <input asp-for="EventNumber" class="form-control" placeholder="Enter event number" />
+                                <span asp-validation-for="EventNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label">
+                                    <i class="bi bi-card-text me-2"></i>Event Name
+                                </label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter event name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
                         </div>
 
                         <div class="row mb-4">
@@ -115,11 +124,11 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="RecordHolderName" class="form-label">
+                                <label asp-for="RecordHolder" class="form-label">
                                     <i class="bi bi-person me-2"></i>Record Holder
                                 </label>
-                                <input asp-for="RecordHolderName" class="form-control" />
-                                <span asp-validation-for="RecordHolderName" class="text-danger"></span>
+                                <input asp-for="RecordHolder" class="form-control" />
+                                <span asp-validation-for="RecordHolder" class="text-danger"></span>
                                 <div class="form-text">Optional: Enter record holder's name</div>
                             </div>
                         </div>

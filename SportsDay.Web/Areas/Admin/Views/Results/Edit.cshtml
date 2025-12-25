@@ -145,9 +145,9 @@
                             <div class="list-group-item">
                                 <div class="small text-muted">Current Record</div>
                                 <div class="fw-bold">@Model.Event.Record.Value</div>
-                                @if (!string.IsNullOrEmpty(Model.Event.RecordHolderName))
+                                @if (!string.IsNullOrEmpty(Model.Event.RecordHolder))
                                 {
-                                    <small class="text-muted">Held by @Model.Event.RecordHolderName</small>
+                                    <small class="text-muted">Held by @Model.Event.RecordHolder</small>
                                 }
                             </div>
                         }

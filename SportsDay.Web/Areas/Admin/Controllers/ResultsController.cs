@@ -88,13 +88,13 @@ public class ResultsController : Controller
             {
                 result.IsNewRecord = true;
                 evt.Record = result.SpeedOrDistance;
-                evt.RecordHolderName = recordHolder?.FullName;
+                evt.RecordHolder = recordHolder?.FullName;
             }
             else if (evt.Type == EventType.Speed && result.SpeedOrDistance < (evt.Record ?? decimal.MaxValue))
             {
                 result.IsNewRecord = true;
                 evt.Record = result.SpeedOrDistance;
-                evt.RecordHolderName = recordHolder?.FullName;
+                evt.RecordHolder = recordHolder?.FullName;
             }
 
             // Calculate points based on placement

@@ -4,10 +4,12 @@ Generate the SQL script to create the entity.
 Create the event template will store a list of events independent of tournament which can be copied to create events in a tournament.
 Add a field name RecordSettingYear.
 Add a fieldName RecordNote
-Generate a SQL to pouplate the EventTemplate with track and field events class 1 to 4 and open events.
+Generate a separate SQL script to populate the EventTemplate with track and field events class 1 to 4 and open events across genders.
 Create the ui to add, view and import the EventTemplate.
  Importing allows the EventTemplate to be copied into the current tournament
 
 == use this to guide the events you add 
-The in Jamaica features a comprehensive list of track and field events across various age groups (classes), including sprints (100m, 200m, 400m), middle/long distance (800m, 1500m, 3000m), hurdles (70mH, 80mH, 100mH, 400mH), relays (4x100m, 4x400m, Medley), jumps (High Jump, Long Jump, Triple Jump), throws (Shot Put, Discus, Javelin), and multi-events (Heptathlon, Decathlon), with specific events varying by class and gender
+in Jamaica features a comprehensive list of track and field events across various age groups (classes), including sprints (100m, 200m, 400m), middle/long distance (800m, 1500m, 3000m), hurdles (70mH, 80mH, 100mH, 400mH), relays (4x100m, 4x400m, Medley), jumps (High Jump, Long Jump, Triple Jump), throws (Shot Put, Discus, Javelin), and multi-events (Heptathlon, Decathlon), with specific events varying by class and gender
 
+Update the memorybank
+Update the docs

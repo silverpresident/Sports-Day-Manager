@@ -60,6 +60,9 @@
                                 <thead>
                                     <tr>
                                         <th>
+                                            <i class="bi bi-hash me-2"></i>Event Number
+                                        </th>
+                                        <th>
                                             <i class="bi bi-flag me-2"></i>Status
                                         </th>
                                         <th>
@@ -89,6 +92,7 @@
                                     @foreach (var evt in classGroup.OrderBy(e => e.ScheduledTime))
                                     {
                                         <tr>
+                                            <td>@evt.EventNumber</td>
                                             <td>
                                                 @{
                                                     var (statusIcon, statusClass) = evt.Status switch
@@ -125,7 +129,7 @@
                                                         <span class="badge bg-warning text-dark me-2">
                                                             @evt.Record.Value
                                                         </span>
-                                                        <small class="text-muted">@evt.RecordHolderName</small>
+                                                        <small class="text-muted">@evt.RecordHolder</small>
                                                     </div>
                                                 }
                                             </td>

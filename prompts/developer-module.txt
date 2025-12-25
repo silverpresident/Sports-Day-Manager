@@ -15,3 +15,6 @@ It should have actions which are limited to the Active Tournament.
 - Delete all Participation
 - Delete all Participants
 - Delete all Events
+
+Update the memorybank
+Update the docs
