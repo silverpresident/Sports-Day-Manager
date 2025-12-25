@@ -70,7 +70,7 @@ namespace SportsDay.Lib.Data
             var config = serviceProvider.GetRequiredService<IConfiguration>();
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
         
-            var defaultUsers = config.GetValue<DefaultUser[]>("DefaultUsers");
+            var defaultUsers = config.GetSection("DefaultUsers").Get<DefaultUser[]>();
             foreach (var defaultUser in defaultUsers)
             {
                 if (string.IsNullOrEmpty(defaultUser.Email))
