@@ -283,12 +283,12 @@ namespace SportsDay.Web.Controllers
             {
                 await _signInManager.SignOutAsync();
                 _logger.LogInformation("User logged out");
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during logout");
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
         }
 
@@ -347,7 +347,7 @@ namespace SportsDay.Web.Controllers
                         _logger.LogInformation("User {Email} successfully set their password", user.Email);
                         await _signInManager.RefreshSignInAsync(user);
                         TempData["SuccessMessage"] = "Your password has been set successfully.";
-                        return RedirectToAction("Index", "Home", new { area = "Admin" });
+                        return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                     }
                     
                     foreach (var error in addPasswordResult.Errors)
@@ -368,7 +368,7 @@ namespace SportsDay.Web.Controllers
                     _logger.LogInformation("User {Email} successfully changed their password", user.Email);
                     await _signInManager.RefreshSignInAsync(user);
                     TempData["SuccessMessage"] = "Your password has been changed successfully.";
-                    return RedirectToAction("Index", "Home", new { area = "Admin" });
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                 }
 
                 foreach (var error in changePasswordResult.Errors)
@@ -439,7 +439,7 @@ namespace SportsDay.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { area = "Admin" });
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
             }
         }
     }
