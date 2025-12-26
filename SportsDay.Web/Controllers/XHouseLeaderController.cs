@@ -10,7 +10,7 @@ using SportsDay.Lib.Services.Interfaces;
 namespace SportsDay.Web.Controllers;
 
 //TODO [Authorize] Role=HouseLeader
-public class HouseLeaderController : Controller
+public class XHouseLeaderController : Controller
 {
     private readonly IHouseLeaderService _houseLeaderService;
     private readonly SportsDayDbContext _context;

@@ -1,0 +1,165 @@
+@model HouseLeaderDashboardViewModel
+
+@{
+    ViewData["Title"] = "House Leader Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header" style="background-color: @Model.House.Color; color: white;">
+                    <h2 class="mb-0">
+                        <i class="bi bi-house-door me-2"></i>@Model.House.Name House Dashboard
+                    </h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.ActiveTournament == null)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>No Active Tournament</strong> - There is no active tournament at this time. Please check back later.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-trophy me-2"></i>
+                            <strong>Active Tournament:</strong> @Model.ActiveTournament.Name
+                            <br />
+                            <small>@Model.ActiveTournament.StartDate.ToString("MMMM dd, yyyy") - @Model.ActiveTournament.EndDate.ToString("MMMM dd, yyyy")</small>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h3 class="mb-0">@Model.TotalParticipants</h3>
+                                        <small>Participants</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h3 class="mb-0">@Model.TotalPoints</h3>
+                                        <small>Total Points</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <h3 class="mb-0">@Model.EventsWithParticipants</h3>
+                                        <small>Events Entered</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-secondary text-white">
+                                    <div class="card-body text-center">
+                                        <h3 class="mb-0">@Model.TotalEvents</h3>
+                                        <small>Total Events</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4><i class="bi bi-lightning me-2"></i>Quick Actions</h4>
+                                <div class="btn-group" role="group">
+                                    <a asp-controller="Participants" asp-action="Add" class="btn btn-success">
+                                        <i class="bi bi-person-plus me-2"></i>Add Participant
+                                    </a>
+                                    <a asp-controller="Participants" asp-action="Index" class="btn btn-outline-primary">
+                                        <i class="bi bi-people me-2"></i>View All Participants
+                                    </a>
+                                    <a asp-controller="Events" asp-action="Index" class="btn btn-outline-info">
+                                        <i class="bi bi-calendar-event me-2"></i>View Events
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Participants -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>
+                                <i class="bi bi-people me-2"></i>Recent Participants
+                            </h4>
+                            <a asp-controller="Participants" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                                View All <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+
+                        @if (Model.Participants.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Gender</th>
+                                            <th>Class</th>
+                                            <th>Age</th>
+                                            <th>Points</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var participant in Model.Participants.Take(5))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@participant.FullName</strong>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary">@participant.GenderGroup</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info">@participant.EventClassGroup</span>
+                                                </td>
+                                                <td>@participant.AgeInYears years</td>
+                                                <td>
+                                                    <span class="badge bg-success">@participant.Points pts</span>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a asp-controller="Participants" asp-action="Edit" asp-route-id="@participant.Id" 
+                                                           class="btn btn-outline-primary" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-secondary text-center">
+                                <i class="bi bi-inbox me-2"></i>
+                                No participants registered yet. Click "Add Participant" to register your first participant.
+                            </div>
+                        }
+                    }
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Main Site
+                        </a>
+                        <a asp-action="Unregister" class="btn btn-outline-danger">
+                            <i class="bi bi-x-circle me-2"></i>Unregister as House Leader
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

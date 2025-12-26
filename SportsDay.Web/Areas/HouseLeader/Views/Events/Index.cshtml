@@ -1,0 +1,141 @@
+@model HouseLeaderEventsViewModel
+
+@{
+    ViewData["Title"] = "Events";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header" style="background-color: @Model.House.Color; color: white;">
+                    <h2 class="mb-0">
+                        <i class="bi bi-calendar-event me-2"></i>Events - @Model.House.Name
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-trophy me-2"></i>
+                        <strong>Tournament:</strong> @Model.ActiveTournament.Name
+                        <span class="ms-3">|</span>
+                        <span class="ms-3"><strong>Total Events:</strong> @Model.TotalEvents</span>
+                        <span class="ms-3">|</span>
+                        <span class="ms-3"><strong>Events with @Model.House.Name Participants:</strong> @Model.EventsWithHouseParticipants</span>
+                    </div>
+
+                    @if (Model.Events.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Event Name</th>
+                                        <th>Division</th>
+                                        <th>Class</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>@Model.House.Name Participants</th>
+                                        <th>Total Participants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var eventVm in Model.Events)
+                                    {
+                                        <tr>
+                                            <td>@eventVm.Event.EventNumber</td>
+                                            <td>
+                                                <strong>@eventVm.Event.Name</strong>
+                                            </td>
+                                            <td>
+                                                @if (eventVm.Event.GenderGroup == DivisionType.Boys)
+                                                {
+                                                    <span class="badge bg-primary">Boys</span>
+                                                }
+                                                else if (eventVm.Event.GenderGroup == DivisionType.Girls)
+                                                {
+                                                    <span class="badge bg-danger">Girls</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@eventVm.Event.GenderGroup</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">@eventVm.Event.ClassGroup</span>
+                                            </td>
+                                            <td>@eventVm.Event.Category</td>
+                                            <td>
+                                                @switch (eventVm.Event.Status)
+                                                {
+                                                    case EventStatus.Scheduled:
+                                                        <span class="badge bg-secondary">Scheduled</span>
+                                                        break;
+                                                    case EventStatus.InProgress:
+                                                        <span class="badge bg-warning text-dark">In Progress</span>
+                                                        break;
+                                                    case EventStatus.Completed:
+                                                        <span class="badge bg-success">Completed</span>
+                                                        break;
+                                                    case EventStatus.Cancelled:
+                                                        <span class="badge bg-dark">Cancelled</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (eventVm.HouseParticipantCount > 0)
+                                                {
+                                                    <span class="badge bg-success">@eventVm.HouseParticipantCount</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">0</span>
+                                                }
+                                                @if (eventVm.Event.ParticipantLimit > 0)
+                                                {
+                                                    <small class="text-muted">/ @eventVm.Event.ParticipantLimit max</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@eventVm.TotalParticipantCount</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a asp-action="Details" asp-route-id="@eventVm.Event.Id" 
+                                                       class="btn btn-outline-info" title="View Details">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    @if (eventVm.Event.Status == EventStatus.Scheduled && eventVm.CanRegisterMore)
+                                                    {
+                                                        <a asp-action="RegisterParticipant" asp-route-id="@eventVm.Event.Id" 
+                                                           class="btn btn-outline-success" title="Register Participants">
+                                                            <i class="bi bi-person-plus"></i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary text-center">
+                            <i class="bi bi-inbox me-2"></i>
+                            No events available for this tournament.
+                        </div>
+                    }
+
+                    <hr class="my-4" />
+
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

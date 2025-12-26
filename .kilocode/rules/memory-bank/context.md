@@ -46,6 +46,17 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - **House Results view** (`/House/Results/{id}`): Shows members with expandable accordion for event participation, filtering by division (Boys, Girls, Open), summary cards for total members/points/participations
   - **House Participants view** (`/House/Participants/{id}`): Simple table listing all participants with name, gender, division, class, and notes
   - House Index updated with links to Details, Participants, and Results views
+- **House Leader Area implemented** (December 2025):
+  - Created dedicated HouseLeader area with separate controllers and views
+  - **HouseLeaderBaseController**: Base controller with `[Area("HouseLeader")]` and role-based authorization
+  - **DashboardController**: Main dashboard, house leader registration/unregistration
+  - **ParticipantsController**: Full CRUD for house participants (Add, Edit, Delete)
+  - **EventsController**: View events with registration counts, register/unregister participants to events
+  - Created ViewModels: HouseLeaderDashboardViewModel, HouseLeaderEventViewModel, HouseLeaderEventsViewModel, RegisterParticipantToEventViewModel, AddParticipantViewModel
+  - Dedicated layout (`_HouseLeaderLayout.cshtml`) with house leader portal branding
+  - Views for Dashboard (Index, Register, Unregister), Participants (Index, Add, Edit, Delete), Events (Index, Details, RegisterParticipant)
+  - Documentation in docs/house-leader-area.md
+  - Old HouseLeaderController in Controllers folder superseded by new area-based implementation
 
 ## Current Focus
 
@@ -70,6 +81,11 @@ The project is in a stable state with core functionality working. The system can
   - **Details**: House info, leaders, overall ranking, division rankings, leaderboard, event results
   - **Results**: Members with expandable event participation, filtering by division, summary statistics
   - **Participants**: Simple list of all house members with basic info
+- **House Leader Portal** (`/HouseLeader/`):
+  - Dashboard with house overview and quick stats
+  - Participant management (add, edit, delete)
+  - Event registration (view events, register/unregister participants)
+  - Self-registration as house leader
 
 ## Known Issues
 
@@ -85,7 +101,7 @@ Potential areas for enhancement:
 - Implement comprehensive logging with ILogger
 - Add error handling throughout the application
 - Complete Azure deployment configuration
-- Implement house leader self-registration feature
+- Remove old HouseLeaderController from Controllers folder
 - Add participant self-registration functionality
 - Create comprehensive unit and integration tests
 - Enhance UI/UX with more interactive features
@@ -101,3 +117,5 @@ Potential areas for enhancement:
 - EventService created; consider similar pattern for Results, Announcements
 - DeveloperService created for testing; consider expanding for more test scenarios
 - HouseDetailsViewModel, HouseResultsViewModel, and HouseParticipantsViewModel created; consider similar ViewModels for other complex views
+- Old HouseLeaderController in Controllers folder should be removed (superseded by HouseLeader area)
+- HouseLeader area ViewModels created in HouseLeaderDashboardViewModel.cs; consider splitting into separate files

@@ -105,14 +105,18 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `ViewModels/HouseDetailsViewModel.cs` - House details with rankings, division summaries, and event results
 - `ViewModels/HouseResultsViewModel.cs` - House members with event participation details
 - `ViewModels/HouseParticipantsViewModel.cs` - Simple list of house participants
+- `ViewModels/HouseLeaderDashboardViewModel.cs` - House leader dashboard, events, and participant registration ViewModels
 
 ### SportsDay.Web (ASP.NET Core MVC)
-**Purpose**: Web application with public and admin interfaces
+**Purpose**: Web application with public, admin, and house leader interfaces
 
 **Key Directories**:
 - `Areas/Admin/` - Administrative interface
   - `Controllers/` - Admin controllers
   - `Views/` - Admin views
+- `Areas/HouseLeader/` - House Leader portal
+  - `Controllers/` - House leader controllers (Dashboard, Participants, Events)
+  - `Views/` - House leader views with dedicated layout
 - `Areas/Identity/` - Authentication pages
 - `Controllers/` - Public-facing controllers
 - `Views/` - Public views and shared components
@@ -127,6 +131,9 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Areas/Admin/Controllers/EventTemplatesController.cs` - Event template management
 - `Areas/Admin/Controllers/ResultsController.cs` - Result entry
 - `Areas/Admin/Controllers/DeveloperController.cs` - Developer tools (DEBUG only)
+- `Areas/HouseLeader/Controllers/DashboardController.cs` - House leader dashboard
+- `Areas/HouseLeader/Controllers/ParticipantsController.cs` - Participant management
+- `Areas/HouseLeader/Controllers/EventsController.cs` - Event registration
 
 ## Data Model
 
@@ -281,6 +288,16 @@ Participant (1) ──→ (N) Result
 5. Events saved to database
 6. SignalR notification sent to connected clients
 7. Admin redirected to Events list
+
+### House Leader Event Registration Flow
+1. House leader navigates to Events in House Leader portal
+2. Views list of events with participant counts per house
+3. Selects event to register participants
+4. System shows eligible participants (matching gender/class)
+5. House leader selects participant to register
+6. System creates Result entry (registration without placement)
+7. Participant appears in registered list
+8. House leader can unregister participants (if no results recorded)
 
 ## Authentication & Authorization
 
