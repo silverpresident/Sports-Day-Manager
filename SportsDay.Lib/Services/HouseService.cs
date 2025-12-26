@@ -296,7 +296,7 @@ public class HouseService : IHouseService
         }
     }
 
-    public async Task<HouseMembersViewModel?> GetHouseMembersForActiveTournamentAsync(int id)
+    public async Task<HouseResultsViewModel?> GetHouseMembersForActiveTournamentAsync(int id)
     {
         try
         {
@@ -353,7 +353,7 @@ public class HouseService : IHouseService
                 .ThenBy(p => p.FirstName)
                 .ToList();
 
-            return new HouseMembersViewModel
+            return new HouseResultsViewModel
             {
                 House = house,
                 ActiveTournament = activeTournament,

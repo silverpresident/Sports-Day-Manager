@@ -12,7 +12,7 @@ public interface IHouseService
     Task<House?> GetByIdWithDetailsAsync(int id);
     Task<House?> GetByIdWithLeadersAsync(int id);
     Task<HouseDetailsViewModel?> GetHouseDetailsForActiveTournamentAsync(int id);
-    Task<HouseMembersViewModel?> GetHouseMembersForActiveTournamentAsync(int id);
+    Task<HouseResultsViewModel?> GetHouseMembersForActiveTournamentAsync(int id);
     Task<IEnumerable<HouseRankingViewModel>> GetAllHouseRankingsForActiveTournamentAsync();
     Task<House> CreateAsync(House house);
     Task UpdateAsync(House house);

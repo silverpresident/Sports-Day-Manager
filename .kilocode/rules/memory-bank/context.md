@@ -40,7 +40,7 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - Event Details view with full event information and results
 - **House Details and Members views implemented** (December 2025):
   - Extended IHouseService with new methods for house details and rankings
-  - HouseDetailsViewModel and HouseMembersViewModel created
+  - HouseDetailsViewModel and HouseResultsViewModel created
   - Public HouseController updated with Details and Members actions
   - House Details view shows: house info, leaders, overall ranking, division rankings, leaderboard, event results
   - House Members view shows: all participants with expandable event participation details
@@ -107,4 +107,4 @@ Potential areas for enhancement:
 - Consider creating additional services for Results and Announcements
 - EventService created; consider similar pattern for Results, Announcements
 - DeveloperService created for testing; consider expanding for more test scenarios
-- HouseDetailsViewModel and HouseMembersViewModel created; consider similar ViewModels for other complex views
+- HouseDetailsViewModel and HouseResultsViewModel created; consider similar ViewModels for other complex views

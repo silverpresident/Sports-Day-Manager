@@ -28,7 +28,10 @@
             </div>
         </div>
         <div class="d-flex gap-2">
-            <a asp-action="Members" asp-route-id="@Model.House.Id" class="btn btn-outline-success">
+            <a asp-action="Results" asp-route-id="@Model.House.Id" class="btn btn-outline-success">
+                <i class="bi bi-trophy me-1"></i>View Results
+            </a>
+            <a asp-action="Members" asp-route-id="@Model.House.Id" class="btn btn-outline-primary">
                 <i class="bi bi-people me-1"></i>View Members
             </a>
             <a asp-action="Index" class="btn btn-outline-secondary">

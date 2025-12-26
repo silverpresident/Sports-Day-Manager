@@ -1,4 +1,4 @@
-@model SportsDay.Lib.ViewModels.HouseMembersViewModel
+@model SportsDay.Lib.ViewModels.HouseResultsViewModel
 @using SportsDay.Lib.Enums
 @{
     ViewData["Title"] = $"{Model.House.Name} - Members";
@@ -10,7 +10,7 @@
             <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Home</a></li>
             <li class="breadcrumb-item"><a asp-controller="House" asp-action="Index">Houses</a></li>
             <li class="breadcrumb-item"><a asp-controller="House" asp-action="Details" asp-route-id="@Model.House.Id">@Model.House.Name</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Members</li>
+            <li class="breadcrumb-item active" aria-current="page">Participant Results</li>
         </ol>
     </nav>
 

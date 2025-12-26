@@ -103,7 +103,7 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Extensions/ServiceCollectionExtensions.cs` - Service registration extension method
 - `Models/BaseEntity.cs` - Base class for all entities with audit fields
 - `ViewModels/HouseDetailsViewModel.cs` - House details with rankings and results
-- `ViewModels/HouseMembersViewModel.cs` - House members with event participation
+- `ViewModels/HouseResultsViewModel.cs` - House members with event participation
 
 ### SportsDay.Web (ASP.NET Core MVC)
 **Purpose**: Web application with public and admin interfaces

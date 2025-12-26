@@ -3,7 +3,7 @@ using SportsDay.Lib.Models;
 
 namespace SportsDay.Lib.ViewModels;
 
-public class HouseMembersViewModel
+public class HouseResultsViewModel
 {
     public House House { get; set; } = null!;
     public Tournament? ActiveTournament { get; set; }

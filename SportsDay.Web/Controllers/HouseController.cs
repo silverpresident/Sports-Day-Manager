@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsDay.Lib.Services.Interfaces;
+using SportsDay.Lib.ViewModels;
 
 namespace SportsDay.Web.Controllers
 {
     public class HouseController : Controller
     {
+        private readonly ITournamentService _tournamentService;
         private readonly IHouseService _houseService;
         private readonly IParticipantService _participantService;
         private readonly ILogger<HouseController> _logger;
@@ -12,11 +14,13 @@ namespace SportsDay.Web.Controllers
         public HouseController(
             IHouseService houseService,
             IParticipantService participantService,
-            ILogger<HouseController> logger)
+            ILogger<HouseController> logger,
+            ITournamentService tournamentService)
         {
             _houseService = houseService;
             _participantService = participantService;
             _logger = logger;
+            _tournamentService = tournamentService;
         }
 
         public async Task<IActionResult> Index()
@@ -56,7 +60,7 @@ namespace SportsDay.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> Members(int id)
+        public async Task<IActionResult> Results(int id)
         {
             try
             {
@@ -83,16 +87,17 @@ namespace SportsDay.Web.Controllers
         {
             try
             {
+                var model = new HouseParticipantsViewModel();
                 var house = await _houseService.GetByIdAsync(id);
                 if (house == null)
                 {
                     return NotFound();
                 }
-
-                var participants = await _participantService.GetByHouseIdAsync(id);
+                model.House = house;
+                model.ActiveTournament = await _tournamentService.GetActiveTournamentAsync();
+                model.Participants = await _participantService.GetByHouseIdAsync(id);
                 
-                ViewBag.House = house;
-                return View(participants);
+                return View(model);
             }
             catch (Exception ex)
             {
