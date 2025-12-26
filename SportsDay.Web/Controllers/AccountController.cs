@@ -87,7 +87,7 @@ namespace SportsDay.Web.Controllers
                     }
                     else
                     {
-                        userName = user.UserName;
+                        userName = user.UserName ?? userName;
                     }
                 }
                 // Attempt to sign in with the provided credentials
