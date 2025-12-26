@@ -89,6 +89,90 @@ public class DashboardController : HouseLeaderBaseController
         return View(viewModel);
     }
 
+    #region House Selection
+
+    /// <summary>
+    /// GET: Select  a house as leader, for Administrators
+    /// </summary>
+    public async Task<IActionResult> Select()
+    {
+        var userId = _userManager.GetUserId(User);
+       /*  if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
+        } */
+
+        // Check if user is already a house leader
+        var existingLeader = await _houseLeaderService.GetByUserIdAsync(userId);
+        if (existingLeader != null)
+        {
+            TempData["Info"] = $"You are already registered as a house leader for {existingLeader.House?.Name}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        ViewBag.Houses = new SelectList(
+            await _houseService.GetAllAsync(),
+            "Id",
+            "Name"
+        );
+
+        return View();
+    }
+
+    /// <summary>
+    /// POST: Register as a house leader
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Select(int houseId)
+    {
+        var userId = _userManager.GetUserId(User);
+        /* if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
+        } */
+
+        try
+        {
+            // Check if user is already a house leader
+            var existingLeader = await _houseLeaderService.GetByUserIdAsync(userId);
+            if (existingLeader != null)
+            {
+                TempData["Error"] = $"You are already registered as a house leader for {existingLeader.House?.Name}.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify house exists
+            var house = await _houseService.GetByIdAsync(houseId);
+            if (house == null)
+            {
+                TempData["Error"] = "Selected house not found.";
+                return RedirectToAction(nameof(Register));
+            }
+
+            //TODO: Add a User Claim for HouseLeaderHouseId
+
+            TempData["Success"] = $"You have successfully registered as a house leader for {house.Name}!";
+            _logger.LogInformation("User {UserId} registered as house leader for {HouseName}", userId, house.Name);
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error registering user {UserId} as house leader", userId);
+            TempData["Error"] = "An error occurred while registering. Please try again.";
+
+            ViewBag.Houses = new SelectList(
+                await _houseService.GetAllAsync(),
+                "Id",
+                "Name"
+            );
+
+            return View();
+        }
+    }
+
+
     #region House Leader Registration
 
     /// <summary>

@@ -1,0 +1,49 @@
+@model HouseLeader
+
+@{
+    ViewData["Title"] = "Select as House Leader";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-person-badge me-2"></i>Select a House to view as Leader
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>House Leaders</strong> can register and manage participants for their house in the active tournament.
+                    </div>
+
+                    <form asp-action="Select" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label for="houseId" class="form-label">Select Your House</label>
+                            <select id="houseId" name="houseId" class="form-select" required>
+                                <option value="">-- Select a House --</option>
+                                @foreach (var house in ViewBag.Houses as SelectList)
+                                {
+                                    <option value="@house.Value">@house.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Select
+                            </button>
+                            <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
