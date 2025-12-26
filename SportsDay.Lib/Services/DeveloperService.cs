@@ -174,7 +174,7 @@ public class DeveloperService : IDeveloperService
         var divisions = new[] { DivisionType.Boys, DivisionType.Girls };
         
         // Get all classes
-        var classes = new[] { EventClass.Open, EventClass.Class1, EventClass.Class2, EventClass.Class3, EventClass.Class4 };
+        var classes = new[] { EventClass.Class1, EventClass.Class2, EventClass.Class3, EventClass.Class4 };
 
         foreach (var house in houses)
         {
@@ -192,7 +192,6 @@ public class DeveloperService : IDeveloperService
                         EventClass.Class3 => _random.Next(13, 15), // Ages 13-14
                         EventClass.Class2 => _random.Next(15, 17), // Ages 15-16
                         EventClass.Class1 => _random.Next(17, 19), // Ages 17-18
-                        EventClass.Open => _random.Next(19, 21),   // Ages 19-20
                         _ => _random.Next(11, 21)
                     };
                     
