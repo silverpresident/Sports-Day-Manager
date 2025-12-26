@@ -102,7 +102,14 @@ public class DeveloperService : IDeveloperService
     /// <inheritdoc />
     public async Task<int> GenerateParticipantsAsync(Guid tournamentId, string createdBy)
     {
-        _logger.LogInformation("Generating participants for tournament {TournamentId}", tournamentId);
+        // Default behavior: generate 2 participants per house
+        return await Generate2ParticipantsPerHouseAsync(tournamentId, createdBy);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> Generate2ParticipantsPerHouseAsync(Guid tournamentId, string createdBy)
+    {
+        _logger.LogInformation("Generating 2 participants per house for tournament {TournamentId}", tournamentId);
 
         var houses = await _context.Houses.ToListAsync();
         var participantsCreated = 0;
@@ -151,7 +158,71 @@ public class DeveloperService : IDeveloperService
         }
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Generated {Count} participants for tournament {TournamentId}", participantsCreated, tournamentId);
+        _logger.LogInformation("Generated {Count} participants (2 per house) for tournament {TournamentId}", participantsCreated, tournamentId);
+        return participantsCreated;
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GenerateComprehensiveParticipantsAsync(Guid tournamentId, string createdBy)
+    {
+        _logger.LogInformation("Generating comprehensive participants (1 from each division/class combination per house) for tournament {TournamentId}", tournamentId);
+
+        var houses = await _context.Houses.ToListAsync();
+        var participantsCreated = 0;
+
+        // Get all divisions (Boys, Girls) - excluding Open as it's not a gender-specific division
+        var divisions = new[] { DivisionType.Boys, DivisionType.Girls };
+        
+        // Get all classes
+        var classes = new[] { EventClass.Open, EventClass.Class1, EventClass.Class2, EventClass.Class3, EventClass.Class4 };
+
+        foreach (var house in houses)
+        {
+            foreach (var division in divisions)
+            {
+                foreach (var eventClass in classes)
+                {
+                    var firstName = FirstNames[_random.Next(FirstNames.Length)];
+                    var lastName = LastNames[_random.Next(LastNames.Length)];
+                    
+                    // Generate appropriate age based on class
+                    var age = eventClass switch
+                    {
+                        EventClass.Class4 => _random.Next(11, 13), // Ages 11-12
+                        EventClass.Class3 => _random.Next(13, 15), // Ages 13-14
+                        EventClass.Class2 => _random.Next(15, 17), // Ages 15-16
+                        EventClass.Class1 => _random.Next(17, 19), // Ages 17-18
+                        EventClass.Open => _random.Next(19, 21),   // Ages 19-20
+                        _ => _random.Next(11, 21)
+                    };
+                    
+                    var dateOfBirth = DateTime.Now.AddYears(-age).AddDays(_random.Next(-180, 180));
+
+                    var participant = new Participant
+                    {
+                        Id = Guid.NewGuid(),
+                        FirstName = firstName,
+                        LastName = lastName,
+                        HouseId = house.Id,
+                        TournamentId = tournamentId,
+                        GenderGroup = division,
+                        DateOfBirth = dateOfBirth,
+                        AgeInYears = age,
+                        AgeGroup = GetAgeGroup(age),
+                        EventClassGroup = eventClass,
+                        Points = 0,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = createdBy
+                    };
+
+                    _context.Participants.Add(participant);
+                    participantsCreated++;
+                }
+            }
+        }
+
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("Generated {Count} comprehensive participants for tournament {TournamentId}", participantsCreated, tournamentId);
         return participantsCreated;
     }
 
@@ -163,6 +234,7 @@ public class DeveloperService : IDeveloperService
         // Get all events for the tournament
         var events = await _context.Events
             .Where(e => e.TournamentId == tournamentId)
+            .OrderBy(e => e.EventNumber)
             .ToListAsync();
 
         // Get all participants for the tournament

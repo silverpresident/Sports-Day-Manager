@@ -26,6 +26,23 @@ public interface IDeveloperService
     Task<int> GenerateParticipantsAsync(Guid tournamentId, string createdBy);
 
     /// <summary>
+    /// Generates 2 random participants per house.
+    /// </summary>
+    /// <param name="tournamentId">The tournament ID.</param>
+    /// <param name="createdBy">The user performing the operation.</param>
+    /// <returns>Number of participants created.</returns>
+    Task<int> Generate2ParticipantsPerHouseAsync(Guid tournamentId, string createdBy);
+
+    /// <summary>
+    /// Generates 1 participant from each division (gender) from each class per house.
+    /// This creates a comprehensive set covering all combinations.
+    /// </summary>
+    /// <param name="tournamentId">The tournament ID.</param>
+    /// <param name="createdBy">The user performing the operation.</param>
+    /// <returns>Number of participants created.</returns>
+    Task<int> GenerateComprehensiveParticipantsAsync(Guid tournamentId, string createdBy);
+
+    /// <summary>
     /// Assigns participants to events (creates participation records).
     /// </summary>
     /// <param name="tournamentId">The tournament ID.</param>

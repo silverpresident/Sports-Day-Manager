@@ -79,33 +79,83 @@ public class DeveloperController : Controller
     }
 
     /// <summary>
-    /// Generate random participants for each house.
+    /// Show participant generation options.
     /// </summary>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> GenerateParticipants()
     {
         var activeTournament = await _tournamentService.GetActiveTournamentAsync();
         if (activeTournament == null)
         {
+            TempData["Error"] = "No active tournament found. Please activate a tournament first.";
+            return RedirectToAction("Index", "Tournaments", new { area = "Admin" });
+        }
+
+        var stats = await _developerService.GetStatsAsync(activeTournament.Id);
+        
+        ViewBag.ActiveTournament = activeTournament;
+        ViewBag.Stats = stats;
+        
+        return View();
+    }
+
+    /// <summary>
+    /// Generate 2 random participants per house.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Generate2ParticipantsPerHouse()
+    {
+        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
+        if (activeTournament == null)
+        {
             TempData["Error"] = "No active tournament found.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(GenerateParticipants));
         }
 
         try
         {
             var createdBy = User.Identity?.Name ?? "Developer";
-            var count = await _developerService.GenerateParticipantsAsync(activeTournament.Id, createdBy);
+            var count = await _developerService.Generate2ParticipantsPerHouseAsync(activeTournament.Id, createdBy);
             TempData["Success"] = $"Successfully generated {count} participants (2 per house).";
-            _logger.LogInformation("Generated {Count} participants for tournament {TournamentId}", count, activeTournament.Id);
+            _logger.LogInformation("Generated {Count} participants (2 per house) for tournament {TournamentId}", count, activeTournament.Id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error generating participants for tournament {TournamentId}", activeTournament.Id);
+            _logger.LogError(ex, "Error generating 2 participants per house for tournament {TournamentId}", activeTournament.Id);
             TempData["Error"] = $"Error generating participants: {ex.Message}";
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(GenerateParticipants));
+    }
+
+    /// <summary>
+    /// Generate comprehensive participants (1 from each division/class combination per house).
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> GenerateComprehensiveParticipants()
+    {
+        var activeTournament = await _tournamentService.GetActiveTournamentAsync();
+        if (activeTournament == null)
+        {
+            TempData["Error"] = "No active tournament found.";
+            return RedirectToAction(nameof(GenerateParticipants));
+        }
+
+        try
+        {
+            var createdBy = User.Identity?.Name ?? "Developer";
+            var count = await _developerService.GenerateComprehensiveParticipantsAsync(activeTournament.Id, createdBy);
+            TempData["Success"] = $"Successfully generated {count} comprehensive participants (1 from each division/class combination per house).";
+            _logger.LogInformation("Generated {Count} comprehensive participants for tournament {TournamentId}", count, activeTournament.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating comprehensive participants for tournament {TournamentId}", activeTournament.Id);
+            TempData["Error"] = $"Error generating comprehensive participants: {ex.Message}";
+        }
+
+        return RedirectToAction(nameof(GenerateParticipants));
     }
 
     /// <summary>

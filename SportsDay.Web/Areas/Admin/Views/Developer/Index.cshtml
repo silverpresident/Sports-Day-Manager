@@ -172,21 +172,17 @@
                         </form>
 
                         <!-- Generate Participants -->
-                        <form asp-action="GenerateParticipants" method="post">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-success w-100 text-start"
-                                    onclick="return confirm('Generate 2 random participants per house?');">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <i class="bi bi-person-plus me-2"></i>
-                                        <strong>2. Generate Participants</strong>
-                                        <br>
-                                        <small class="text-muted">Create 2 random participants per house (ages 11-20)</small>
-                                    </span>
-                                    <i class="bi bi-chevron-right"></i>
-                                </div>
-                            </button>
-                        </form>
+                        <a asp-action="GenerateParticipants" class="btn btn-outline-success w-100 text-start text-decoration-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>
+                                    <i class="bi bi-person-plus me-2"></i>
+                                    <strong>2. Generate Participants</strong>
+                                    <br>
+                                    <small class="text-muted">Choose participant generation options (simple or comprehensive)</small>
+                                </span>
+                                <i class="bi bi-chevron-right"></i>
+                            </div>
+                        </a>
 
                         <!-- Generate Participation -->
                         <form asp-action="GenerateParticipation" method="post">
