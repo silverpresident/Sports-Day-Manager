@@ -45,10 +45,10 @@ public class EventsController : HouseLeaderBaseController
     public async Task<IActionResult> Index()
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -107,10 +107,10 @@ public class EventsController : HouseLeaderBaseController
     public async Task<IActionResult> Details(Guid id)
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -156,10 +156,10 @@ public class EventsController : HouseLeaderBaseController
     public async Task<IActionResult> RegisterParticipant(Guid id)
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -231,10 +231,10 @@ public class EventsController : HouseLeaderBaseController
     public async Task<IActionResult> RegisterParticipant(Guid id, Guid participantId)
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         try
         {
@@ -327,10 +327,10 @@ public class EventsController : HouseLeaderBaseController
     public async Task<IActionResult> UnregisterParticipant(Guid eventId, Guid participantId)
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+       /*  if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         try
         {

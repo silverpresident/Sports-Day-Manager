@@ -51,10 +51,10 @@ public class DashboardController : HouseLeaderBaseController
     public async Task<IActionResult> Index()
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -97,10 +97,10 @@ public class DashboardController : HouseLeaderBaseController
     public async Task<IActionResult> Register()
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+       /*  if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         // Check if user is already a house leader
         var existingLeader = await _houseLeaderService.GetByUserIdAsync(userId);
@@ -127,10 +127,10 @@ public class DashboardController : HouseLeaderBaseController
     public async Task<IActionResult> Register(int houseId)
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         try
         {
@@ -185,10 +185,10 @@ public class DashboardController : HouseLeaderBaseController
     public async Task<IActionResult> Unregister()
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -208,10 +208,10 @@ public class DashboardController : HouseLeaderBaseController
     public async Task<IActionResult> UnregisterConfirmed()
     {
         var userId = _userManager.GetUserId(User);
-        if (string.IsNullOrEmpty(userId))
+        /* if (string.IsNullOrEmpty(userId))
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         try
         {
