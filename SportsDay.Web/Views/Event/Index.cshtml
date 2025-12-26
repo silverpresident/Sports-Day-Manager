@@ -129,13 +129,85 @@
 
             // Event filter buttons
             const filterButtons = document.querySelectorAll('[data-filter]');
+            const tableBody = document.querySelector('tbody');
+            const noEventsRow = document.querySelector('tbody tr td[colspan="7"]')?.parentElement;
+            
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
+                    // Update active button state
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
-                    // TODO: Implement actual filtering logic
+                    
+                    // Get filter type
+                    const filterType = this.getAttribute('data-filter');
+                    
+                    // Get all event rows (excluding the "no events" row)
+                    const eventRows = Array.from(document.querySelectorAll('tbody tr')).filter(row => {
+                        return !row.querySelector('td[colspan="7"]');
+                    });
+                    
+                    let visibleCount = 0;
+                    
+                    // Filter events based on status
+                    eventRows.forEach(row => {
+                        const statusCell = row.querySelector('td:nth-child(5)'); // Status column
+                        if (!statusCell) return;
+                        
+                        const statusText = statusCell.textContent.trim();
+                        let shouldShow = false;
+                        
+                        switch (filterType) {
+                            case 'all':
+                                shouldShow = true;
+                                break;
+                            case 'upcoming':
+                                // Show Scheduled and In Progress events
+                                shouldShow = statusText.includes('Scheduled') || statusText.includes('In Progress');
+                                break;
+                            case 'completed':
+                                // Show Completed events
+                                shouldShow = statusText.includes('Completed');
+                                break;
+                        }
+                        
+                        if (shouldShow) {
+                            row.style.display = '';
+                            visibleCount++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide "no events" message based on visible count
+                    if (noEventsRow) {
+                        if (visibleCount === 0 && eventRows.length > 0) {
+                            // Show custom "no events found for filter" message
+                            noEventsRow.style.display = '';
+                            const messageCell = noEventsRow.querySelector('td[colspan="7"]');
+                            if (messageCell) {
+                                const filterName = filterType.charAt(0).toUpperCase() + filterType.slice(1);
+                                messageCell.innerHTML = `<i class="bi bi-emoji-neutral me-2"></i>No ${filterName.toLowerCase()} events found`;
+                            }
+                        } else if (visibleCount > 0) {
+                            // Hide "no events" message when events are visible
+                            noEventsRow.style.display = 'none';
+                        }
+                    }
+                    
+                    // Update button text with count for non-"all" filters
+                    if (filterType !== 'all') {
+                        const icon = this.querySelector('i').outerHTML;
+                        const filterName = filterType.charAt(0).toUpperCase() + filterType.slice(1);
+                        this.innerHTML = `${icon} ${filterName} (${visibleCount})`;
+                    }
                 });
             });
+            
+            // Initialize with "All" filter active and show counts
+            const allButton = document.querySelector('[data-filter="all"]');
+            if (allButton) {
+                allButton.click();
+            }
         });
     </script>
 }
