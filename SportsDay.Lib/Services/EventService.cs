@@ -230,4 +230,66 @@ public class EventService : IEventService
             throw;
         }
     }
+
+    public async Task<Event?> GetNextEventAsync(Guid currentEventId)
+    {
+        try
+        {
+            var currentEvent = await _context.Events
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == currentEventId);
+
+            if (currentEvent == null)
+            {
+                _logger.LogWarning("Current event not found: {EventId}", currentEventId);
+                return null;
+            }
+
+            // Get the next event by event number within the same tournament
+            var nextEvent = await _context.Events
+                .Where(e => e.TournamentId == currentEvent.TournamentId
+                         && e.EventNumber > currentEvent.EventNumber)
+                .OrderBy(e => e.EventNumber)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return nextEvent;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting next event for {EventId}", currentEventId);
+            throw;
+        }
+    }
+
+    public async Task<Event?> GetPreviousEventAsync(Guid currentEventId)
+    {
+        try
+        {
+            var currentEvent = await _context.Events
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == currentEventId);
+
+            if (currentEvent == null)
+            {
+                _logger.LogWarning("Current event not found: {EventId}", currentEventId);
+                return null;
+            }
+
+            // Get the previous event by event number within the same tournament
+            var previousEvent = await _context.Events
+                .Where(e => e.TournamentId == currentEvent.TournamentId
+                         && e.EventNumber < currentEvent.EventNumber)
+                .OrderByDescending(e => e.EventNumber)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return previousEvent;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting previous event for {EventId}", currentEventId);
+            throw;
+        }
+    }
 }

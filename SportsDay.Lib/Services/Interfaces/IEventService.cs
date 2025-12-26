@@ -15,4 +15,6 @@ public interface IEventService
     Task DeleteAsync(Guid id);
     Task<bool> ExistsAsync(Guid id);
     Task<int> GetNextEventNumberAsync(Guid tournamentId);
+    Task<Event?> GetNextEventAsync(Guid currentEventId);
+    Task<Event?> GetPreviousEventAsync(Guid currentEventId);
 }

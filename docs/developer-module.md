@@ -68,6 +68,10 @@ The generation actions should be run in order for best results:
   - Sets `IsNewRecord = true` on the result
   - Updates the event's record value and record holder with the participant's name
 - Marks events as Completed
+- **Creates EventUpdate records for each event with results**:
+  - Standard update: "Results recorded for [Event Name]. Winner: [Winner Name]"
+  - New record update: "🏆 NEW RECORD! [Winner Name] wins [Event Name] and sets a new record!"
+  - Additional celebratory update for new records: "🎉 [Winner Name] has broken the school record in [Event Name]!"
 
 ### Data Cleanup
 

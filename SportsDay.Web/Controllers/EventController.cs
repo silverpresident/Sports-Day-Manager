@@ -70,5 +70,54 @@ namespace SportsDay.Web.Controllers
                 return NotFound();
             }
         }
+        public async Task<IActionResult> NextEvent(Guid id)
+        {
+            try
+            {
+                var nextEvent = await _eventService.GetNextEventAsync(id);
+
+                if (nextEvent == null)
+                {
+                    _logger.LogInformation("No next event found after event ID: {EventId}", id);
+                    // Stay on current event if no next event exists
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                _logger.LogInformation("Navigating to next event {EventName} (ID: {EventId})",
+                    nextEvent.Name, nextEvent.Id);
+
+                return RedirectToAction(nameof(Details), new { id = nextEvent.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error navigating to next event from ID: {EventId}", id);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        public async Task<IActionResult> PreviousEvent(Guid id)
+        {
+            try
+            {
+                var previousEvent = await _eventService.GetPreviousEventAsync(id);
+
+                if (previousEvent == null)
+                {
+                    _logger.LogInformation("No previous event found before event ID: {EventId}", id);
+                    // Stay on current event if no previous event exists
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                _logger.LogInformation("Navigating to previous event {EventName} (ID: {EventId})",
+                    previousEvent.Name, previousEvent.Id);
+
+                return RedirectToAction(nameof(Details), new { id = previousEvent.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error navigating to previous event from ID: {EventId}", id);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
     }
 }

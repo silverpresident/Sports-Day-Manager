@@ -241,6 +241,7 @@ public class DeveloperService : IDeveloperService
 
         var resultsCreated = 0;
         var newRecordsCreated = 0;
+        var eventUpdatesCreated = 0;
 
         foreach (var evt in events)
         {
@@ -261,6 +262,9 @@ public class DeveloperService : IDeveloperService
                 .ToList();
 
             var placement = 1;
+            string? winnerName = null;
+            bool hasNewRecord = false;
+
             foreach (var result in participantsWithoutResults)
             {
                 result.Placement = placement;
@@ -278,15 +282,22 @@ public class DeveloperService : IDeveloperService
                     result.SpeedOrDistance = Math.Round((decimal)(_random.NextDouble() * 9 + 1), 2);
                 }
 
-                // For first place finishers, randomly mark some as new records (about 10% chance)
-                if (placement == 1 && _random.Next(10) == 0)
+                // Track the winner's name for the event update
+                if (placement == 1)
                 {
-                    result.IsNewRecord = true;
-                    newRecordsCreated++;
+                    winnerName = result.Participant?.FullName ?? "Unknown";
 
-                    // Update the event's record with this result
-                    evt.Record = result.SpeedOrDistance;
-                    evt.RecordHolder = result.Participant?.FullName ?? "Unknown";
+                    // For first place finishers, randomly mark some as new records (about 10% chance)
+                    if (_random.Next(10) == 0)
+                    {
+                        result.IsNewRecord = true;
+                        hasNewRecord = true;
+                        newRecordsCreated++;
+
+                        // Update the event's record with this result
+                        evt.Record = result.SpeedOrDistance;
+                        evt.RecordHolder = winnerName;
+                    }
                 }
 
                 result.UpdatedAt = DateTime.Now;
@@ -300,11 +311,42 @@ public class DeveloperService : IDeveloperService
             evt.Status = EventStatus.Completed;
             evt.UpdatedAt = DateTime.Now;
             evt.UpdatedBy = createdBy;
+
+            // Create EventUpdate for this event's results
+            var eventUpdate = new EventUpdate
+            {
+                Id = Guid.NewGuid(),
+                EventId = evt.Id,
+                TournamentId = tournamentId,
+                Message = hasNewRecord
+                    ? $"🏆 NEW RECORD! {winnerName} wins {evt.Name} and sets a new record!"
+                    : $"Results recorded for {evt.Name}. Winner: {winnerName}",
+                CreatedAt = DateTime.Now,
+                CreatedBy = createdBy
+            };
+            _context.EventUpdates.Add(eventUpdate);
+            eventUpdatesCreated++;
+
+            // If there's a new record, create an additional celebratory update
+            if (hasNewRecord)
+            {
+                var recordUpdate = new EventUpdate
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = evt.Id,
+                    TournamentId = tournamentId,
+                    Message = $"🎉 {winnerName} has broken the school record in {evt.Name}!",
+                    CreatedAt = DateTime.Now.AddSeconds(1), // Slightly later timestamp
+                    CreatedBy = createdBy
+                };
+                _context.EventUpdates.Add(recordUpdate);
+                eventUpdatesCreated++;
+            }
         }
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Generated {Count} results for tournament {TournamentId}, including {NewRecords} new records",
-            resultsCreated, tournamentId, newRecordsCreated);
+        _logger.LogInformation("Generated {Count} results for tournament {TournamentId}, including {NewRecords} new records and {Updates} event updates",
+            resultsCreated, tournamentId, newRecordsCreated, eventUpdatesCreated);
         return resultsCreated;
     }
 
