@@ -42,8 +42,9 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 │  │  - IHouseLeaderService / HouseLeaderService      │   │
 │  │  - IParticipantService / ParticipantService      │   │
 │  │  - IEventTemplateService / EventTemplateService  │   │
+│  │  - IEventService / EventService                  │   │
 │  │  - IDeveloperService / DeveloperService (DEBUG)  │   │
-│  │  - (Future: IEventService, IResultService)       │   │
+│  │  - IDashboardService / DashboardService          │   │
 │  └─────────────────────────────────────────────────┘   │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  Extensions                                      │   │
@@ -98,8 +99,11 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Services/HouseLeaderService.cs` - House leader management logic
 - `Services/EventTemplateService.cs` - Event template management logic
 - `Services/DeveloperService.cs` - Developer/testing data generation (DEBUG only)
+- `Services/EventService.cs` - Event management logic
 - `Extensions/ServiceCollectionExtensions.cs` - Service registration extension method
 - `Models/BaseEntity.cs` - Base class for all entities with audit fields
+- `ViewModels/HouseDetailsViewModel.cs` - House details with rankings and results
+- `ViewModels/HouseMembersViewModel.cs` - House members with event participation
 
 ### SportsDay.Web (ASP.NET Core MVC)
 **Purpose**: Web application with public and admin interfaces
@@ -212,7 +216,8 @@ Participant (1) ──→ (N) Result
   - `ParticipantService` handles participant management
   - `HouseLeaderService` handles house leader operations
   - `EventTemplateService` handles event template CRUD and import operations
-  - `DeveloperService` handles test data generation and cleanup (DEBUG only)
+    - `EventService` handles event CRUD and retrieval for active tournament
+    - `DeveloperService` handles test data generation and cleanup (DEBUG only)
 
 ### Hub Pattern (SignalR)
 - `SportsHub` manages real-time connections

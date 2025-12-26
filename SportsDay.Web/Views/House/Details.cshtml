@@ -1,0 +1,336 @@
+@model SportsDay.Lib.ViewModels.HouseDetailsViewModel
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = Model.House.Name;
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="House" asp-action="Index">Houses</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.House.Name</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <div class="me-3" style="width: 60px; height: 60px; background-color: @Model.House.Color; border-radius: 50%;"></div>
+            <div>
+                <h1 class="mb-0">@Model.House.Name</h1>
+                <p class="text-muted mb-0">
+                    <span class="badge" style="background-color: @Model.House.Color;">@Model.House.ColorName</span>
+                    @if (Model.ActiveTournament != null)
+                    {
+                        <span class="ms-2">@Model.ActiveTournament.Name</span>
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Members" asp-route-id="@Model.House.Id" class="btn btn-outline-success">
+                <i class="bi bi-people me-1"></i>View Members
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Houses
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Overall Ranking Card -->
+        <div class="col-md-4 mb-4">
+            <div class="sports-card card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-trophy me-2"></i>Overall Standing
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-1 fw-bold" style="color: @Model.House.Color;">
+                        @if (Model.OverallRank > 0)
+                        {
+                            @Model.OverallRank<sup>@GetOrdinalSuffix(Model.OverallRank)</sup>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </div>
+                    <p class="text-muted mb-2">out of @Model.TotalHouses houses</p>
+                    <div class="display-4 fw-bold text-success">@Model.TotalPoints</div>
+                    <p class="text-muted">Total Points</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Division Rankings Card -->
+        <div class="col-md-4 mb-4">
+            <div class="sports-card card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-bar-chart me-2"></i>Division Rankings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.DivisionSummaries.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Division</th>
+                                        <th class="text-end">Points</th>
+                                        <th class="text-end">Rank</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var division in Model.DivisionSummaries)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="bi @(division.Division == DivisionType.Boys ? "bi-gender-male text-primary" : division.Division == DivisionType.Girls ? "bi-gender-female text-danger" : "bi-people text-success") me-1"></i>
+                                                @division.Division
+                                            </td>
+                                            <td class="text-end fw-bold">@division.TotalPoints</td>
+                                            <td class="text-end">
+                                                @if (division.Rank > 0)
+                                                {
+                                                    <span class="badge @(division.Rank == 1 ? "bg-warning" : division.Rank == 2 ? "bg-secondary" : division.Rank == 3 ? "bg-info" : "bg-light text-dark")">
+                                                        @division.Rank<sup>@GetOrdinalSuffix(division.Rank)</sup>
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-0">No division data available</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- House Leaders Card -->
+        <div class="col-md-4 mb-4">
+            <div class="sports-card card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-badge me-2"></i>House Leaders
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.HouseLeaders.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var leader in Model.HouseLeaders)
+                            {
+                                <li class="list-group-item d-flex align-items-center px-0">
+                                    <i class="bi bi-person-circle me-2 text-success"></i>
+                                    <span>@leader.UserId</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-0">No house leaders assigned</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Houses Leaderboard -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="sports-card card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list-ol me-2"></i>Overall Leaderboard
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 60px;">Rank</th>
+                                    <th>House</th>
+                                    <th class="text-end">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ranking in Model.AllHouseRankings)
+                                {
+                                    var isCurrentHouse = ranking.HouseId == Model.House.Id;
+                                    <tr class="@(isCurrentHouse ? "table-active" : "")">
+                                        <td class="text-center">
+                                            @if (ranking.Rank == 1)
+                                            {
+                                                <i class="bi bi-trophy-fill text-warning"></i>
+                                            }
+                                            else if (ranking.Rank == 2)
+                                            {
+                                                <i class="bi bi-award-fill text-secondary"></i>
+                                            }
+                                            else if (ranking.Rank == 3)
+                                            {
+                                                <i class="bi bi-award text-info"></i>
+                                            }
+                                            else
+                                            {
+                                                @ranking.Rank
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge me-2" style="background-color: @ranking.HouseColor;">&nbsp;</span>
+                                            @ranking.HouseName
+                                            @if (isCurrentHouse)
+                                            {
+                                                <i class="bi bi-arrow-left-short text-success"></i>
+                                            }
+                                        </td>
+                                        <td class="text-end fw-bold">@ranking.TotalPoints</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Results -->
+    <div class="row">
+        <div class="col-12">
+            <div class="sports-card card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-calendar-event me-2"></i>Event Results
+                        </h5>
+                        <span class="badge bg-success">@Model.EventResults.Count() events</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.EventResults.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sports mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 60px;">#</th>
+                                        <th scope="col">Event</th>
+                                        <th scope="col">Division</th>
+                                        <th scope="col">Class</th>
+                                        <th scope="col">Participant</th>
+                                        <th scope="col" class="text-center">Placement</th>
+                                        <th scope="col" class="text-end">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var result in Model.EventResults)
+                                    {
+                                        var placementClass = result.Placement switch
+                                        {
+                                            1 => "table-warning",
+                                            2 => "table-secondary",
+                                            3 => "table-info",
+                                            _ => ""
+                                        };
+                                        <tr class="@placementClass">
+                                            <td>@result.EventNumber</td>
+                                            <td>
+                                                <a asp-controller="Event" asp-action="Details" asp-route-id="@result.EventId" class="text-decoration-none">
+                                                    @result.EventName
+                                                </a>
+                                                @if (result.IsNewRecord)
+                                                {
+                                                    <span class="badge bg-danger ms-1">
+                                                        <i class="bi bi-star-fill"></i> RECORD
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <i class="bi @(result.Division == DivisionType.Boys ? "bi-gender-male text-primary" : result.Division == DivisionType.Girls ? "bi-gender-female text-danger" : "bi-people text-success") me-1"></i>
+                                                @result.Division
+                                            </td>
+                                            <td>
+                                                @(result.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)result.ClassGroup}")
+                                            </td>
+                                            <td>@(result.ParticipantName ?? "-")</td>
+                                            <td class="text-center">
+                                                @if (result.Placement.HasValue)
+                                                {
+                                                    var placementIcon = result.Placement switch
+                                                    {
+                                                        1 => "bi-trophy-fill text-warning",
+                                                        2 => "bi-award-fill text-secondary",
+                                                        3 => "bi-award text-info",
+                                                        _ => "bi-circle"
+                                                    };
+                                                    <i class="bi @placementIcon me-1"></i>@result.Placement
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td class="text-end fw-bold">@result.Points</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success">
+                                        <td colspan="6" class="text-end fw-bold">Total Points:</td>
+                                        <td class="text-end fw-bold">@Model.TotalPoints</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-hourglass-split display-4 text-muted"></i>
+                            <p class="text-muted mt-3">No event results recorded yet</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetOrdinalSuffix(int number)
+    {
+        if (number <= 0) return "";
+        
+        switch (number % 100)
+        {
+            case 11:
+            case 12:
+            case 13:
+                return "th";
+        }
+        
+        switch (number % 10)
+        {
+            case 1: return "st";
+            case 2: return "nd";
+            case 3: return "rd";
+            default: return "th";
+        }
+    }
+}

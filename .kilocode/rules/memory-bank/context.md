@@ -34,6 +34,17 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - Generate Events, Participants, Participation, and Results
   - Delete all Results, Participation, Participants, and Events
   - Documentation in docs/developer-module.md
+- **EventService implemented** (December 2025):
+  - IEventService interface and EventService implementation
+  - Public EventController refactored to use service layer
+  - Event Details view with full event information and results
+- **House Details and Members views implemented** (December 2025):
+  - Extended IHouseService with new methods for house details and rankings
+  - HouseDetailsViewModel and HouseMembersViewModel created
+  - Public HouseController updated with Details and Members actions
+  - House Details view shows: house info, leaders, overall ranking, division rankings, leaderboard, event results
+  - House Members view shows: all participants with expandable event participation details
+  - House Index updated with links to Details and Members views
 
 ## Current Focus
 
@@ -54,6 +65,18 @@ The project is in a stable state with core functionality working. The system can
   - Generate test data (events, participants, participation, results)
   - Clean up test data with bulk delete operations
   - View tournament statistics
+- **View house details**:
+  - House information with color and logo
+  - House leaders list
+  - Overall ranking and total points
+  - Division-specific rankings (Boys, Girls, Open)
+  - All house rankings leaderboard
+  - Event results with placements and points
+- **View house members**:
+  - All participants registered to the house
+  - Individual participant event participation
+  - Points breakdown per participant
+  - Filtering by division
 
 ## Known Issues
 
@@ -80,8 +103,8 @@ Potential areas for enhancement:
 
 ## Technical Debt
 
-- Need to add proper ViewModel classes for complex views
 - Missing anti-forgery token validation on some POST actions
-- Consider creating additional services for Events, Results, and Announcements
-- EventTemplateService created; consider similar pattern for Events, Results, Announcements
+- Consider creating additional services for Results and Announcements
+- EventService created; consider similar pattern for Results, Announcements
 - DeveloperService created for testing; consider expanding for more test scenarios
+- HouseDetailsViewModel and HouseMembersViewModel created; consider similar ViewModels for other complex views

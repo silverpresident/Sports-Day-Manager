@@ -1,4 +1,5 @@
 using SportsDay.Lib.Models;
+using SportsDay.Lib.ViewModels;
 
 namespace SportsDay.Lib.Services.Interfaces;
 
@@ -9,6 +10,10 @@ public interface IHouseService
     Task<House?> GetByIdWithParticipantsAsync(int id);
     Task<House?> GetByIdWithResultsAsync(int id);
     Task<House?> GetByIdWithDetailsAsync(int id);
+    Task<House?> GetByIdWithLeadersAsync(int id);
+    Task<HouseDetailsViewModel?> GetHouseDetailsForActiveTournamentAsync(int id);
+    Task<HouseMembersViewModel?> GetHouseMembersForActiveTournamentAsync(int id);
+    Task<IEnumerable<HouseRankingViewModel>> GetAllHouseRankingsForActiveTournamentAsync();
     Task<House> CreateAsync(House house);
     Task UpdateAsync(House house);
     Task DeleteAsync(int id);

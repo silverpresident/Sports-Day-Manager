@@ -179,13 +179,9 @@
                                                 }
                                             </td>
                                             <td class="text-end">
-                                                @if (result.Speed.HasValue)
+                                                @if (result.SpeedOrDistance.HasValue)
                                                 {
-                                                    <span>@result.Speed.Value.ToString("F2")s</span>
-                                                }
-                                                else if (result.Distance.HasValue)
-                                                {
-                                                    <span>@result.Distance.Value.ToString("F2")m</span>
+                                                    <span>@result.SpeedOrDistance.Value.ToString("F2")@(Model.Type == EventType.Speed ? "s" : "m")</span>
                                                 }
                                                 @if (result.IsNewRecord)
                                                 {

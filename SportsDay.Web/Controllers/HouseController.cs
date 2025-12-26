@@ -33,6 +33,52 @@ namespace SportsDay.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var houseDetails = await _houseService.GetHouseDetailsForActiveTournamentAsync(id);
+                if (houseDetails == null)
+                {
+                    _logger.LogWarning("House not found with ID: {HouseId}", id);
+                    return NotFound();
+                }
+
+                _logger.LogInformation("Loaded house details for {HouseName} (ID: {HouseId})",
+                    houseDetails.House.Name, id);
+
+                return View(houseDetails);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving house details for house {HouseId}", id);
+                return View("Error");
+            }
+        }
+
+        public async Task<IActionResult> Members(int id)
+        {
+            try
+            {
+                var houseMembers = await _houseService.GetHouseMembersForActiveTournamentAsync(id);
+                if (houseMembers == null)
+                {
+                    _logger.LogWarning("House not found with ID: {HouseId}", id);
+                    return NotFound();
+                }
+
+                _logger.LogInformation("Loaded house members for {HouseName} (ID: {HouseId})",
+                    houseMembers.House.Name, id);
+
+                return View(houseMembers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving house members for house {HouseId}", id);
+                return View("Error");
+            }
+        }
+
         public async Task<IActionResult> Participants(int id)
         {
             try

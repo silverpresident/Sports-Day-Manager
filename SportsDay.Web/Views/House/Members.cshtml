@@ -1,0 +1,268 @@
+@model SportsDay.Lib.ViewModels.HouseMembersViewModel
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = $"{Model.House.Name} - Members";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="House" asp-action="Index">Houses</a></li>
+            <li class="breadcrumb-item"><a asp-controller="House" asp-action="Details" asp-route-id="@Model.House.Id">@Model.House.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Members</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <div class="me-3" style="width: 50px; height: 50px; background-color: @Model.House.Color; border-radius: 50%;"></div>
+            <div>
+                <h1 class="mb-0">@Model.House.Name Members</h1>
+                <p class="text-muted mb-0">
+                    @if (Model.ActiveTournament != null)
+                    {
+                        <span>@Model.ActiveTournament.Name</span>
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Details" asp-route-id="@Model.House.Id" class="btn btn-outline-success">
+                <i class="bi bi-house me-1"></i>House Details
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Houses
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="sports-card card text-center">
+                <div class="card-body">
+                    <div class="display-4 fw-bold" style="color: @Model.House.Color;">@Model.TotalParticipants</div>
+                    <p class="text-muted mb-0">Total Members</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="sports-card card text-center">
+                <div class="card-body">
+                    <div class="display-4 fw-bold text-success">@Model.TotalPoints</div>
+                    <p class="text-muted mb-0">Total Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="sports-card card text-center">
+                <div class="card-body">
+                    <div class="display-4 fw-bold text-primary">@Model.Participants.Sum(p => p.EventCount)</div>
+                    <p class="text-muted mb-0">Event Participations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members List -->
+    <div class="sports-card card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-people me-2"></i>Members & Event Participation
+                </h5>
+                <div class="btn-group" role="group" aria-label="Division filters">
+                    <button type="button" class="btn btn-outline-success btn-sm active" data-filter="all">All</button>
+                    <button type="button" class="btn btn-outline-success btn-sm" data-filter="Boys">Boys</button>
+                    <button type="button" class="btn btn-outline-success btn-sm" data-filter="Girls">Girls</button>
+                    <button type="button" class="btn btn-outline-success btn-sm" data-filter="Open">Open</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Participants.Any())
+            {
+                <div class="accordion" id="membersAccordion">
+                    @foreach (var participant in Model.Participants)
+                    {
+                        var participantIndex = Model.Participants.ToList().IndexOf(participant);
+                        <div class="accordion-item member-item" data-division="@participant.Division">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#member-@participantIndex" aria-expanded="false" aria-controls="member-@participantIndex">
+                                    <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge me-2 @(participant.Division == DivisionType.Boys ? "bg-primary" : participant.Division == DivisionType.Girls ? "bg-danger" : "bg-success")">
+                                                @participant.Division
+                                            </span>
+                                            <strong>@participant.FullName</strong>
+                                            <span class="text-muted ms-2">
+                                                (@(participant.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)participant.ClassGroup}"))
+                                            </span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-secondary me-2">@participant.EventCount events</span>
+                                            <span class="badge bg-success">@participant.TotalPoints pts</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="member-@participantIndex" class="accordion-collapse collapse" data-bs-parent="#membersAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <dl class="row mb-0">
+                                                <dt class="col-sm-4">Division</dt>
+                                                <dd class="col-sm-8">
+                                                    <i class="bi @(participant.Division == DivisionType.Boys ? "bi-gender-male text-primary" : participant.Division == DivisionType.Girls ? "bi-gender-female text-danger" : "bi-people text-success") me-1"></i>
+                                                    @participant.Division
+                                                </dd>
+                                                <dt class="col-sm-4">Class</dt>
+                                                <dd class="col-sm-8">@(participant.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)participant.ClassGroup}")</dd>
+                                                <dt class="col-sm-4">Age Group</dt>
+                                                <dd class="col-sm-8">@(string.IsNullOrEmpty(participant.AgeGroup) || participant.AgeGroup == "0" ? "Open" : participant.AgeGroup)</dd>
+                                            </dl>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <dl class="row mb-0">
+                                                <dt class="col-sm-4">Events</dt>
+                                                <dd class="col-sm-8">@participant.EventCount</dd>
+                                                <dt class="col-sm-4">Total Points</dt>
+                                                <dd class="col-sm-8"><strong class="text-success">@participant.TotalPoints</strong></dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+
+                                    @if (participant.EventResults.Any())
+                                    {
+                                        <h6 class="mb-2"><i class="bi bi-calendar-event me-1"></i>Event Results</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-hover mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Event</th>
+                                                        <th class="text-center">Placement</th>
+                                                        <th class="text-end">Result</th>
+                                                        <th class="text-end">Points</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var result in participant.EventResults)
+                                                    {
+                                                        var placementClass = result.Placement switch
+                                                        {
+                                                            1 => "table-warning",
+                                                            2 => "table-secondary",
+                                                            3 => "table-info",
+                                                            _ => ""
+                                                        };
+                                                        <tr class="@placementClass">
+                                                            <td>@result.EventNumber</td>
+                                                            <td>
+                                                                <a asp-controller="Event" asp-action="Details" asp-route-id="@result.EventId" class="text-decoration-none">
+                                                                    @result.EventName
+                                                                </a>
+                                                                @if (result.IsNewRecord)
+                                                                {
+                                                                    <span class="badge bg-danger ms-1">
+                                                                        <i class="bi bi-star-fill"></i> RECORD
+                                                                    </span>
+                                                                }
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @if (result.Placement.HasValue)
+                                                                {
+                                                                    var placementIcon = result.Placement switch
+                                                                    {
+                                                                        1 => "bi-trophy-fill text-warning",
+                                                                        2 => "bi-award-fill text-secondary",
+                                                                        3 => "bi-award text-info",
+                                                                        _ => "bi-circle"
+                                                                    };
+                                                                    <i class="bi @placementIcon me-1"></i>@result.Placement
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">-</span>
+                                                                }
+                                                            </td>
+                                                            <td class="text-end">
+                                                                @if (result.SpeedOrDistance.HasValue)
+                                                                {
+                                                                    @result.SpeedOrDistance.Value.ToString("F2")
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">-</span>
+                                                                }
+                                                            </td>
+                                                            <td class="text-end fw-bold">@result.Points</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="table-success">
+                                                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                                                        <td class="text-end fw-bold">@participant.TotalPoints</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center py-3">
+                                            <i class="bi bi-hourglass-split text-muted"></i>
+                                            <p class="text-muted mb-0 small">No event results recorded yet</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-people display-4 text-muted"></i>
+                    <p class="text-muted mt-3">No members registered for this house</p>
+                    @if (Model.ActiveTournament == null)
+                    {
+                        <p class="text-muted small">No active tournament found</p>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Division filter buttons
+            const filterButtons = document.querySelectorAll('[data-filter]');
+            const memberItems = document.querySelectorAll('.member-item');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Filter members
+                    memberItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-division') === filter) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}
