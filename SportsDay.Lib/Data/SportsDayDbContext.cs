@@ -123,11 +123,16 @@ public class SportsDayDbContext : IdentityDbContext
         modelBuilder.Entity<Event>()
             .Property(r => r.ClassGroup)
             .HasConversion<string>();
+
+        // Event enum conversions
         modelBuilder.Entity<Event>()
             .Property(r => r.GenderGroup)
             .HasConversion<string>();
         modelBuilder.Entity<Event>()
             .Property(r => r.Status)
+            .HasConversion<string>();
+        modelBuilder.Entity<Event>()
+            .Property(e => e.Type)
             .HasConversion<string>();
 
         // EventTemplate enum conversions
