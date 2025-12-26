@@ -30,6 +30,11 @@ The generation actions should be run in order for best results:
 - Imports all active event templates into the current tournament
 - Creates Event records with proper event numbers
 - Uses the `IEventTemplateService.ImportAllToTournamentAsync()` method
+- **Adds random record details to approximately 30% of events**:
+  - Assigns a randomly generated student name as the record holder (simulating records from previous years)
+  - Generates appropriate record values based on event type:
+    - Speed events: 10-30 seconds (track times)
+    - Distance events: 1-15 meters (field measurements)
 
 #### 2. Generate Participants
 - Creates 2 random participants per house (12 total for 6 houses)
@@ -59,6 +64,9 @@ The generation actions should be run in order for best results:
 - Generates random speed/distance values:
   - Speed events: 10-60 seconds
   - Distance events: 1-10 meters
+- **Randomly marks some first-place results as new records (approximately 10% chance)**:
+  - Sets `IsNewRecord = true` on the result
+  - Updates the event's record value and record holder with the participant's name
 - Marks events as Completed
 
 ### Data Cleanup

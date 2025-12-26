@@ -36,6 +36,7 @@ public class DeveloperService : IDeveloperService
         "Scott", "Green", "Baker", "Adams", "Nelson", "Hill", "Mitchell", "Roberts", "Carter", "Phillips"
     };
 
+
     public DeveloperService(
         SportsDayDbContext context,
         IEventTemplateService eventTemplateService,
@@ -52,9 +53,49 @@ public class DeveloperService : IDeveloperService
         _logger.LogInformation("Generating events for tournament {TournamentId}", tournamentId);
 
         var events = await _eventTemplateService.ImportAllToTournamentAsync(tournamentId, createdBy);
-        var count = events.Count();
+        var eventList = events.ToList();
+        var count = eventList.Count;
 
-        _logger.LogInformation("Generated {Count} events for tournament {TournamentId}", count, tournamentId);
+        // Add random record details to approximately 30% of events
+        // These simulate records from previous years at the high school
+        var eventsToAddRecords = eventList
+            .OrderBy(_ => _random.Next())
+            .Take((int)(count * 0.3))
+            .ToList();
+
+        foreach (var evt in eventsToAddRecords)
+        {
+            // Only add records if the event doesn't already have one
+            if (evt.Record == null)
+            {
+                // Generate a random student name as the record holder (simulating previous years)
+                var recordHolderFirstName = FirstNames[_random.Next(FirstNames.Length)];
+                var recordHolderLastName = LastNames[_random.Next(LastNames.Length)];
+                evt.RecordHolder = $"{recordHolderFirstName} {recordHolderLastName}";
+                
+                // Generate appropriate record value based on event type
+                if (evt.Type == EventType.Speed)
+                {
+                    // Generate time in seconds (faster times are better records)
+                    // Track events: 10-30 seconds for sprints, 30-120 for longer distances
+                    evt.Record = Math.Round((decimal)(_random.NextDouble() * 20 + 10), 2);
+                }
+                else
+                {
+                    // Generate distance in meters (longer distances are better records)
+                    // Field events: 1-15 meters for throws/jumps
+                    evt.Record = Math.Round((decimal)(_random.NextDouble() * 14 + 1), 2);
+                }
+
+                evt.UpdatedAt = DateTime.Now;
+                evt.UpdatedBy = createdBy;
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Generated {Count} events for tournament {TournamentId}, added records to {RecordCount} events",
+            count, eventsToAddRecords.Count, tournamentId);
         return count;
     }
 
@@ -194,10 +235,12 @@ public class DeveloperService : IDeveloperService
         // Get all events that have participants but no completed results
         var events = await _context.Events
             .Include(e => e.Results)
+                .ThenInclude(r => r.Participant)
             .Where(e => e.TournamentId == tournamentId)
             .ToListAsync();
 
         var resultsCreated = 0;
+        var newRecordsCreated = 0;
 
         foreach (var evt in events)
         {
@@ -235,6 +278,17 @@ public class DeveloperService : IDeveloperService
                     result.SpeedOrDistance = Math.Round((decimal)(_random.NextDouble() * 9 + 1), 2);
                 }
 
+                // For first place finishers, randomly mark some as new records (about 10% chance)
+                if (placement == 1 && _random.Next(10) == 0)
+                {
+                    result.IsNewRecord = true;
+                    newRecordsCreated++;
+
+                    // Update the event's record with this result
+                    evt.Record = result.SpeedOrDistance;
+                    evt.RecordHolder = result.Participant?.FullName ?? "Unknown";
+                }
+
                 result.UpdatedAt = DateTime.Now;
                 result.UpdatedBy = createdBy;
 
@@ -249,7 +303,8 @@ public class DeveloperService : IDeveloperService
         }
 
         await _context.SaveChangesAsync();
-        _logger.LogInformation("Generated {Count} results for tournament {TournamentId}", resultsCreated, tournamentId);
+        _logger.LogInformation("Generated {Count} results for tournament {TournamentId}, including {NewRecords} new records",
+            resultsCreated, tournamentId, newRecordsCreated);
         return resultsCreated;
     }
 
