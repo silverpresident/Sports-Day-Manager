@@ -1,7 +1,403 @@
+@model SportsDay.Lib.ViewModels.RecordsIndexViewModel
+@using SportsDay.Lib.Enums
 @{
     ViewData["Title"] = "Records";
 }
 
-<h1>Records</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0">
+                <i class="bi bi-trophy-fill text-warning me-2"></i>Records
+            </h1>
+            <p class="text-muted mt-2">
+                <i class="bi bi-info-circle me-1"></i>Historical and new records from @(Model.ActiveTournamentName ?? "the active tournament")
+            </p>
+        </div>
+    </div>
 
-<p>List of records will go here.</p>
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy fs-1 text-success mb-2"></i>
+                    <h3 class="mb-0">@Model.ExistingRecordCount</h3>
+                    <small class="text-muted">Existing Records</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-star-fill fs-1 text-warning mb-2"></i>
+                    <h3 class="mb-0">@Model.NewRecordCount</h3>
+                    <small class="text-muted">New Records</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-collection fs-1 text-primary mb-2"></i>
+                    <h3 class="mb-0">@(Model.ExistingRecordCount + Model.NewRecordCount)</h3>
+                    <small class="text-muted">Total Records</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="sports-card card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-funnel me-2"></i>Filter Records
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3">
+                <div class="col-md-2">
+                    <label for="division" class="form-label">
+                        <i class="bi bi-gender-ambiguous me-1"></i>Division
+                    </label>
+                    <select name="division" id="division" class="form-select">
+                        <option value="">All Divisions</option>
+                        @foreach (var div in Enum.GetValues<DivisionType>())
+                        {
+                            <option value="@div" selected="@(Model.SelectedDivision == div)">@div</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="eventClass" class="form-label">
+                        <i class="bi bi-123 me-1"></i>Class
+                    </label>
+                    <select name="eventClass" id="eventClass" class="form-select">
+                        <option value="">All Classes</option>
+                        @foreach (var cls in Enum.GetValues<EventClass>())
+                        {
+                            var displayName = cls == EventClass.Open ? "Open" : $"Class {(int)cls}";
+                            <option value="@cls" selected="@(Model.SelectedClass == cls)">@displayName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="category" class="form-label">
+                        <i class="bi bi-tag me-1"></i>Category
+                    </label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">All Categories</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat" selected="@(Model.SelectedCategory == cat)">@cat</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="year" class="form-label">
+                        <i class="bi bi-calendar me-1"></i>Year
+                    </label>
+                    <select name="year" id="year" class="form-select">
+                        <option value="">All Years</option>
+                        @foreach (var yr in Model.Years)
+                        {
+                            <option value="@yr" selected="@(Model.SelectedYear == yr)">@yr</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">
+                        <i class="bi bi-filter me-1"></i>Record Type
+                    </label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="showNewOnly" id="showNewOnly" value="true" @(Model.ShowNewRecordsOnly ? "checked" : "")>
+                        <label class="form-check-label" for="showNewOnly">
+                            <i class="bi bi-star-fill text-warning me-1"></i>New Only
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="showExistingOnly" id="showExistingOnly" value="true" @(Model.ShowExistingRecordsOnly ? "checked" : "")>
+                        <label class="form-check-label" for="showExistingOnly">
+                            <i class="bi bi-trophy text-success me-1"></i>Existing Only
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-search me-1"></i>Filter
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-1">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Records Section -->
+    @if (Model.NewRecords.Any() && !Model.ShowExistingRecordsOnly)
+    {
+        <div class="sports-card card mb-4">
+            <div class="card-header bg-warning bg-opacity-25">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-star-fill text-warning me-2"></i>New Records
+                    </h5>
+                    <span class="badge bg-warning text-dark">
+                        <i class="bi bi-lightning me-1"></i>@Model.NewRecordCount Records Broken
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sports mb-0" aria-label="New records table">
+                        <thead>
+                            <tr>
+                                <th scope="col"><i class="bi bi-trophy me-1"></i>Event</th>
+                                <th scope="col"><i class="bi bi-gender-ambiguous me-1"></i>Division</th>
+                                <th scope="col"><i class="bi bi-123 me-1"></i>Class</th>
+                                <th scope="col"><i class="bi bi-stopwatch me-1"></i>Record</th>
+                                <th scope="col"><i class="bi bi-person me-1"></i>Holder</th>
+                                <th scope="col"><i class="bi bi-house me-1"></i>House</th>
+                                <th scope="col"><i class="bi bi-calendar me-1"></i>Date</th>
+                                <th scope="col" class="text-center"><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.NewRecords)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@record.EventName</strong>
+                                        <span class="badge bg-warning text-dark ms-1">NEW</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var (divIcon, divClass) = record.Division switch
+                                            {
+                                                DivisionType.Boys => ("bi-gender-male", "text-primary"),
+                                                DivisionType.Girls => ("bi-gender-female", "text-danger"),
+                                                DivisionType.Open => ("bi-gender-ambiguous", "text-success"),
+                                                _ => ("bi-question-circle", "text-secondary")
+                                            };
+                                        }
+                                        <span class="@divClass">
+                                            <i class="bi @divIcon me-1"></i>@record.Division
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @(record.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)record.ClassGroup}")
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-star-fill me-1"></i>@record.FormattedRecord
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-person-fill me-1"></i>@record.RecordHolder
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(record.HouseName))
+                                        {
+                                            <span class="badge" style="background-color: @record.HouseColor; color: white;">
+                                                @record.HouseName
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (record.DateSet.HasValue)
+                                        {
+                                            <i class="bi bi-calendar-event me-1"></i>@record.DateSet.Value.ToString("MMM dd, yyyy")
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <a asp-action="Details" asp-route-id="@record.EventId" class="btn btn-sm btn-outline-success btn-action" aria-label="View record details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Existing Records Section -->
+    @if (Model.ExistingRecords.Any() && !Model.ShowNewRecordsOnly)
+    {
+        <div class="sports-card card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-trophy me-2"></i>Existing Records
+                    </h5>
+                    <span class="badge bg-success">
+                        <i class="bi bi-trophy me-1"></i>@Model.ExistingRecordCount Records
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sports mb-0" aria-label="Existing records table">
+                        <thead>
+                            <tr>
+                                <th scope="col"><i class="bi bi-trophy me-1"></i>Event</th>
+                                <th scope="col"><i class="bi bi-gender-ambiguous me-1"></i>Division</th>
+                                <th scope="col"><i class="bi bi-123 me-1"></i>Class</th>
+                                <th scope="col"><i class="bi bi-tag me-1"></i>Category</th>
+                                <th scope="col"><i class="bi bi-stopwatch me-1"></i>Record</th>
+                                <th scope="col"><i class="bi bi-person me-1"></i>Holder</th>
+                                <th scope="col" class="text-center"><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.ExistingRecords)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@record.EventName</strong>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var (existDivIcon, existDivClass) = record.Division switch
+                                            {
+                                                DivisionType.Boys => ("bi-gender-male", "text-primary"),
+                                                DivisionType.Girls => ("bi-gender-female", "text-danger"),
+                                                DivisionType.Open => ("bi-gender-ambiguous", "text-success"),
+                                                _ => ("bi-question-circle", "text-secondary")
+                                            };
+                                        }
+                                        <span class="@existDivClass">
+                                            <i class="bi @existDivIcon me-1"></i>@record.Division
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @(record.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)record.ClassGroup}")
+                                    </td>
+                                    <td>
+                                        @{
+                                            var catIcon = record.Category?.ToLower() switch
+                                            {
+                                                "track" => "bi-signpost-split",
+                                                "field" => "bi-bullseye",
+                                                _ => "bi-tag"
+                                            };
+                                        }
+                                        <i class="bi @catIcon me-1"></i>@record.Category
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-trophy me-1"></i>@record.FormattedRecord
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(record.RecordHolder))
+                                        {
+                                            <i class="bi bi-person-fill me-1"></i>@record.RecordHolder
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Unknown</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <a asp-action="Details" asp-route-id="@record.EventId" class="btn btn-sm btn-outline-success btn-action" aria-label="View record details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- No Records Message -->
+    @if (!Model.ExistingRecords.Any() && !Model.NewRecords.Any())
+    {
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-trophy fs-1 text-muted mb-3 d-block"></i>
+                <h4 class="text-muted">No Records Found</h4>
+                <p class="text-muted mb-0">
+                    @if (Model.SelectedDivision.HasValue || Model.SelectedClass.HasValue || !string.IsNullOrEmpty(Model.SelectedCategory) || Model.SelectedYear.HasValue)
+                    {
+                        <text>No records match the selected filters. Try adjusting your filters.</text>
+                    }
+                    else
+                    {
+                        <text>No records have been set yet for the active tournament.</text>
+                    }
+                </p>
+            </div>
+        </div>
+    }
+
+    <!-- Legend -->
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card border-0 bg-light">
+                    <div class="card-body py-2">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Record Types:</strong>
+                            <span class="ms-2"><i class="bi bi-star-fill text-warning me-1"></i>New (broken this tournament)</span>
+                            <span class="ms-2"><i class="bi bi-trophy text-success me-1"></i>Existing (historical)</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 bg-light">
+                    <div class="card-body py-2">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Divisions:</strong>
+                            <span class="ms-2 text-primary"><i class="bi bi-gender-male me-1"></i>Boys</span>
+                            <span class="ms-2 text-danger"><i class="bi bi-gender-female me-1"></i>Girls</span>
+                            <span class="ms-2 text-success"><i class="bi bi-gender-ambiguous me-1"></i>Open</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure only one record type filter is selected at a time
+            const newOnlyCheckbox = document.getElementById('showNewOnly');
+            const existingOnlyCheckbox = document.getElementById('showExistingOnly');
+
+            newOnlyCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    existingOnlyCheckbox.checked = false;
+                }
+            });
+
+            existingOnlyCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    newOnlyCheckbox.checked = false;
+                }
+            });
+
+            // Add aria-labels to the table rows for better accessibility
+            const recordRows = document.querySelectorAll('tbody tr');
+            recordRows.forEach(row => {
+                const eventName = row.querySelector('td strong')?.textContent;
+                if (eventName) {
+                    row.setAttribute('aria-label', `Record: ${eventName}`);
+                }
+            });
+        });
+    </script>
+}

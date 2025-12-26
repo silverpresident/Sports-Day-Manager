@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IParticipantService, ParticipantService>();
         services.AddScoped<IEventTemplateService, EventTemplateService>();
         services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IRecordService, RecordService>();
         services.AddScoped<IDashboardService, DashboardService>();
 
 #if DEBUG

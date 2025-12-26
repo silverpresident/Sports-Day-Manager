@@ -235,7 +235,6 @@ public class DeveloperService : IDeveloperService
         // Get all events that have participants but no completed results
         var events = await _context.Events
             .Include(e => e.Results)
-                .ThenInclude(r => r.Participant)
             .Where(e => e.TournamentId == tournamentId)
             .ToListAsync();
 
