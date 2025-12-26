@@ -15,13 +15,13 @@ public class XHouseLeaderController : Controller
     private readonly IHouseLeaderService _houseLeaderService;
     private readonly SportsDayDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly ILogger<HouseLeaderController> _logger;
+    private readonly ILogger<XHouseLeaderController> _logger;
 
-    public HouseLeaderController(
+    public XHouseLeaderController(
         IHouseLeaderService houseLeaderService,
         SportsDayDbContext context,
         UserManager<IdentityUser> userManager,
-        ILogger<HouseLeaderController> logger)
+        ILogger<XHouseLeaderController> logger)
     {
         _houseLeaderService = houseLeaderService;
         _context = context;
