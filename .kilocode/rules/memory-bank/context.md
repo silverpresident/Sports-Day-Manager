@@ -38,13 +38,14 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - IEventService interface and EventService implementation
   - Public EventController refactored to use service layer
   - Event Details view with full event information and results
-- **House Details and Members views implemented** (December 2025):
+- **House Views Restructured** (December 2025):
   - Extended IHouseService with new methods for house details and rankings
-  - HouseDetailsViewModel and HouseResultsViewModel created
-  - Public HouseController updated with Details and Members actions
-  - House Details view shows: house info, leaders, overall ranking, division rankings, leaderboard, event results
-  - House Members view shows: all participants with expandable event participation details
-  - House Index updated with links to Details and Members views
+  - Created three ViewModels: HouseDetailsViewModel, HouseResultsViewModel, HouseParticipantsViewModel
+  - Public HouseController updated with four actions: Index, Details, Results, Participants
+  - **House Details view** (`/House/Details/{id}`): Shows house info, leaders, overall ranking, division rankings, all house rankings leaderboard, and event results
+  - **House Results view** (`/House/Results/{id}`): Shows members with expandable accordion for event participation, filtering by division (Boys, Girls, Open), summary cards for total members/points/participations
+  - **House Participants view** (`/House/Participants/{id}`): Simple table listing all participants with name, gender, division, class, and notes
+  - House Index updated with links to Details, Participants, and Results views
 
 ## Current Focus
 
@@ -65,18 +66,10 @@ The project is in a stable state with core functionality working. The system can
   - Generate test data (events, participants, participation, results)
   - Clean up test data with bulk delete operations
   - View tournament statistics
-- **View house details**:
-  - House information with color and logo
-  - House leaders list
-  - Overall ranking and total points
-  - Division-specific rankings (Boys, Girls, Open)
-  - All house rankings leaderboard
-  - Event results with placements and points
-- **View house members**:
-  - All participants registered to the house
-  - Individual participant event participation
-  - Points breakdown per participant
-  - Filtering by division
+- **View house information** (three separate views):
+  - **Details**: House info, leaders, overall ranking, division rankings, leaderboard, event results
+  - **Results**: Members with expandable event participation, filtering by division, summary statistics
+  - **Participants**: Simple list of all house members with basic info
 
 ## Known Issues
 
@@ -107,4 +100,4 @@ Potential areas for enhancement:
 - Consider creating additional services for Results and Announcements
 - EventService created; consider similar pattern for Results, Announcements
 - DeveloperService created for testing; consider expanding for more test scenarios
-- HouseDetailsViewModel and HouseResultsViewModel created; consider similar ViewModels for other complex views
+- HouseDetailsViewModel, HouseResultsViewModel, and HouseParticipantsViewModel created; consider similar ViewModels for other complex views
