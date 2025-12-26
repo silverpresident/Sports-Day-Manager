@@ -1,0 +1,321 @@
+@model SportsDay.Lib.ViewModels.ResultsIndexViewModel
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Results";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0">
+                <i class="bi bi-list-ol text-success me-2"></i>Results
+            </h1>
+            <p class="text-muted mt-2">
+                <i class="bi bi-info-circle me-1"></i>Event results from @(Model.ActiveTournamentName ?? "the active tournament")
+            </p>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-list-check fs-1 text-success mb-2"></i>
+                    <h3 class="mb-0">@Model.TotalResultCount</h3>
+                    <small class="text-muted">Total Results</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy-fill fs-1 text-warning mb-2"></i>
+                    <h3 class="mb-0">@Model.PlacedResultCount</h3>
+                    <small class="text-muted">Podium Finishes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <i class="bi bi-star-fill fs-1 text-danger mb-2"></i>
+                    <h3 class="mb-0">@Model.NewRecordCount</h3>
+                    <small class="text-muted">New Records</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-calculator fs-1 text-primary mb-2"></i>
+                    <h3 class="mb-0">@Model.TotalPoints</h3>
+                    <small class="text-muted">Total Points</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="sports-card card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-funnel me-2"></i>Filter Results
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3">
+                <div class="col-md-2">
+                    <label for="division" class="form-label">
+                        <i class="bi bi-gender-ambiguous me-1"></i>Division
+                    </label>
+                    <select name="division" id="division" class="form-select">
+                        <option value="">All Divisions</option>
+                        @foreach (var div in Enum.GetValues<DivisionType>())
+                        {
+                            <option value="@div" selected="@(Model.SelectedDivision == div)">@div</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="eventClass" class="form-label">
+                        <i class="bi bi-123 me-1"></i>Class
+                    </label>
+                    <select name="eventClass" id="eventClass" class="form-select">
+                        <option value="">All Classes</option>
+                        @foreach (var cls in Enum.GetValues<EventClass>())
+                        {
+                            var displayName = cls == EventClass.Open ? "Open" : $"Class {(int)cls}";
+                            <option value="@cls" selected="@(Model.SelectedClass == cls)">@displayName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="category" class="form-label">
+                        <i class="bi bi-tag me-1"></i>Category
+                    </label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">All Categories</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat" selected="@(Model.SelectedCategory == cat)">@cat</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="houseId" class="form-label">
+                        <i class="bi bi-house me-1"></i>House
+                    </label>
+                    <select name="houseId" id="houseId" class="form-select">
+                        <option value="">All Houses</option>
+                        @foreach (var house in Model.Houses)
+                        {
+                            <option value="@house.Id" selected="@(Model.SelectedHouseId == house.Id)">@house.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="eventId" class="form-label">
+                        <i class="bi bi-calendar-event me-1"></i>Event
+                    </label>
+                    <select name="eventId" id="eventId" class="form-select">
+                        <option value="">All Events</option>
+                        @foreach (var evt in Model.Events)
+                        {
+                            <option value="@evt.Id" selected="@(Model.SelectedEventId == evt.Id)">@evt.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-search me-1"></i>Filter
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-1">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    @if (Model.Results.Any())
+    {
+        <div class="sports-card card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list-ol me-2"></i>Event Results
+                    </h5>
+                    <span class="badge bg-success">
+                        <i class="bi bi-check-circle me-1"></i>@Model.TotalResultCount Results
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sports mb-0" aria-label="Results table">
+                        <thead>
+                            <tr>
+                                <th scope="col"><i class="bi bi-hash me-1"></i>Place</th>
+                                <th scope="col"><i class="bi bi-person me-1"></i>Participant</th>
+                                <th scope="col"><i class="bi bi-house me-1"></i>House</th>
+                                <th scope="col"><i class="bi bi-trophy me-1"></i>Event</th>
+                                <th scope="col"><i class="bi bi-gender-ambiguous me-1"></i>Division</th>
+                                <th scope="col"><i class="bi bi-stopwatch me-1"></i>Result</th>
+                                <th scope="col"><i class="bi bi-calculator me-1"></i>Points</th>
+                                <th scope="col" class="text-center"><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var result in Model.Results)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (result.Placement.HasValue)
+                                        {
+                                            <span class="badge @result.PlacementBadgeClass">
+                                                <i class="bi @result.PlacementIcon me-1"></i>@result.FormattedPlacement
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                        @if (result.IsNewRecord)
+                                        {
+                                            <span class="badge bg-danger ms-1">
+                                                <i class="bi bi-star-fill"></i> NEW RECORD
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-person-fill me-1"></i>@result.ParticipantName
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background-color: @result.HouseColor; color: white;">
+                                            @result.HouseName
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <strong>@result.EventName</strong>
+                                        @if (result.EventNumber.HasValue)
+                                        {
+                                            <small class="text-muted ms-1">(#@result.EventNumber)</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            var (divIcon, divClass) = result.Division switch
+                                            {
+                                                DivisionType.Boys => ("bi-gender-male", "text-primary"),
+                                                DivisionType.Girls => ("bi-gender-female", "text-danger"),
+                                                DivisionType.Open => ("bi-gender-ambiguous", "text-success"),
+                                                _ => ("bi-question-circle", "text-secondary")
+                                            };
+                                        }
+                                        <span class="@divClass">
+                                            <i class="bi @divIcon me-1"></i>@result.Division
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (result.SpeedOrDistance.HasValue)
+                                        {
+                                            <span class="badge bg-info text-dark">
+                                                @result.FormattedValue
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-plus-circle me-1"></i>@result.Points pts
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a asp-action="Details" asp-route-id="@result.ResultId" class="btn btn-sm btn-outline-success btn-action" aria-label="View result details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- No Results Message -->
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-list-ol fs-1 text-muted mb-3 d-block"></i>
+                <h4 class="text-muted">No Results Found</h4>
+                <p class="text-muted mb-0">
+                    @if (Model.SelectedDivision.HasValue || Model.SelectedClass.HasValue || !string.IsNullOrEmpty(Model.SelectedCategory) || Model.SelectedHouseId.HasValue || Model.SelectedEventId.HasValue)
+                    {
+                        <text>No results match the selected filters. Try adjusting your filters.</text>
+                    }
+                    else
+                    {
+                        <text>No results have been recorded yet for the active tournament.</text>
+                    }
+                </p>
+            </div>
+        </div>
+    }
+
+    <!-- Legend -->
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card border-0 bg-light">
+                    <div class="card-body py-2">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Placements:</strong>
+                            <span class="ms-2"><span class="badge bg-warning text-dark"><i class="bi bi-trophy-fill me-1"></i>1st</span></span>
+                            <span class="ms-2"><span class="badge bg-secondary"><i class="bi bi-award-fill me-1"></i>2nd</span></span>
+                            <span class="ms-2"><span class="badge bg-bronze"><i class="bi bi-award me-1"></i>3rd</span></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 bg-light">
+                    <div class="card-body py-2">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Divisions:</strong>
+                            <span class="ms-2 text-primary"><i class="bi bi-gender-male me-1"></i>Boys</span>
+                            <span class="ms-2 text-danger"><i class="bi bi-gender-female me-1"></i>Girls</span>
+                            <span class="ms-2 text-success"><i class="bi bi-gender-ambiguous me-1"></i>Open</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add aria-labels to the table rows for better accessibility
+            const resultRows = document.querySelectorAll('tbody tr');
+            resultRows.forEach(row => {
+                const participantName = row.querySelector('td:nth-child(2)')?.textContent?.trim();
+                const eventName = row.querySelector('td:nth-child(4) strong')?.textContent;
+                if (participantName && eventName) {
+                    row.setAttribute('aria-label', `Result: ${participantName} in ${eventName}`);
+                }
+            });
+        });
+    </script>
+}
