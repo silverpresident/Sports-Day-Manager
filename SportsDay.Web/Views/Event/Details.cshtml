@@ -1,7 +1,221 @@
+@model SportsDay.Lib.Models.Event
+@using SportsDay.Lib.Enums
 @{
-    ViewData["Title"] = "Event Details";
+    ViewData["Title"] = Model.Name;
+    var statusInfo = Model.Status switch
+    {
+        EventStatus.Scheduled => (Icon: "bi-calendar", Class: "bg-primary", Text: "Scheduled"),
+        EventStatus.InProgress => (Icon: "bi-play-circle", Class: "bg-warning", Text: "In Progress"),
+        EventStatus.Completed => (Icon: "bi-check-circle", Class: "bg-success", Text: "Completed"),
+        EventStatus.Cancelled => (Icon: "bi-x-circle", Class: "bg-danger", Text: "Cancelled"),
+        _ => (Icon: "bi-question-circle", Class: "bg-secondary", Text: "Unknown")
+    };
 }
 
-<h1>Event Details</h1>
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Event" asp-action="Index">Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
 
-<p>Details for the event will go here.</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0">
+                <i class="bi bi-trophy-fill text-success me-2"></i>@Model.Name
+            </h1>
+            <p class="text-muted mt-2">
+                <span class="badge @statusInfo.Class">
+                    <i class="bi @statusInfo.Icon me-1"></i>@statusInfo.Text
+                </span>
+                <span class="ms-2">Event #@Model.EventNumber</span>
+            </p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-success">
+            <i class="bi bi-arrow-left me-1"></i>Back to Events
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="sports-card card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Event Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Division</dt>
+                        <dd class="col-sm-7">@Model.GenderGroup</dd>
+
+                        <dt class="col-sm-5">Class</dt>
+                        <dd class="col-sm-7">
+                            @(Model.ClassGroup == EventClass.Open ? "Open" : $"Class {(int)Model.ClassGroup}")
+                        </dd>
+
+                        <dt class="col-sm-5">Age Group</dt>
+                        <dd class="col-sm-7">@(string.IsNullOrEmpty(Model.AgeGroup) || Model.AgeGroup == "0" ? "Open" : Model.AgeGroup)</dd>
+
+                        <dt class="col-sm-5">Category</dt>
+                        <dd class="col-sm-7">@Model.Category</dd>
+
+                        <dt class="col-sm-5">Type</dt>
+                        <dd class="col-sm-7">@Model.Type</dd>
+
+                        <dt class="col-sm-5">Point System</dt>
+                        <dd class="col-sm-7"><code>@Model.PointSystem</code></dd>
+
+                        @if (Model.ScheduledTime.HasValue)
+                        {
+                            <dt class="col-sm-5">Scheduled</dt>
+                            <dd class="col-sm-7">
+                                <i class="bi bi-clock me-1"></i>@Model.ScheduledTime.Value.ToString("MMM dd, yyyy HH:mm")
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            @if (Model.Record.HasValue || !string.IsNullOrEmpty(Model.RecordHolder))
+            {
+                <div class="sports-card card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-award me-2"></i>Record
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            @if (Model.Record.HasValue)
+                            {
+                                <dt class="col-sm-5">Record</dt>
+                                <dd class="col-sm-7">
+                                    <strong class="text-success">@Model.Record.Value</strong>
+                                    @(Model.Type == EventType.Speed ? "s" : "m")
+                                </dd>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.RecordHolder))
+                            {
+                                <dt class="col-sm-5">Holder</dt>
+                                <dd class="col-sm-7">@Model.RecordHolder</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-8">
+            <div class="sports-card card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list-ol me-2"></i>Results
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Results != null && Model.Results.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sports mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center" style="width: 60px;">
+                                            <i class="bi bi-hash"></i>
+                                        </th>
+                                        <th scope="col">
+                                            <i class="bi bi-person me-1"></i>Participant
+                                        </th>
+                                        <th scope="col">
+                                            <i class="bi bi-house me-1"></i>House
+                                        </th>
+                                        <th scope="col" class="text-end">
+                                            <i class="bi bi-stopwatch me-1"></i>Result
+                                        </th>
+                                        <th scope="col" class="text-end">
+                                            <i class="bi bi-star me-1"></i>Points
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var result in Model.Results.OrderBy(r => r.Placement))
+                                    {
+                                        var placementClass = result.Placement switch
+                                        {
+                                            1 => "table-warning",
+                                            2 => "table-secondary",
+                                            3 => "table-info",
+                                            _ => ""
+                                        };
+                                        var placementIcon = result.Placement switch
+                                        {
+                                            1 => "bi-trophy-fill text-warning",
+                                            2 => "bi-award-fill text-secondary",
+                                            3 => "bi-award text-info",
+                                            _ => "bi-circle"
+                                        };
+                                        <tr class="@placementClass">
+                                            <td class="text-center">
+                                                <i class="bi @placementIcon me-1"></i>@result.Placement
+                                            </td>
+                                            <td>
+                                                @if (result.Participant != null)
+                                                {
+                                                    @result.Participant.FirstName @result.Participant.LastName
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Unknown</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (result.House != null)
+                                                {
+                                                    <span class="badge" style="background-color: @result.House.Color;">
+                                                        @result.House.Name
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-end">
+                                                @if (result.Speed.HasValue)
+                                                {
+                                                    <span>@result.Speed.Value.ToString("F2")s</span>
+                                                }
+                                                else if (result.Distance.HasValue)
+                                                {
+                                                    <span>@result.Distance.Value.ToString("F2")m</span>
+                                                }
+                                                @if (result.IsNewRecord)
+                                                {
+                                                    <span class="badge bg-danger ms-1">
+                                                        <i class="bi bi-star-fill"></i> NEW RECORD
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>@result.Points</strong>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-hourglass-split display-4 text-muted"></i>
+                            <p class="text-muted mt-3">No results recorded yet</p>
+                            @if (Model.Status == EventStatus.Scheduled)
+                            {
+                                <p class="text-muted small">Results will appear here once the event begins</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
