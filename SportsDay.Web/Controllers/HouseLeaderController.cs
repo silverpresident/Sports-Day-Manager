@@ -9,7 +9,7 @@ using SportsDay.Lib.Services.Interfaces;
 
 namespace SportsDay.Web.Controllers;
 
-[Authorize]
+//TODO [Authorize] Role=HouseLeader
 public class HouseLeaderController : Controller
 {
     private readonly IHouseLeaderService _houseLeaderService;
@@ -33,10 +33,10 @@ public class HouseLeaderController : Controller
     public async Task<IActionResult> Register()
     {
         var userId = _userManager.GetUserId(User);
-        if (userId == null)
+        /* if (userId == null)
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         // Check if user is already a house leader
         var existingLeader = await _houseLeaderService.GetByUserIdAsync(userId);
@@ -61,10 +61,10 @@ public class HouseLeaderController : Controller
     public async Task<IActionResult> Register(int houseId)
     {
         var userId = _userManager.GetUserId(User);
-        if (userId == null)
+        /* if (userId == null)
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         try
         {
@@ -117,10 +117,10 @@ public class HouseLeaderController : Controller
     public async Task<IActionResult> Dashboard()
     {
         var userId = _userManager.GetUserId(User);
-        if (userId == null)
+        /* if (userId == null)
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -160,10 +160,10 @@ public class HouseLeaderController : Controller
     public async Task<IActionResult> Unregister()
     {
         var userId = _userManager.GetUserId(User);
-        if (userId == null)
+        /* if (userId == null)
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
         if (houseLeader == null)
@@ -181,10 +181,10 @@ public class HouseLeaderController : Controller
     public async Task<IActionResult> UnregisterConfirmed()
     {
         var userId = _userManager.GetUserId(User);
-        if (userId == null)
+        /* if (userId == null)
         {
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-        }
+        } */
 
         try
         {

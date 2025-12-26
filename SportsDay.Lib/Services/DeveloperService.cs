@@ -242,6 +242,11 @@ public class DeveloperService : IDeveloperService
         var newRecordsCreated = 0;
         var eventUpdatesCreated = 0;
 
+        var pids = events.SelectMany(e => e.Results.Select(r => r.ParticipantId).Distinct().ToList()).ToList();
+        var participants = await _context.Participants
+                .Where(p => pids.Contains(p.Id))
+                .ToListAsync();
+
         foreach (var evt in events)
         {
             // Get participants in this event without placement
@@ -284,7 +289,8 @@ public class DeveloperService : IDeveloperService
                 // Track the winner's name for the event update
                 if (placement == 1)
                 {
-                    winnerName = result.Participant?.FullName ?? "Unknown";
+                    var participant = participants.FirstOrDefault(p => p.Id == result.ParticipantId);
+                    winnerName = participant?.FullName ?? "Unknown";
 
                     // For first place finishers, randomly mark some as new records (about 10% chance)
                     if (_random.Next(10) == 0)
