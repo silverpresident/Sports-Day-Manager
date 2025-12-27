@@ -17,6 +17,7 @@ public class SportsDayDbContext : IdentityDbContext
     public DbSet<HouseLeader> HouseLeaders { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
     public DbSet<EventTemplate> EventTemplates { get; set; } = null!;
+    public DbSet<EventClassGroup> EventClassGroups { get; set; } = null!;
     public DbSet<Participant> Participants { get; set; } = null!;
     public DbSet<Result> Results { get; set; } = null!;
     public DbSet<Announcement> Announcements { get; set; } = null!;

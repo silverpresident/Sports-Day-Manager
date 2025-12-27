@@ -42,3 +42,31 @@ UPdate the events service and use this service in  the controllers
 - the options on this view should be cancel, save or publish.
 - both save and publish will save but publish will also mark the event IsPublished as true and generate an eventupdate
 ===
+ Create a service, table and entity to manage EventClassGroup
+Populate it with 5 classes numbered 0 to 4
+The name of class 0 is "Open"
+then Class 1, Class 2, Class 3 and Class 4.
+Each class has a MaxParticipantAge
+Class 0 has no age limit
+    - Age ≤ 12: Class 4
+    - Age ≤ 14: Class 3
+    - Age ≤ 16: Class 2
+    - Age ≤ 19: Class 1
+ The service should be able to return a class given a paticipant age
+ The service should be able to return a class given a paticipant dateof birth (age reckoned as at the tournament date)
+
+Add a ClassGroupNumber field to the following entities
+Event,
+EventTemplate
+Paticipant
+TournamentHouseSummary
+===
+MOve the `public static int GetClassGroupNumberByAge(int age)`, `public static int CalculateAge(DateTime dateOfBirth, DateTime asOfDate)`, and `public static int GetClassGroupNumberByDateOfBirth(DateTime dateOfBirth, DateTime tournamentDate)` to the service and use the database values to decide which to return.
+if the db values are not found then default to using the if logic.
+add a method to the db inititalizer to pouplate the EventClassGroups.
+add a static object cache in the service to store retirved db values for a reasonable amount of time.
+===
+
+Introduce views to list and edit EventClassGroup
+THere should be no, create, delete, and there is no real need for a details view.
+Only the Paticipants maxAge and the description shoud be editable.

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SportsDay.Lib.Data;
+using SportsDay.Lib.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -39,6 +40,9 @@ namespace SportsDay.Lib.Data
                 // Seed initial data if needed
                 try
                 {
+                    // Seed EventClassGroups first
+                    await SeedEventClassGroupsAsync(scope.ServiceProvider);
+                    
                     // Seed default admin user
                     await SeedDefaultRolesAsync(scope.ServiceProvider);
                     await SeedDefaultUsersAsync(scope.ServiceProvider);
@@ -49,6 +53,75 @@ namespace SportsDay.Lib.Data
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }
+        }
+
+        private static async Task SeedEventClassGroupsAsync(IServiceProvider serviceProvider)
+        {
+            var context = serviceProvider.GetRequiredService<SportsDayDbContext>();
+            var logger = serviceProvider.GetRequiredService<ILogger<SportsDayDbContext>>();
+
+            // Check if EventClassGroups already exist
+            if (await context.EventClassGroups.AnyAsync())
+            {
+                logger.LogInformation("EventClassGroups already seeded");
+                return;
+            }
+
+            logger.LogInformation("Seeding EventClassGroups");
+
+            var classGroups = new[]
+            {
+                new EventClassGroup
+                {
+                    ClassGroupNumber = 0,
+                    Name = "Open",
+                    MaxParticipantAge = 0,
+                    Description = "Open class with no age limit",
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = "System"
+                },
+                new EventClassGroup
+                {
+                    ClassGroupNumber = 1,
+                    Name = "Class 1",
+                    MaxParticipantAge = 19,
+                    Description = "Class 1 - Participants aged 19 and under",
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = "System"
+                },
+                new EventClassGroup
+                {
+                    ClassGroupNumber = 2,
+                    Name = "Class 2",
+                    MaxParticipantAge = 16,
+                    Description = "Class 2 - Participants aged 16 and under",
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = "System"
+                },
+                new EventClassGroup
+                {
+                    ClassGroupNumber = 3,
+                    Name = "Class 3",
+                    MaxParticipantAge = 14,
+                    Description = "Class 3 - Participants aged 14 and under",
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = "System"
+                },
+                new EventClassGroup
+                {
+                    ClassGroupNumber = 4,
+                    Name = "Class 4",
+                    MaxParticipantAge = 12,
+                    Description = "Class 4 - Participants aged 12 and under",
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = "System"
+                }
+            };
+
+            await context.EventClassGroups.AddRangeAsync(classGroups);
+            await context.SaveChangesAsync();
+
+            logger.LogInformation("EventClassGroups seeded successfully");
         }
 
         private static async Task SeedDefaultRolesAsync(IServiceProvider serviceProvider)

@@ -53,6 +53,12 @@ public class Participant : BaseEntity
     
     public EventClass EventClassGroup { get; set; }
     
+    /// <summary>
+    /// The class group number (0-4) corresponding to the EventClass enum.
+    /// 0 = Open, 1 = Class 1, 2 = Class 2, 3 = Class 3, 4 = Class 4
+    /// </summary>
+    public int ClassGroupNumber { get; set; }
+    
     [NotMapped]
     public EventClass ClassGroup => EventClassGroup;
 

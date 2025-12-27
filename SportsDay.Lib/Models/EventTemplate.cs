@@ -27,6 +27,13 @@ public class EventTemplate : BaseEntity
     [Display(Name = "Class Group")]
     public EventClass ClassGroup { get; set; }
 
+    /// <summary>
+    /// The class group number (0-4) corresponding to the EventClass enum.
+    /// 0 = Open, 1 = Class 1, 2 = Class 2, 3 = Class 3, 4 = Class 4
+    /// </summary>
+    [Display(Name = "Class Group Number")]
+    public int ClassGroupNumber { get; set; }
+
     [Required]
     [StringLength(10)]
     [Display(Name = "Age Group")]
@@ -95,6 +102,7 @@ public class EventTemplate : BaseEntity
             Name = Name,
             GenderGroup = GenderGroup,
             ClassGroup = ClassGroup,
+            ClassGroupNumber = ClassGroupNumber,
             AgeGroup = AgeGroup,
             ParticipantMaxAge = ParticipantMaxAge,
             ParticipantLimit = ParticipantLimit,

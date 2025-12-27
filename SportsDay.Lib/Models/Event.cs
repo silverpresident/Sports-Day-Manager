@@ -24,6 +24,12 @@ public class Event : BaseEntity
     [Required]
     public EventClass ClassGroup { get; set; }
 
+    /// <summary>
+    /// The class group number (0-4) corresponding to the EventClass enum.
+    /// 0 = Open, 1 = Class 1, 2 = Class 2, 3 = Class 3, 4 = Class 4
+    /// </summary>
+    public int ClassGroupNumber { get; set; }
+
     [Required]
     [StringLength(10)]
     public string AgeGroup { get; set; } = string.Empty;
