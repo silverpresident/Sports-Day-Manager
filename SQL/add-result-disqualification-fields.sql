@@ -1,10 +1,7 @@
 -- Migration script to add IsDisqualified and ResultLabel fields to Results table
 -- Created: 2025-12-27
 -- Description: Adds support for disqualification status and result labels (1st, 2nd, DQ, DNS, DNF)
-
-USE [SportsDay];
-GO
-
+ 
 -- Add IsDisqualified column (default to false for existing records)
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Results]') AND name = 'IsDisqualified')
 BEGIN

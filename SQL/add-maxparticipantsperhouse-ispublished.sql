@@ -3,8 +3,6 @@
 -- Description: Adds MaxParticipantsPerHouse (int, default 0) and IsPublished (bit, default 0) to Events table
 --              Also adds MaxParticipantsPerHouse to EventTemplates table
 
-USE [SportsDay];
-GO
 
 -- Check if MaxParticipantsPerHouse column exists in Events table
 IF NOT EXISTS (

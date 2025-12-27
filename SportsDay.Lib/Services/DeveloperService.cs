@@ -374,6 +374,22 @@ public class DeveloperService : IDeveloperService
                         evt.Record = result.SpeedOrDistance;
                         evt.RecordHolder = winnerName;
                     }
+                } else if (_random.Next(40) == 0)
+                {
+                    result.IsDisqualified = true;
+                    result.ResultLabel = "DQ";
+                    result.Placement = 0;
+                    placement--;//not a valid placement, so skip it
+                } else if (_random.Next(50) == 0)
+                { 
+                    result.ResultLabel = "DNS";
+                    result.Placement = 0;
+                    placement--;//not a valid placement, so skip it
+                } else if (_random.Next(50) == 0)
+                { 
+                    result.ResultLabel = "DNF";
+                    result.Placement = 0;
+                    placement--;//not a valid placement, so skip it
                 }
 
                 result.UpdatedAt = DateTime.Now;

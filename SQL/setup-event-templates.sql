@@ -16,6 +16,7 @@ BEGIN
         [AgeGroup] NVARCHAR(10) NOT NULL,
         [ParticipantMaxAge] INT NOT NULL DEFAULT 0,
         [ParticipantLimit] INT NOT NULL DEFAULT 0,
+        [MaxParticipantsPerHouse] INT NOT NULL DEFAULT 0,
         [Category] NVARCHAR(50) NOT NULL,
         [Type] NVARCHAR(50) NOT NULL,
         [Record] DECIMAL(18, 2) NULL,

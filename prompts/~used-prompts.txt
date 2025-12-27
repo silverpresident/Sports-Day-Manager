@@ -6,6 +6,9 @@ also update section of the events view in the admin area, the houseleader area a
 update the public results view to show the resultlabel.
 do not remove any of the currently displayed informaiton in the views.
 ===
+Add MaxParticipantsPerHouse (default 0) to the event and the eventTemplate
+Update the view to match
+===
 Update applicable models to extend a BaseEntity whichadds common fieldsinlcuing CreatedAt, UpdatedAt, CreatedBy and UpdatedBy
 Update the relevant controller to reflect this change
 UPdate the setup.sql to refect this as well. 
