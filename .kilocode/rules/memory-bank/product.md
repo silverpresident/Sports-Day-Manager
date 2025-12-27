@@ -78,9 +78,14 @@ Sports Day Manager is a real-time tournament management system that transforms h
 - **Comprehensive**: Full tournament management in one place
 
 ### For House Leaders
-- **Empowered**: Register their own participants
-- **Informed**: Track their house's performance
+- **Empowered**: Register their own participants and manage event registrations
+- **Informed**: Track their house's performance across all events
 - **Simple**: Focused interface for their specific needs
+
+### For All Users
+- **Transparent**: View comprehensive records and results
+- **Analytical**: Access statistics and performance metrics
+- **Historical**: Track records over time with year-based filtering
 
 ## Core Features
 
@@ -126,6 +131,24 @@ Sports Day Manager is a real-time tournament management system that transforms h
 - Optional expiration dates
 - Enable/disable toggle
 - Real-time broadcast to public dashboard
+
+### Records Management
+- View existing records from events (historical)
+- View new records set during tournaments
+- Filter by division, class, category, and year
+- Toggle between new records only, existing only, or all
+- Detailed record information with holder and year set
+
+### Results Viewing
+- Comprehensive result viewing with multiple filters
+- Filter by division, class, category, house, or event
+- View results by specific event or house
+- Statistics dashboard showing:
+  - Total results and events with results
+  - Participants with results
+  - New records set
+  - Points by house and division
+  - Top performers (podium finishers)
 
 ## Technical Approach
 

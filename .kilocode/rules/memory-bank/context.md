@@ -57,6 +57,15 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - Views for Dashboard (Index, Register, Unregister), Participants (Index, Add, Edit, Delete), Events (Index, Details, RegisterParticipant)
   - Documentation in docs/house-leader-area.md
   - Old HouseLeaderController in Controllers folder superseded by new area-based implementation
+- **RecordService and ResultService implemented** (December 2025):
+  - IRecordService interface and RecordService implementation for managing event records
+  - IResultService interface and ResultService implementation for managing event results
+  - RecordController (public) with Index and Details actions for viewing records
+  - ResultController (public) with Index, Details, ByEvent, ByHouse, and Statistics actions
+  - Created ViewModels: RecordViewModel, RecordsIndexViewModel, ResultViewModel, ResultsIndexViewModel, ResultStatisticsViewModel
+  - Records come from two sources: existing records in Events and new records from Results
+  - Comprehensive filtering by division, class, category, house, event, and year
+  - Statistics dashboard for result analysis
 
 ## Current Focus
 
@@ -86,6 +95,10 @@ The project is in a stable state with core functionality working. The system can
   - Participant management (add, edit, delete)
   - Event registration (view events, register/unregister participants)
   - Self-registration as house leader
+- **View records and results**:
+  - **Records**: View existing event records and new records set during tournaments
+  - **Results**: Comprehensive result viewing with filtering by division, class, category, house, and event
+  - **Statistics**: Result statistics dashboard showing tournament performance metrics
 
 ## Known Issues
 
@@ -98,22 +111,21 @@ The project is in a stable state with core functionality working. The system can
 
 Potential areas for enhancement:
 - Enable and test authentication/authorization
-- Implement comprehensive logging with ILogger
+- Implement comprehensive logging with ILogger (partially done - added to RecordService and ResultService)
 - Add error handling throughout the application
 - Complete Azure deployment configuration
-- Add participant self-registration functionality
 - Create comprehensive unit and integration tests
 - Enhance UI/UX with more interactive features
 - Add data validation and business rule enforcement
 - Implement TournamentHouseSummary calculation and updates
-- Add records management page
 - Complete all public-facing pages
+- Add views for Record and Result controllers
 
 ## Technical Debt
 
 - Missing anti-forgery token validation on some POST actions
-- Consider creating additional services for Results and Announcements
-- EventService created; consider similar pattern for Results, Announcements
+- RecordService and ResultService created; consider similar pattern for Announcements
 - DeveloperService created for testing; consider expanding for more test scenarios
 - HouseDetailsViewModel, HouseResultsViewModel, and HouseParticipantsViewModel created; consider similar ViewModels for other complex views
 - HouseLeader area ViewModels created in HouseLeaderDashboardViewModel.cs; consider splitting into separate files
+- RecordViewModel and ResultViewModel created; views need to be implemented for Record and Result controllers

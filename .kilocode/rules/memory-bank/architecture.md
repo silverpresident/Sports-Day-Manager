@@ -43,6 +43,8 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 │  │  - IParticipantService / ParticipantService      │   │
 │  │  - IEventTemplateService / EventTemplateService  │   │
 │  │  - IEventService / EventService                  │   │
+│  │  - IRecordService / RecordService                │   │
+│  │  - IResultService / ResultService                │   │
 │  │  - IDeveloperService / DeveloperService (DEBUG)  │   │
 │  │  - IDashboardService / DashboardService          │   │
 │  └─────────────────────────────────────────────────┘   │
@@ -100,12 +102,16 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Services/EventTemplateService.cs` - Event template management logic
 - `Services/DeveloperService.cs` - Developer/testing data generation (DEBUG only)
 - `Services/EventService.cs` - Event management logic
+- `Services/RecordService.cs` - Record management and retrieval logic
+- `Services/ResultService.cs` - Result management and retrieval logic
 - `Extensions/ServiceCollectionExtensions.cs` - Service registration extension method
 - `Models/BaseEntity.cs` - Base class for all entities with audit fields
 - `ViewModels/HouseDetailsViewModel.cs` - House details with rankings, division summaries, and event results
 - `ViewModels/HouseResultsViewModel.cs` - House members with event participation details
 - `ViewModels/HouseParticipantsViewModel.cs` - Simple list of house participants
 - `ViewModels/HouseLeaderDashboardViewModel.cs` - House leader dashboard, events, and participant registration ViewModels
+- `ViewModels/RecordViewModel.cs` - Record display with existing and new records
+- `ViewModels/ResultViewModel.cs` - Result display with filtering and statistics
 
 ### SportsDay.Web (ASP.NET Core MVC)
 **Purpose**: Web application with public, admin, and house leader interfaces
@@ -134,6 +140,8 @@ Sports Day Manager follows a layered architecture pattern with clear separation 
 - `Areas/HouseLeader/Controllers/DashboardController.cs` - House leader dashboard
 - `Areas/HouseLeader/Controllers/ParticipantsController.cs` - Participant management
 - `Areas/HouseLeader/Controllers/EventsController.cs` - Event registration
+- `Controllers/RecordController.cs` - Public record viewing
+- `Controllers/ResultController.cs` - Public result viewing with statistics
 
 ## Data Model
 
@@ -224,8 +232,10 @@ Participant (1) ──→ (N) Result
   - `ParticipantService` handles participant management
   - `HouseLeaderService` handles house leader operations
   - `EventTemplateService` handles event template CRUD and import operations
-    - `EventService` handles event CRUD and retrieval for active tournament
-    - `DeveloperService` handles test data generation and cleanup (DEBUG only)
+  - `EventService` handles event CRUD and retrieval for active tournament
+  - `RecordService` handles record retrieval from Events and Results
+  - `ResultService` handles result retrieval with comprehensive filtering
+  - `DeveloperService` handles test data generation and cleanup (DEBUG only)
 
 ### Hub Pattern (SignalR)
 - `SportsHub` manages real-time connections
@@ -298,6 +308,23 @@ Participant (1) ──→ (N) Result
 6. System creates Result entry (registration without placement)
 7. Participant appears in registered list
 8. House leader can unregister participants (if no results recorded)
+
+### Record Viewing Flow
+1. User navigates to Records page (`/Record/Index`)
+2. System retrieves records from two sources:
+   - Existing records stored in Events (historical records)
+   - New records from Results where IsNewRecord = true
+3. User can filter by division, class, category, year
+4. User can toggle between showing all, new only, or existing only
+5. Clicking a record shows details including record holder and year set
+
+### Result Viewing Flow
+1. User navigates to Results page (`/Result/Index`)
+2. System retrieves all results with placements from active tournament
+3. User can filter by division, class, category, house, or event
+4. User can view results by specific event (`/Result/ByEvent/{id}`)
+5. User can view results by specific house (`/Result/ByHouse/{id}`)
+6. Statistics page shows comprehensive tournament metrics
 
 ## Authentication & Authorization
 

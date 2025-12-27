@@ -224,6 +224,8 @@ RequiredUniqueChars = 1
 - ILogger<T> dependency injection
 - Log levels: Information, Warning, Error
 - Console logging in development
+- Implemented in RecordService and ResultService
+- All controllers log operations and errors
 
 ## Theme & Styling
 
