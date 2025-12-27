@@ -5,6 +5,7 @@ using Microsoft.Azure.SignalR;
 using SportsDay.Lib.Data;
 using SportsDay.Lib.Extensions;
 using SportsDay.Web.Hubs;
+using SportsDay.Web.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,9 @@ builder.Services.AddMemoryCache();
 
 // Add custom services
 builder.Services.AddSportsDayServices();
+
+// Register filters
+builder.Services.AddScoped<HouseLeaderHouseFilter>();
 
 // Configure Identity options
 builder.Services.Configure<IdentityOptions>(options =>

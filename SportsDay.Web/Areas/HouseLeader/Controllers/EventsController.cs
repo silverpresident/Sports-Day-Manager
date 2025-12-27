@@ -5,12 +5,14 @@ using SportsDay.Lib.Data;
 using SportsDay.Lib.Models;
 using SportsDay.Lib.Services.Interfaces;
 using SportsDay.Lib.ViewModels;
+using SportsDay.Web.Filters;
 
 namespace SportsDay.Web.Areas.HouseLeader.Controllers;
 
 /// <summary>
 /// Controller for managing event registrations for house participants
 /// </summary>
+[ServiceFilter(typeof(HouseLeaderHouseFilter))]
 public class EventsController : HouseLeaderBaseController
 {
     private readonly IHouseLeaderService _houseLeaderService;

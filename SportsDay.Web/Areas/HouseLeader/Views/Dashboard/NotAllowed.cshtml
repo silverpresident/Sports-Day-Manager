@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Access Not Allowed";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Access Not Allowed
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <strong>You do not have permission to access the House Leader area.</strong>
+                    </div>
+
+                    <p class="lead">You must be registered as a house leader to access this area.</p>
+
+                    <p>To become a house leader, please:</p>
+                    <ul>
+                        <li>Contact your school administrator</li>
+                        <li>Request to be assigned as a house leader for your house</li>
+                        <li>Once assigned, you will be able to access this area</li>
+                    </ul>
+
+                    <hr class="my-4" />
+
+                    <div class="d-grid gap-2">
+                        <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i>Return to Main Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -101,7 +101,6 @@ Potential areas for enhancement:
 - Implement comprehensive logging with ILogger
 - Add error handling throughout the application
 - Complete Azure deployment configuration
-- Remove old HouseLeaderController from Controllers folder
 - Add participant self-registration functionality
 - Create comprehensive unit and integration tests
 - Enhance UI/UX with more interactive features
@@ -117,5 +116,4 @@ Potential areas for enhancement:
 - EventService created; consider similar pattern for Results, Announcements
 - DeveloperService created for testing; consider expanding for more test scenarios
 - HouseDetailsViewModel, HouseResultsViewModel, and HouseParticipantsViewModel created; consider similar ViewModels for other complex views
-- Old HouseLeaderController in Controllers folder should be removed (superseded by HouseLeader area)
 - HouseLeader area ViewModels created in HouseLeaderDashboardViewModel.cs; consider splitting into separate files

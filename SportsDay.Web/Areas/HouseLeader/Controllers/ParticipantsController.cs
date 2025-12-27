@@ -6,12 +6,14 @@ using SportsDay.Lib.Enums;
 using SportsDay.Lib.Models;
 using SportsDay.Lib.Services.Interfaces;
 using SportsDay.Lib.ViewModels;
+using SportsDay.Web.Filters;
 
 namespace SportsDay.Web.Areas.HouseLeader.Controllers;
 
 /// <summary>
 /// Controller for managing house participants
 /// </summary>
+[ServiceFilter(typeof(HouseLeaderHouseFilter))]
 public class ParticipantsController : HouseLeaderBaseController
 {
     private readonly IHouseLeaderService _houseLeaderService;
