@@ -75,3 +75,13 @@ Add link to this view on the index page and on the details page.
 ===
 Add a section that shows the house leaders to the details view.
 Include a button and action that allows adding and removing house leaders.
+===
+Add a COntroller for Participants
+Create views to list, add, edit, delete participants.
+===
+Add a COntroller for Participants
+Create views to list, add, edit, delete participants.
+===
+Create a "Publish Points Standing" action on the tournament controller which generate an announcement with the pointstanding for each house in each division as the content.
+Put a link on the admin home page.
+===

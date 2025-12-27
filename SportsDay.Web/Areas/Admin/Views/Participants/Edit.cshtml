@@ -1,0 +1,147 @@
+@model SportsDay.Lib.Models.Participant
+
+@{
+    ViewData["Title"] = "Edit Participant";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="bi bi-pencil-square"></i> Edit Participant
+                </h1>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Points" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        <input type="hidden" asp-for="CreatedBy" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-12">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-person"></i> Personal Information
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateOfBirth" class="form-label"></label>
+                                <input asp-for="DateOfBirth" type="date" class="form-control" />
+                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="AgeGroup" class="form-label"></label>
+                                <input asp-for="AgeGroup" class="form-control" placeholder="e.g., Under 13, 13-15" />
+                                <span asp-validation-for="AgeGroup" class="text-danger"></span>
+                            </div>
+
+                            <!-- Tournament and House -->
+                            <div class="col-md-12 mt-3">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-trophy"></i> Tournament & House
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TournamentId" class="form-label">Tournament</label>
+                                <select asp-for="TournamentId" class="form-select" asp-items="ViewBag.Tournaments">
+                                    <option value="">-- Select Tournament --</option>
+                                </select>
+                                <span asp-validation-for="TournamentId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="HouseId" class="form-label">House</label>
+                                <select asp-for="HouseId" class="form-select" asp-items="ViewBag.Houses">
+                                    <option value="">-- Select House --</option>
+                                </select>
+                                <span asp-validation-for="HouseId" class="text-danger"></span>
+                            </div>
+
+                            <!-- Classification -->
+                            <div class="col-md-12 mt-3">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-diagram-3"></i> Classification
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="GenderGroup" class="form-label">Gender/Division</label>
+                                <select asp-for="GenderGroup" class="form-select" asp-items="ViewBag.GenderGroups">
+                                    <option value="">-- Select Gender/Division --</option>
+                                </select>
+                                <span asp-validation-for="GenderGroup" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EventClassGroup" class="form-label">Event Class</label>
+                                <select asp-for="EventClassGroup" class="form-select" asp-items="ViewBag.EventClasses">
+                                    <option value="">-- Select Event Class --</option>
+                                </select>
+                                <span asp-validation-for="EventClassGroup" class="text-danger"></span>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="col-md-12 mt-3">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-card-text"></i> Additional Information
+                                </h5>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Notes" class="form-label"></label>
+                                <textarea asp-for="Notes" class="form-control" rows="3" 
+                                          placeholder="Enter any additional notes or information"></textarea>
+                                <span asp-validation-for="Notes" class="text-danger"></span>
+                            </div>
+
+                            <!-- Current Points Display -->
+                            <div class="col-md-12 mb-3">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> 
+                                    <strong>Current Points:</strong> @Model.Points
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

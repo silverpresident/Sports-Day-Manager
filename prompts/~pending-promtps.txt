@@ -1,4 +1,0 @@
-
-Create a "Publish Points Standing" action ont he tournament controller which generate an announcement witht he pointstanding for each house in each section as the content.
-
-===

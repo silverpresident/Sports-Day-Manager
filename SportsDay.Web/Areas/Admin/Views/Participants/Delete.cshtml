@@ -1,0 +1,122 @@
+@model SportsDay.Lib.Models.Participant
+
+@{
+    ViewData["Title"] = "Delete Participant";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-danger">
+                    <i class="bi bi-trash"></i> Delete Participant
+                </h1>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Confirm Deletion
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Warning:</strong> You are about to delete this participant. This action cannot be undone.
+                    </div>
+
+                    <h5 class="mb-3">Participant Details:</h5>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Name</dt>
+                        <dd class="col-sm-9">
+                            <strong>@Model.FullName</strong>
+                        </dd>
+
+                        <dt class="col-sm-3">House</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.House != null)
+                            {
+                                <span class="badge" style="background-color: @Model.House.Color;">
+                                    @Model.House.Name
+                                </span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Tournament</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Tournament != null)
+                            {
+                                @Model.Tournament.Name
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Gender/Division</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-secondary">@Model.GenderGroup</span>
+                        </dd>
+
+                        <dt class="col-sm-3">Event Class</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-info">@Model.EventClassGroup</span>
+                        </dd>
+
+                        <dt class="col-sm-3">Age</dt>
+                        <dd class="col-sm-9">
+                            @Model.AgeInYears years
+                            <small class="text-muted">(Born: @Model.DateOfBirth.ToString("MMM dd, yyyy"))</small>
+                        </dd>
+
+                        <dt class="col-sm-3">Age Group</dt>
+                        <dd class="col-sm-9">@Model.AgeGroup</dd>
+
+                        <dt class="col-sm-3">Points</dt>
+                        <dd class="col-sm-9">
+                            <strong>@Model.Points</strong>
+                        </dd>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                        {
+                            <dt class="col-sm-3">Notes</dt>
+                            <dd class="col-sm-9">@Model.Notes</dd>
+                        }
+
+                        @if (Model.Results != null && Model.Results.Any())
+                        {
+                            <dt class="col-sm-3">Results</dt>
+                            <dd class="col-sm-9">
+                                <span class="badge bg-warning text-dark">
+                                    @Model.Results.Count result(s) recorded
+                                </span>
+                            </dd>
+                        }
+                    </dl>
+
+                    @if (Model.Results != null && Model.Results.Any())
+                    {
+                        <div class="alert alert-danger mt-3" role="alert">
+                            <i class="bi bi-exclamation-octagon-fill"></i>
+                            <strong>Important:</strong> This participant has @Model.Results.Count recorded result(s). 
+                            Deleting this participant will also remove all associated results.
+                        </div>
+                    }
+
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete Participant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

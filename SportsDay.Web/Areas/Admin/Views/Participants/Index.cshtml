@@ -1,0 +1,166 @@
+@model IEnumerable<SportsDay.Lib.Models.Participant>
+
+@{
+    ViewData["Title"] = "Participants";
+    var selectedTournamentId = ViewBag.SelectedTournamentId as Guid?;
+    var selectedHouseId = ViewBag.SelectedHouseId as int?;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="bi bi-people-fill"></i> Participants
+        </h1>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add New Participant
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3">
+                <div class="col-md-5">
+                    <label for="tournamentId" class="form-label">Filter by Tournament</label>
+                    <select name="tournamentId" id="tournamentId" class="form-select">
+                        <option value="">All Tournaments</option>
+                        @foreach (var item in ViewBag.Tournaments as SelectList)
+                        {
+                            <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="houseId" class="form-label">Filter by House</label>
+                    <select name="houseId" id="houseId" class="form-select">
+                        <option value="">All Houses</option>
+                        @foreach (var item in ViewBag.Houses as SelectList)
+                        {
+                            <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Participants Table -->
+    <div class="card">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>House</th>
+                                <th>Tournament</th>
+                                <th>Gender</th>
+                                <th>Class</th>
+                                <th>Age</th>
+                                <th>Points</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var participant in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@participant.FullName</strong>
+                                    </td>
+                                    <td>
+                                        @if (participant.House != null)
+                                        {
+                                            <span class="badge" style="background-color: @participant.House.Color;">
+                                                @participant.House.Name
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (participant.Tournament != null)
+                                        {
+                                            <small>@participant.Tournament.Name</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@participant.GenderGroup</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@participant.EventClassGroup</span>
+                                    </td>
+                                    <td>@participant.AgeInYears years</td>
+                                    <td>
+                                        <strong>@participant.Points</strong>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Details" asp-route-id="@participant.Id" 
+                                               class="btn btn-outline-info" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@participant.Id" 
+                                               class="btn btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@participant.Id" 
+                                               class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        Showing <strong>@Model.Count()</strong> participant(s)
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-people display-1 text-muted"></i>
+                    <p class="lead mt-3">No participants found</p>
+                    @if (selectedTournamentId.HasValue || selectedHouseId.HasValue)
+                    {
+                        <p class="text-muted">Try adjusting your filters or</p>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Clear Filters</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Create" class="btn btn-success mt-2">
+                            <i class="bi bi-plus-circle"></i> Add First Participant
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
