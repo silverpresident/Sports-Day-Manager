@@ -35,8 +35,11 @@
                                 <label asp-for="EventNumber" class="form-label">
                                     <i class="bi bi-card-text me-2"></i>Event Number
                                 </label>
-                                <input asp-for="EventNumber" class="form-control" placeholder="Enter event number" />
+                                <input asp-for="EventNumber" class="form-control" placeholder="Enter event number or leave as 0" value="0" />
                                 <span asp-validation-for="EventNumber" class="text-danger"></span>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>Set to 0 to allow the system to assign the next available number automatically
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label asp-for="Name" class="form-label">
@@ -76,7 +79,10 @@
                                 <label asp-for="Category" class="form-label">
                                     <i class="bi bi-tag me-2"></i>Category
                                 </label>
-                                <input asp-for="Category" class="form-control" placeholder="Enter category" />
+                                <select asp-for="Category" asp-items="ViewBag.Categories"
+                                        class="form-select">
+                                    <option value="">Select Category</option>
+                                </select>
                                 <span asp-validation-for="Category" class="text-danger"></span>
                             </div>
 
@@ -84,7 +90,7 @@
                                 <label asp-for="Type" class="form-label">
                                     <i class="bi bi-speedometer2 me-2"></i>Event Type
                                 </label>
-                                <select asp-for="Type" asp-items="ViewBag.Types" 
+                                <select asp-for="Type" asp-items="ViewBag.Types"
                                         class="form-select">
                                     <option value="">Select Type</option>
                                 </select>

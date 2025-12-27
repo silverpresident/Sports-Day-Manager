@@ -1,0 +1,284 @@
+@model SportsDay.Lib.Models.Event
+@using Humanizer
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = $"Enter Results - {Model.Name}";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-pencil-square text-success me-2"></i>Enter Results
+            </h1>
+            <p class="text-muted mt-2">@Model.Name - @Model.Division @Model.ClassGroup</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Event
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-info-circle me-2"></i>Event Info
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="small text-muted">Type</div>
+                            <div class="fw-bold">@Model.Type</div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Category</div>
+                            <div class="fw-bold">@Model.Category</div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Point System</div>
+                            <div class="fw-bold">@Model.PointSystem</div>
+                        </div>
+                        @if (Model.Record.HasValue)
+                        {
+                            <div class="list-group-item">
+                                <div class="small text-muted">Current Record</div>
+                                <div class="fw-bold text-warning">@Model.Record.Value</div>
+                                <div class="small">@Model.RecordHolder</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-question-circle me-2"></i>Instructions
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            Enter @(Model.Type == EventType.Speed ? "time" : "distance") or placement
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            Check DQ for disqualified
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            Check DNF for did not finish
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            Check DNS for did not start
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            <strong>Save</strong> to save without publishing
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            <strong>Publish</strong> to save and mark event complete
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list-ol me-2"></i>Participants
+                        </h5>
+                        <span class="badge bg-light text-dark">
+                            @Model.Results.Count Participants
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Results.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-clipboard-x text-muted fs-1 d-block mb-3"></i>
+                            <p class="text-muted mb-0">No participants registered for this event</p>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary mt-3">
+                                <i class="bi bi-person-plus me-2"></i>Add Participants
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="EnterResults" asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 25%">
+                                                <i class="bi bi-person me-1"></i>Participant
+                                            </th>
+                                            <th style="width: 15%">
+                                                <i class="bi bi-house me-1"></i>House
+                                            </th>
+                                            <th style="width: 15%">
+                                                <i class="bi bi-trophy me-1"></i>Placement
+                                            </th>
+                                            <th style="width: 15%">
+                                                <i class="bi bi-stopwatch me-1"></i>@(Model.Type == EventType.Speed ? "Time" : "Distance")
+                                            </th>
+                                            <th style="width: 10%" class="text-center">DQ</th>
+                                            <th style="width: 10%" class="text-center">DNF</th>
+                                            <th style="width: 10%" class="text-center">DNS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Results.Count; i++)
+                                        {
+                                            var result = Model.Results.ElementAt(i);
+                                            <tr>
+                                                <td>
+                                                    <strong>@result.Participant.FullName</strong>
+                                                    <input type="hidden" name="results[@i].ResultId" value="@result.Id" />
+                                                    <input type="hidden" name="results[@i].ParticipantId" value="@result.ParticipantId" />
+                                                    <input type="hidden" name="results[@i].ParticipantName" value="@result.Participant.FullName" />
+                                                </td>
+                                                <td>
+                                                    <span class="badge" style="background-color: @result.House.Color">
+                                                        @result.House.Name
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <input type="number" 
+                                                           name="results[@i].Placement" 
+                                                           value="@result.Placement" 
+                                                           class="form-control form-control-sm" 
+                                                           min="1" 
+                                                           placeholder="Place" />
+                                                </td>
+                                                <td>
+                                                    <input type="number" 
+                                                           name="results[@i].SpeedOrDistance" 
+                                                           value="@result.SpeedOrDistance" 
+                                                           class="form-control form-control-sm" 
+                                                           step="0.01" 
+                                                           placeholder="@(Model.Type == EventType.Speed ? "Seconds" : "Meters")" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check d-inline-block">
+                                                        <input type="checkbox" 
+                                                               name="results[@i].IsDisqualified" 
+                                                               value="true" 
+                                                               class="form-check-input" 
+                                                               @(result.IsDisqualified ? "checked" : "") />
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check d-inline-block">
+                                                        <input type="checkbox" 
+                                                               name="results[@i].IsDNF" 
+                                                               value="true" 
+                                                               class="form-check-input" 
+                                                               @(result.ResultLabel == "DNF" ? "checked" : "") />
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check d-inline-block">
+                                                        <input type="checkbox" 
+                                                               name="results[@i].IsDNS" 
+                                                               value="true" 
+                                                               class="form-check-input" 
+                                                               @(result.ResultLabel == "DNS" ? "checked" : "") />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                                <button type="submit" name="action" value="save" class="btn btn-primary">
+                                    <i class="bi bi-save me-2"></i>Save
+                                </button>
+                                <button type="submit" name="action" value="publish" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Save & Publish
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Prevent multiple checkbox selection
+        document.querySelectorAll('tbody tr').forEach(row => {
+            const dqCheckbox = row.querySelector('input[name$=".IsDisqualified"]');
+            const dnfCheckbox = row.querySelector('input[name$=".IsDNF"]');
+            const dnsCheckbox = row.querySelector('input[name$=".IsDNS"]');
+            const placementInput = row.querySelector('input[name$=".Placement"]');
+            const speedDistanceInput = row.querySelector('input[name$=".SpeedOrDistance"]');
+
+            function updateCheckboxes(changedCheckbox) {
+                if (changedCheckbox.checked) {
+                    // Uncheck other checkboxes
+                    [dqCheckbox, dnfCheckbox, dnsCheckbox].forEach(cb => {
+                        if (cb !== changedCheckbox) {
+                            cb.checked = false;
+                        }
+                    });
+                    // Clear inputs
+                    placementInput.value = '';
+                    speedDistanceInput.value = '';
+                }
+            }
+
+            dqCheckbox?.addEventListener('change', () => updateCheckboxes(dqCheckbox));
+            dnfCheckbox?.addEventListener('change', () => updateCheckboxes(dnfCheckbox));
+            dnsCheckbox?.addEventListener('change', () => updateCheckboxes(dnsCheckbox));
+
+            // Clear checkboxes when entering data
+            [placementInput, speedDistanceInput].forEach(input => {
+                input?.addEventListener('input', () => {
+                    if (input.value) {
+                        dqCheckbox.checked = false;
+                        dnfCheckbox.checked = false;
+                        dnsCheckbox.checked = false;
+                    }
+                });
+            });
+        });
+
+        // Confirm before publishing
+        document.querySelector('button[value="publish"]')?.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to publish these results? This will mark the event as completed.')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}

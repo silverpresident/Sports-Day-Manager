@@ -1,4 +1,5 @@
 using SportsDay.Lib.Models;
+using SportsDay.Lib.Enums;
 
 namespace SportsDay.Lib.Services.Interfaces;
 
@@ -17,4 +18,7 @@ public interface IEventService
     Task<int> GetNextEventNumberAsync(Guid tournamentId);
     Task<Event?> GetNextEventAsync(Guid currentEventId);
     Task<Event?> GetPreviousEventAsync(Guid currentEventId);
+    Task<IEnumerable<Participant>> GetEligibleParticipantsAsync(Guid eventId);
+    Task<Result> AddParticipantToEventAsync(Guid eventId, Guid participantId, string createdBy);
+    Task RemoveParticipantFromEventAsync(Guid eventId, Guid participantId);
 }

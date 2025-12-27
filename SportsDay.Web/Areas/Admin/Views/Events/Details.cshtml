@@ -147,14 +147,17 @@
             </div>
 
             <!-- Quick Actions -->
-            @if (Model.Status != EventStatus.Completed && Model.Status != EventStatus.Cancelled)
-            {
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-lightning me-2"></i>Quick Actions
-                    </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-lightning me-2"></i>Quick Actions
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="EnterResults" asp-route-id="@Model.Id" class="btn btn-primary w-100">
+                            <i class="bi bi-pencil-square me-2"></i>Enter Results
+                        </a>
+                        @if (Model.Status != EventStatus.Completed && Model.Status != EventStatus.Cancelled)
+                        {
                             @if (Model.Status == EventStatus.Scheduled)
                             {
                                 <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
@@ -182,6 +185,37 @@
                                     <i class="bi bi-x-circle me-2"></i>Cancel Event
                                 </button>
                             </form>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Participants -->
+            @if (ViewBag.EligibleParticipants != null && ((IEnumerable<SportsDay.Lib.Models.Participant>)ViewBag.EligibleParticipants).Any())
+            {
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-person-plus me-2"></i>Add Participants
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="AddParticipant" method="post" class="mb-3">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="eventId" value="@Model.Id" />
+                            <div class="input-group">
+                                <select name="participantId" class="form-select" required>
+                                    <option value="">Select Participant</option>
+                                    @foreach (var participant in (IEnumerable<SportsDay.Lib.Models.Participant>)ViewBag.EligibleParticipants)
+                                    {
+                                        <option value="@participant.Id">@participant.FullName (@participant.House?.Name)</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-info">
+                                    <i class="bi bi-plus-circle me-1"></i>Add
+                                </button>
+                            </div>
+                        </form>
+                        <div class="small text-muted">
+                            <i class="bi bi-info-circle me-1"></i>@((IEnumerable<SportsDay.Lib.Models.Participant>)ViewBag.EligibleParticipants).Count() eligible participants available
                         </div>
                     </div>
                 </div>
@@ -194,10 +228,10 @@
                 <div class="card-header bg-success text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
-                            <i class="bi bi-list-ol me-2"></i>Results
+                            <i class="bi bi-list-ol me-2"></i>Participants & Results
                         </h5>
                         <span class="badge bg-light text-dark">
-                            @Model.Results.Count Results
+                            @Model.Results.Count Participants
                         </span>
                     </div>
                 </div>
@@ -222,12 +256,13 @@
                                         <i class="bi bi-award me-2"></i>Points
                                     </th>
                                     <th>Record</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (Model.Results.Any())
                                 {
-                                    foreach (var result in Model.Results.OrderBy(r => r.Placement))
+                                    foreach (var result in Model.Results.OrderBy(r => r.Placement ?? int.MaxValue))
                                     {
                                         <tr>
                                             <td>@result.Participant.FullName</td>
@@ -253,17 +288,25 @@
                                                         @result.ResultLabel
                                                     </span>
                                                 }
-                                                else if (result.Placement.HasValue)
+                                                else if (result.Placement.HasValue && result.Placement > 0)
                                                 {
                                                     <span class="badge bg-success">
                                                         @result.Placement.Value.ToOrdinal()
                                                     </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
                                                 }
                                             </td>
                                             <td>
                                                 @if (result.SpeedOrDistance.HasValue)
                                                 {
                                                     @result.SpeedOrDistance.Value
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
                                                 }
                                             </td>
                                             <td>
@@ -279,15 +322,29 @@
                                                     </span>
                                                 }
                                             </td>
+                                            <td>
+                                                @if (!result.Placement.HasValue && !result.SpeedOrDistance.HasValue)
+                                                {
+                                                    <form asp-action="RemoveParticipant" method="post" class="d-inline"
+                                                          onsubmit="return confirm('Remove this participant from the event?');">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="eventId" value="@Model.Id" />
+                                                        <input type="hidden" name="participantId" value="@result.ParticipantId" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </td>
                                         </tr>
                                     }
                                 }
                                 else
                                 {
                                     <tr>
-                                        <td colspan="5" class="text-center py-4">
+                                        <td colspan="7" class="text-center py-4">
                                             <i class="bi bi-clipboard-x text-muted fs-1 d-block mb-2"></i>
-                                            <p class="text-muted mb-0">No results recorded</p>
+                                            <p class="text-muted mb-0">No participants registered</p>
                                         </td>
                                     </tr>
                                 }

@@ -1,4 +1,5 @@
 Add a IsDisqualified field to the result model. 
+Add a IsPublished  field to the result model. 
 Add a ResultLabel to the result model string (10)
 ResultLabel will store a place lable "1st", "2nd" or status "DQ", "DNS", "DNF"
 Update the services and generate the sql to do the update.
@@ -13,4 +14,31 @@ Update applicable models to extend a BaseEntity whichadds common fieldsinlcuing 
 Update the relevant controller to reflect this change
 UPdate the setup.sql to refect this as well. 
 Have CreatedAt and updatedby default to "system"
+===
+let's work on the events module.
+UPdate the events service and use this service in  the controllers
+== CREATE VIEW AND ACTION
+-Make Category a drop down showing the options Tack, Field, Other
+- put a help tip to indicate that the EVentNumber field is optional and can be set to zero to allow the system to assign the number.
+-In the create post aciton, remove AgeGroup from the validation.
+
+
+== EDIT VIEW AND ACTION
+-Make Category a drop down showing the options Tack, Field, Other
+-In the post aciton, remove AgeGroup from the validation.
+
+
+== DETAILS VIEW AND ACTION
+- add a button to allow adding participants 
+   available participants should be based on Division and Class except for Open class events where all participant are eligible
+- add a button to the ruls entiry which allow the user to edit that single result entry.
+
+== RESULTS
+- Create a separate view which allow you to enter the results for all participants in one view.
+  You enter either the speed, distance or placement. When saved the placement is worked out by speed or distance if entered. Points are then assigned based on placement. 
+- You should ble able to enter (DQ) IsDisqualified too
+- There should be an option for DNF (set results and placement to 0)
+- There should be an option for DNS (set results and placement to 0)
+- the options on this view should be cancel, save or publish.
+- both save and publish will save but publish will also mark the event IsPublished as true and generate an eventupdate
 ===
