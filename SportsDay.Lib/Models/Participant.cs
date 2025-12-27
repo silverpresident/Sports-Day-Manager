@@ -29,6 +29,7 @@ public class Participant : BaseEntity
 
     [Required]
     public Guid TournamentId { get; set; }
+    [ValidateNever]
     public Tournament? Tournament { get; set; }
 
     public int Points { get; set; }

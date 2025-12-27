@@ -7,6 +7,7 @@ namespace SportsDay.Lib.Models;
 public class Event : BaseEntity
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     [Required]
@@ -61,6 +62,7 @@ public class Event : BaseEntity
 
     // Navigation properties
     [ForeignKey("TournamentId")]
+    [ValidateNever]
     public virtual Tournament Tournament { get; set; } = null!;
 
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();

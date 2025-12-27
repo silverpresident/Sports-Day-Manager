@@ -11,6 +11,7 @@ namespace SportsDay.Lib.Models;
 public class EventTemplate : BaseEntity
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     [Required]

@@ -12,21 +12,27 @@ namespace SportsDay.Lib.Models
             Tournament = tournament ?? throw new ArgumentNullException(nameof(tournament));
             House = house ?? throw new ArgumentNullException(nameof(house));
             Division = division;
-            
+
             TournamentId = tournament.Id;
             HouseId = house.Id;
         }
 
         protected TournamentHouseSummary() { } // For EF Core
 
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         public Guid TournamentId { get; set; }
+        [ForeignKey("TournamentId")]
+        [ValidateNever]
         public Tournament? Tournament { get; set; }
 
         public int HouseId { get; set; }
+        
+        [ValidateNever]
+        [ForeignKey("HouseId")]
+
         public House? House { get; set; }
 
         public DivisionType Division { get; set; }

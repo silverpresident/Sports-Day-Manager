@@ -7,23 +7,23 @@ namespace SportsDay.Lib.Models
 {
     public class Tournament : BaseEntity
     {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Required]
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
-    
+
         [Required]
         public DateTime TournamentDate { get; set; }
-        
+
         [NotMapped]
         public DateTime StartDate => TournamentDate;
-        
+
         [NotMapped]
         public DateTime EndDate => TournamentDate;
-    
+
         public bool IsActive { get; set; }
 
         // Navigation properties
