@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddSportsDayServices(this IServiceCollection services)
     {
+
         // Register all application services
         services.AddScoped<ITournamentService, TournamentService>();
         services.AddScoped<IHouseService, HouseService>();

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SportsDay.Lib.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace SportsDay.Lib.Models;
 
