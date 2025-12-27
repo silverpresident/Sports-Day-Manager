@@ -188,4 +188,10 @@ public class HouseLeaderService : IHouseLeaderService
             throw;
         }
     }
+
+    public Task<IEnumerable<Guid>> GetHousesByUserIdAsync(string? userId)
+    {
+        ?
+        throw new NotImplementedException();
+    }
 }

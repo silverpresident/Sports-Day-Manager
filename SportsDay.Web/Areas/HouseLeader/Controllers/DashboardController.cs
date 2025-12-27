@@ -118,12 +118,13 @@ public class DashboardController : HouseLeaderBaseController
         }
         if (houseIds.Count() == 1 && !isAdmin){
             SelectSingleHouseClaim(houseIds[0]);
+            ?redir to index
         }
         IEnumerable<House> availableHouses;
         if (isAdmin){
             //all houses
             availableHouses = await _houseService.GetAllAsync();
-        } else if (houseIds){
+        } else if (houseIds.Any()){
             availableHouses = await _houseService.GetAllAsync();
             availableHouses = availableHouses.Where(h => houseIds.Contains(h.Id)).ToList();
         } else {
@@ -131,15 +132,17 @@ public class DashboardController : HouseLeaderBaseController
             return RedirectToAction(nameof(Register));
         }
 
-
-
-        // For now, we only support single house leadership
-        // If user is an administrator, they can view all houses
+    // If user is an administrator, they can view all houses
 
         ViewBag.Houses = new SelectList(availableHouses, "Id", "Name");
         ViewBag.IsAdmin = isAdmin;
 
         return View();
+    }
+
+    private void SelectSingleHouseClaim(Guid houseId)
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
