@@ -14,6 +14,7 @@ public interface IHouseService
     Task<HouseDetailsViewModel?> GetHouseDetailsForActiveTournamentAsync(int id);
     Task<HouseResultsViewModel?> GetHouseMembersForActiveTournamentAsync(int id);
     Task<IEnumerable<HouseRankingViewModel>> GetAllHouseRankingsForActiveTournamentAsync();
+    Task<IEnumerable<Event>> GetHouseEventsAsync(int houseId);
     Task<House> CreateAsync(House house);
     Task UpdateAsync(House house);
     Task DeleteAsync(int id);

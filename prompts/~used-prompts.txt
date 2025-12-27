@@ -61,12 +61,17 @@ EventTemplate
 Paticipant
 TournamentHouseSummary
 ===
-MOve the `public static int GetClassGroupNumberByAge(int age)`, `public static int CalculateAge(DateTime dateOfBirth, DateTime asOfDate)`, and `public static int GetClassGroupNumberByDateOfBirth(DateTime dateOfBirth, DateTime tournamentDate)` to the service and use the database values to decide which to return.
+Move the `public static int GetClassGroupNumberByAge(int age)`, `public static int CalculateAge(DateTime dateOfBirth, DateTime asOfDate)`, and `public static int GetClassGroupNumberByDateOfBirth(DateTime dateOfBirth, DateTime tournamentDate)` to the service and use the database values to decide which to return.
 if the db values are not found then default to using the if logic.
 add a method to the db inititalizer to pouplate the EventClassGroups.
 add a static object cache in the service to store retirved db values for a reasonable amount of time.
 ===
-
 Introduce views to list and edit EventClassGroup
 THere should be no, create, delete, and there is no real need for a details view.
 Only the Paticipants maxAge and the description shoud be editable.
+===
+From the Houses Controller add as view to show all the events for which a house is registered. 
+Add link to this view on the index page and on the details page.
+===
+Add a section that shows the house leaders to the details view.
+Include a button and action that allows adding and removing house leaders.

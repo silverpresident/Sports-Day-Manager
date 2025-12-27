@@ -77,18 +77,23 @@
                                 </span>
                             </div>
                             <div class="btn-group">
-                                <a asp-action="Details" asp-route-id="@house.Id" 
+                                <a asp-action="Details" asp-route-id="@house.Id"
                                    class="btn btn-sm btn-outline-success"
                                    title="View details">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a asp-action="Edit" asp-route-id="@house.Id" 
+                                <a asp-action="Events" asp-route-id="@house.Id"
+                                   class="btn btn-sm btn-outline-success"
+                                   title="View events">
+                                    <i class="bi bi-calendar-event"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@house.Id"
                                    class="btn btn-sm btn-outline-success"
                                    title="Edit house">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" 
-                                        data-bs-toggle="modal" 
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#deleteModal@(house.Id)"
                                         title="Delete house">
                                     <i class="bi bi-trash"></i>

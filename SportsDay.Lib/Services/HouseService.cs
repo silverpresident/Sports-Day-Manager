@@ -437,6 +437,37 @@ public class HouseService : IHouseService
         }
     }
 
+    public async Task<IEnumerable<Event>> GetHouseEventsAsync(int houseId)
+    {
+        try
+        {
+            var activeTournament = await _tournamentService.GetActiveTournamentAsync();
+            
+            if (activeTournament == null)
+            {
+                _logger.LogWarning("No active tournament found");
+                return new List<Event>();
+            }
+
+            // Get all events where this house has registered participants (has results)
+            var events = await _context.Results
+                .Where(r => r.HouseId == houseId && r.TournamentId == activeTournament.Id)
+                .Select(r => r.Event)
+                .Distinct()
+                .OrderBy(e => e.EventNumber)
+                .AsNoTracking()
+                .ToListAsync();
+
+            _logger.LogInformation("Retrieved {Count} events for house {HouseId}", events.Count, houseId);
+            return events;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving events for house {HouseId}", houseId);
+            throw;
+        }
+    }
+
     private async Task<IEnumerable<HouseRankingViewModel>> GetDivisionRankingsAsync(Guid? tournamentId, DivisionType division)
     {
         try

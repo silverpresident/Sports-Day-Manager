@@ -13,6 +13,9 @@
             <p class="text-muted mt-2">House details and statistics</p>
         </div>
         <div class="btn-group">
+            <a asp-action="Events" asp-route-id="@Model.Id" class="btn btn-outline-success">
+                <i class="bi bi-calendar-event me-2"></i>View Events
+            </a>
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-success">
                 <i class="bi bi-pencil me-2"></i>Edit House
             </a>
@@ -65,7 +68,7 @@
             </div>
 
             <!-- Statistics Card -->
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-graph-up me-2"></i>Statistics
                 </div>
@@ -88,6 +91,52 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- House Leaders Card -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-person-badge me-2"></i>House Leaders
+                        </div>
+                        <a asp-action="AddLeader" asp-route-id="@Model.Id" class="btn btn-sm btn-light">
+                            <i class="bi bi-plus-circle me-1"></i>Add Leader
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.HouseLeaders != null && Model.HouseLeaders.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var leader in Model.HouseLeaders)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-person-circle text-success me-2"></i>
+                                            <span>@leader.UserId</span>
+                                        </div>
+                                        <form asp-action="RemoveLeader" asp-route-id="@leader.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Are you sure you want to remove this house leader?');">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-person-badge text-muted fs-1 d-block mb-2"></i>
+                            <p class="text-muted mb-0">No house leaders assigned</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -176,8 +225,8 @@
                                     foreach (var result in Model.Results.OrderByDescending(r => r.Points).Take(10))
                                     {
                                         <tr>
-                                            <td>@result.Event.Name</td>
-                                            <td>@result.Participant.FullName</td>
+                                            <td>@(result.Event?.Name ?? "Unknown Event")</td>
+                                            <td>@(result.Participant?.FullName ?? "Unknown Participant")</td>
                                             <td>
                                                 @if (result.Placement.HasValue)
                                                 {

@@ -1,0 +1,109 @@
+@{
+    var house = ViewBag.House as SportsDay.Lib.Models.House;
+    ViewData["Title"] = $"Add Leader to {house?.Name}";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-person-plus text-success me-2"></i>Add House Leader
+            </h1>
+            <p class="text-muted mt-2">Add a new leader to @house?.Name</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@house?.Id" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Details
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header" style="background-color: @house?.Color; color: white;">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-house-fill me-2"></i>@house?.Name
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddLeader" asp-route-id="@house?.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-4">
+                            <label for="userId" class="form-label">
+                                <i class="bi bi-person-circle me-2"></i>User ID / Email
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="userId" 
+                                   name="userId" 
+                                   placeholder="Enter user ID or email address"
+                                   required>
+                            <div class="form-text">
+                                Enter the user ID or email address of the person you want to assign as a house leader.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Note:</strong> Each user can only be a house leader for one house at a time.
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Details" asp-route-id="@house?.Id" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-person-plus me-2"></i>Add House Leader
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Current House Leaders -->
+            @if (house?.HouseLeaders != null && house.HouseLeaders.Any())
+            {
+                <div class="card mt-4">
+                    <div class="card-header bg-light">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-people me-2"></i>Current House Leaders
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @foreach (var leader in house.HouseLeaders)
+                            {
+                                <div class="list-group-item">
+                                    <i class="bi bi-person-badge text-success me-2"></i>
+                                    @leader.UserId
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-hide alerts
+        window.setTimeout(function() {
+            $(".alert-danger").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 5000);
+
+        // Focus on input field
+        document.getElementById('userId').focus();
+    </script>
+}
