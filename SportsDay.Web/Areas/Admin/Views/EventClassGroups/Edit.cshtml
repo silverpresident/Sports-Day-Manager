@@ -1,0 +1,169 @@
+@model SportsDay.Lib.Models.EventClassGroup
+
+@{
+    ViewData["Title"] = $"Edit {Model.Name}";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>
+                <i class="bi bi-pencil"></i> Edit Class Group
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Class Groups</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit @Model.Name</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <span class="badge bg-primary">@Model.ClassGroupNumber</span>
+                        @Model.Name
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.ClassGroupNumber" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Class Number</label>
+                            <input type="text" class="form-control" value="@Model.ClassGroupNumber" disabled />
+                            <small class="form-text text-muted">Class number cannot be changed</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" value="@Model.Name" disabled />
+                            <small class="form-text text-muted">Class name cannot be changed</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="maxParticipantAge" class="form-label">
+                                Maximum Participant Age <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="maxParticipantAge" 
+                                   name="maxParticipantAge" 
+                                   value="@Model.MaxParticipantAge" 
+                                   min="0" 
+                                   max="100"
+                                   required />
+                            <small class="form-text text-muted">
+                                Set to 0 for no age limit (Open class). Participants with age ≤ this value will be assigned to this class.
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="3" 
+                                      maxlength="500">@Model.Description</textarea>
+                            <small class="form-text text-muted">Optional description (max 500 characters)</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-info-circle"></i> Information</h6>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Created:</dt>
+                        <dd class="col-sm-7">
+                            <small>@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+                        </dd>
+
+                        @if (!string.IsNullOrEmpty(Model.CreatedBy))
+                        {
+                            <dt class="col-sm-5">Created By:</dt>
+                            <dd class="col-sm-7">
+                                <small>@Model.CreatedBy</small>
+                            </dd>
+                        }
+
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <dt class="col-sm-5">Last Updated:</dt>
+                            <dd class="col-sm-7">
+                                <small>@Model.UpdatedAt.Value.ToString("MMM dd, yyyy HH:mm")</small>
+                            </dd>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.UpdatedBy))
+                        {
+                            <dt class="col-sm-5">Updated By:</dt>
+                            <dd class="col-sm-7">
+                                <small>@Model.UpdatedBy</small>
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Tips</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 small">
+                        <li>The <strong>Max Age</strong> determines which participants are assigned to this class</li>
+                        <li>Setting Max Age to <strong>0</strong> means no age limit (typically for Open class)</li>
+                        <li>Changes take effect immediately and the cache is automatically cleared</li>
+                        <li>Existing participant classifications are not automatically updated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add form validation feedback
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('form')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}

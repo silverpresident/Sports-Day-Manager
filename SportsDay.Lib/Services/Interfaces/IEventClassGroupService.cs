@@ -42,4 +42,14 @@ public interface IEventClassGroupService
     /// <param name="asOfDate">The date to calculate age as of.</param>
     /// <returns>Age in years.</returns>
     int CalculateAge(DateTime dateOfBirth, DateTime asOfDate);
+
+    /// <summary>
+    /// Updates a class group's MaxParticipantAge and Description.
+    /// </summary>
+    /// <param name="classGroupNumber">The class group number to update.</param>
+    /// <param name="maxParticipantAge">The new maximum participant age.</param>
+    /// <param name="description">The new description.</param>
+    /// <param name="updatedBy">The user making the update.</param>
+    /// <returns>True if update was successful, false otherwise.</returns>
+    Task<bool> UpdateClassGroupAsync(int classGroupNumber, int maxParticipantAge, string? description, string updatedBy);
 }

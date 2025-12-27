@@ -49,35 +49,42 @@
                                 </a>
                             </li>
                         }
-                        <li class="nav-item dropdown"></li>
-                        <a class="nav-link dropdown-toggle" href="#" id="tournamentDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-list me-1"></i>
-                            Entities
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="tournamentDropdown">
-                            <li>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Tournaments"
-                                    asp-action="Index">
-                                    <i class="bi bi-trophy me-1"></i> Tournaments
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Houses" asp-action="Index">
-                                    <i class="bi bi-house me-1"></i> Houses
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="EventTemplates"
-                                    asp-action="Index">
-                                    <i class="bi bi-file-earmark-text me-1"></i>Templates
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Participants"
-                                    asp-action="Index">Participants</a>
-                            </li>
-                        </ul>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="tournamentDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-list me-1"></i>
+                                Entities
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="tournamentDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Tournaments"
+                                        asp-action="Index">
+                                        <i class="bi bi-trophy me-1"></i> Tournaments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Houses"
+                                        asp-action="Index">
+                                        <i class="bi bi-house me-1"></i> Houses
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="EventTemplates"
+                                        asp-action="Index">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Templates
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="EventClassGroups"
+                                        asp-action="Index">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Event Classes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Participants"
+                                        asp-action="Index">Participants</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="activeTournamentDropdown" role="button"

@@ -1,0 +1,144 @@
+@model IEnumerable<SportsDay.Lib.Models.EventClassGroup>
+
+@{
+    ViewData["Title"] = "Class Groups";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>
+                <i class="bi bi-diagram-3"></i> Class Groups
+            </h2>
+            <p class="text-muted">Manage age-based class group configurations</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Class Number</th>
+                            <th>Name</th>
+                            <th>Max Age</th>
+                            <th>Description</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var classGroup in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-primary">@classGroup.ClassGroupNumber</span>
+                                    </td>
+                                    <td>
+                                        <strong>@classGroup.Name</strong>
+                                    </td>
+                                    <td>
+                                        @if (classGroup.MaxParticipantAge == 0)
+                                        {
+                                            <span class="badge bg-info">No Limit</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">≤ @classGroup.MaxParticipantAge years</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(classGroup.Description))
+                                        {
+                                            @classGroup.Description
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No description</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (classGroup.UpdatedAt.HasValue)
+                                        {
+                                            <small class="text-muted">
+                                                @classGroup.UpdatedAt.Value.ToString("MMM dd, yyyy")
+                                                @if (!string.IsNullOrEmpty(classGroup.UpdatedBy))
+                                                {
+                                                    <text><br />by @classGroup.UpdatedBy</text>
+                                                }
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <small class="text-muted">
+                                                @classGroup.CreatedAt.ToString("MMM dd, yyyy")
+                                                @if (!string.IsNullOrEmpty(classGroup.CreatedBy))
+                                                {
+                                                    <text><br />by @classGroup.CreatedBy</text>
+                                                }
+                                            </small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@classGroup.ClassGroupNumber" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           title="Edit class group">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">
+                                    <i class="bi bi-info-circle"></i> No class groups found. They should be automatically seeded on application startup.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <div class="alert alert-info">
+            <h5><i class="bi bi-info-circle"></i> About Class Groups</h5>
+            <p class="mb-0">
+                Class groups are age-based categories for events and participants. The system uses the <strong>Max Age</strong> 
+                value to automatically assign participants to the appropriate class group based on their age.
+            </p>
+            <ul class="mb-0 mt-2">
+                <li><strong>Open (Class 0):</strong> No age limit - for participants of any age</li>
+                <li><strong>Class 1-4:</strong> Age-restricted classes based on the Max Age setting</li>
+            </ul>
+            <p class="mt-2 mb-0">
+                <small class="text-muted">
+                    <i class="bi bi-lightbulb"></i> <strong>Note:</strong> Changes to Max Age values will affect future participant 
+                    classifications. The cache is automatically cleared when you update a class group.
+                </small>
+            </p>
+        </div>
+    </div>
+</div>

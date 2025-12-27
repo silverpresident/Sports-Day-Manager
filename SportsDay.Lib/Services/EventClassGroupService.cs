@@ -183,4 +183,40 @@ public class EventClassGroupService : IEventClassGroupService
         if (dateOfBirth.Date > asOfDate.AddYears(-age)) age--;
         return age;
     }
+
+    /// <inheritdoc/>
+    public async Task<bool> UpdateClassGroupAsync(int classGroupNumber, int maxParticipantAge, string? description, string updatedBy)
+    {
+        try
+        {
+            _logger.LogInformation("Updating class group {ClassGroupNumber}", classGroupNumber);
+            
+            var classGroup = await _context.EventClassGroups
+                .FirstOrDefaultAsync(cg => cg.ClassGroupNumber == classGroupNumber);
+            
+            if (classGroup == null)
+            {
+                _logger.LogWarning("Class group {ClassGroupNumber} not found", classGroupNumber);
+                return false;
+            }
+
+            classGroup.MaxParticipantAge = maxParticipantAge;
+            classGroup.Description = description;
+            classGroup.UpdatedAt = DateTime.Now;
+            classGroup.UpdatedBy = updatedBy;
+
+            await _context.SaveChangesAsync();
+            
+            // Clear cache to ensure updated values are used
+            ClearCache();
+            
+            _logger.LogInformation("Class group {ClassGroupNumber} updated successfully", classGroupNumber);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating class group {ClassGroupNumber}", classGroupNumber);
+            return false;
+        }
+    }
 }

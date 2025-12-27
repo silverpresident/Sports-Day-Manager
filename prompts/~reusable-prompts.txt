@@ -1,2 +1,3 @@
 UPdate the docs and README
 UPdate the memory bank
+Build the project and fix any errors
