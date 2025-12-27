@@ -114,6 +114,36 @@
                         </div>
 
                         <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="ParticipantLimit" class="form-label">
+                                    <i class="bi bi-person-lines-fill me-2"></i>Participant Limit
+                                </label>
+                                <input asp-for="ParticipantLimit" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="ParticipantLimit" class="text-danger"></span>
+                                <div class="form-text">Set to 0 for no limit</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="MaxParticipantsPerHouse" class="form-label">
+                                    <i class="bi bi-house-fill me-2"></i>Max Per House
+                                </label>
+                                <input asp-for="MaxParticipantsPerHouse" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="MaxParticipantsPerHouse" class="text-danger"></span>
+                                <div class="form-text">Set to 0 for no limit</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="IsPublished" class="form-label">
+                                    <i class="bi bi-eye me-2"></i>Published
+                                </label>
+                                <div class="form-check form-switch mt-2">
+                                    <input asp-for="IsPublished" class="form-check-input" type="checkbox" />
+                                    <label class="form-check-label" asp-for="IsPublished">Visible to public</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <label asp-for="Record" class="form-label">
                                     <i class="bi bi-trophy me-2"></i>Current Record

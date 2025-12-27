@@ -31,6 +31,8 @@ public class Event : BaseEntity
     public int ParticipantMaxAge { get; set; } = 0;
 
     public int ParticipantLimit { get; set; } = 0; // 0 means no limit
+
+    public int MaxParticipantsPerHouse { get; set; } = 0; // 0 means no limit
     
     [NotMapped]
     public DivisionType Division => GenderGroup;
@@ -60,6 +62,9 @@ public class Event : BaseEntity
     public DateTime? ScheduledTime { get; set; }
 
     public EventStatus Status { get; set; } = EventStatus.Scheduled; // Scheduled, InProgress, Completed, Cancelled
+
+    [Display(Name = "Published")]
+    public bool IsPublished { get; set; } = false;
 
     // Navigation properties
     [ForeignKey("TournamentId")]

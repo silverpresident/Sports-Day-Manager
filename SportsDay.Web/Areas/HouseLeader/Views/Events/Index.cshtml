@@ -92,9 +92,13 @@
                                                 {
                                                     <span class="badge bg-secondary">0</span>
                                                 }
-                                                @if (eventVm.Event.ParticipantLimit > 0)
+                                                @if (eventVm.Event.MaxParticipantsPerHouse > 0)
                                                 {
-                                                    <small class="text-muted">/ @eventVm.Event.ParticipantLimit max</small>
+                                                    <small class="text-muted">/ @eventVm.Event.MaxParticipantsPerHouse max per house</small>
+                                                }
+                                                else if (eventVm.Event.ParticipantLimit > 0)
+                                                {
+                                                    <small class="text-muted">/ @eventVm.Event.ParticipantLimit total max</small>
                                                 }
                                             </td>
                                             <td>

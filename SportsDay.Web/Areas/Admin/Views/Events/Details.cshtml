@@ -74,6 +74,49 @@
                                 }
                             </div>
                         </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Participant Limit</div>
+                            <div class="fw-bold">
+                                @if (Model.ParticipantLimit > 0)
+                                {
+                                    <i class="bi bi-person-lines-fill me-1"></i>@Model.ParticipantLimit
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No limit</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Max Per House</div>
+                            <div class="fw-bold">
+                                @if (Model.MaxParticipantsPerHouse > 0)
+                                {
+                                    <i class="bi bi-house-fill me-1"></i>@Model.MaxParticipantsPerHouse
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No limit</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="small text-muted">Published</div>
+                            <div class="fw-bold">
+                                @if (Model.IsPublished)
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-eye me-1"></i>Published
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-eye-slash me-1"></i>Not Published
+                                    </span>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

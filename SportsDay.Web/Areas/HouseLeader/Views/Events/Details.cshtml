@@ -67,10 +67,15 @@
                                         <dt class="col-sm-6">Total Participants:</dt>
                                         <dd class="col-sm-6"><span
                                                 class="badge bg-secondary">@Model.TotalParticipantCount</span></dd>
+                                        @if (Model.Event.MaxParticipantsPerHouse > 0)
+                                        {
+                                            <dt class="col-sm-6">Max per House:</dt>
+                                            <dd class="col-sm-6"><span class="badge bg-warning text-dark">@Model.Event.MaxParticipantsPerHouse</span></dd>
+                                        }
                                         @if (Model.Event.ParticipantLimit > 0)
                                         {
-                                            <dt class="col-sm-6">Limit per House:</dt>
-                                            <dd class="col-sm-6">@Model.Event.ParticipantLimit</dd>
+                                            <dt class="col-sm-6">Total Limit:</dt>
+                                            <dd class="col-sm-6"><span class="badge bg-info">@Model.Event.ParticipantLimit</span></dd>
                                         }
                                     </dl>
                                 </div>

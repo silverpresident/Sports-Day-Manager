@@ -38,6 +38,9 @@ public class EventTemplate : BaseEntity
     [Display(Name = "Participant Limit")]
     public int ParticipantLimit { get; set; } = 0; // 0 means no limit
 
+    [Display(Name = "Max Participants Per House")]
+    public int MaxParticipantsPerHouse { get; set; } = 0; // 0 means no limit
+
     [NotMapped]
     public DivisionType Division => GenderGroup;
 
@@ -95,6 +98,7 @@ public class EventTemplate : BaseEntity
             AgeGroup = AgeGroup,
             ParticipantMaxAge = ParticipantMaxAge,
             ParticipantLimit = ParticipantLimit,
+            MaxParticipantsPerHouse = MaxParticipantsPerHouse,
             Category = Category,
             Type = Type,
             Record = Record,

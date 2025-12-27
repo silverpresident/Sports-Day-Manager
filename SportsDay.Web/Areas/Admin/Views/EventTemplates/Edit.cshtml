@@ -138,7 +138,7 @@
                         </h6>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label asp-for="ParticipantMaxAge" class="form-label">
                                     <i class="bi bi-calendar-check me-2"></i>Maximum Age
                                 </label>
@@ -146,12 +146,20 @@
                                 <span asp-validation-for="ParticipantMaxAge" class="text-danger"></span>
                                 <div class="form-text">Set to 0 for no age limit</div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label asp-for="ParticipantLimit" class="form-label">
                                     <i class="bi bi-person-lines-fill me-2"></i>Participant Limit
                                 </label>
                                 <input asp-for="ParticipantLimit" class="form-control" type="number" min="0" />
                                 <span asp-validation-for="ParticipantLimit" class="text-danger"></span>
+                                <div class="form-text">Set to 0 for no limit</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="MaxParticipantsPerHouse" class="form-label">
+                                    <i class="bi bi-house-fill me-2"></i>Max Per House
+                                </label>
+                                <input asp-for="MaxParticipantsPerHouse" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="MaxParticipantsPerHouse" class="text-danger"></span>
                                 <div class="form-text">Set to 0 for no limit</div>
                             </div>
                         </div>
