@@ -82,6 +82,7 @@ public class ResultViewModel
     /// </summary>
     public bool IsDisqualified { get; set; }
 
+    public bool IsPublished { get; set; }
     /// <summary>
     /// The result label (e.g., "1st", "2nd", "DQ", "DNS", "DNF").
     /// </summary>

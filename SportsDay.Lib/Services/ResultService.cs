@@ -428,6 +428,7 @@ public class ResultService : IResultService
             Points = result.Points,
             IsNewRecord = result.IsNewRecord,
             IsDisqualified = result.IsDisqualified,
+            IsPublished = result.IsPublished,
             ResultLabel = result.ResultLabel,
             HouseId = result.HouseId,
             HouseName = result.House.Name,

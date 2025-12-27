@@ -391,7 +391,7 @@ public class DeveloperService : IDeveloperService
                     result.Placement = 0;
                     placement--;//not a valid placement, so skip it
                 }
-
+                result.IsPublished = _random.Next(10) > 3;
                 result.UpdatedAt = DateTime.Now;
                 result.UpdatedBy = createdBy;
 

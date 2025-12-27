@@ -117,6 +117,7 @@ BEGIN
         Points INT NOT NULL,
         IsNewRecord BIT NOT NULL DEFAULT 0,
         [IsDisqualified] BIT NOT NULL DEFAULT 0,
+        [IsPublished] BIT NOT NULL DEFAULT 0,
         ResultLabel NVARCHAR(10) NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
         CreatedBy NVARCHAR(100) NOT NULL DEFAULT 'system',

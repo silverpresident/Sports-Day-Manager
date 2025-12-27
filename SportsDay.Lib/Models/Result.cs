@@ -23,11 +23,12 @@ public class Result : BaseEntity
 
     public decimal? SpeedOrDistance { get; set; }
 
-    public int Points { get; set; }
+    public int Points { get; set; } = 0;
 
-    public bool IsNewRecord { get; set; }
+    public bool IsNewRecord { get; set; } = false;
 
-    public bool IsDisqualified { get; set; }
+    public bool IsDisqualified { get; set; } = false;
+    public bool IsPublished { get; set; } = false;
 
     [MaxLength(10)]
     public string? ResultLabel { get; set; }

@@ -14,7 +14,19 @@ BEGIN
     PRINT 'IsDisqualified column already exists in Results table';
 END
 GO
-
+ 
+-- Add IsPublished column (default to false for existing records)
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Results]') AND name = 'IsPublished')
+BEGIN
+    ALTER TABLE [dbo].[Results]
+    ADD [IsPublished] BIT NOT NULL DEFAULT 0;
+    PRINT 'Added IsPublished column to Results table';
+END
+ELSE
+BEGIN
+    PRINT 'IsPublished column already exists in Results table';
+END
+GO
 -- Add ResultLabel column (nullable, max 10 characters)
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Results]') AND name = 'ResultLabel')
 BEGIN
