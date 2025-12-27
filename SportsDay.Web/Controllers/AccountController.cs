@@ -437,9 +437,13 @@ namespace SportsDay.Web.Controllers
             {
                 return Redirect(returnUrl);
             }
-            else
+            else if (User.IsInRole("Administrator"))
             {
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+            else 
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "HouseLeader" });
             }
         }
     }
