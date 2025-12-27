@@ -37,14 +37,13 @@ public class HouseLeaderHouseFilter : IAsyncActionFilter
 
         var user = context.HttpContext.User;
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-//TODO enable after testing is done
-       /*  if (string.IsNullOrEmpty(userId))
+        
+        if (string.IsNullOrEmpty(userId))
         {
             _logger.LogWarning("User ID not found in claims");
             context.Result = new RedirectToActionResult("Login", "Account", new { area = "" });
             return;
-        } */
+        } 
 
         // Check if HouseLeaderHouseId claim exists
         var houseIdClaim = user.FindFirstValue("HouseLeaderHouseId");

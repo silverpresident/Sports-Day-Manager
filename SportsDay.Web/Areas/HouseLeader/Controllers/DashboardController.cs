@@ -30,6 +30,7 @@ public class DashboardController : HouseLeaderBaseController
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ILogger<DashboardController> _logger;
 
+    private const string HouseLeaderClaimType = "HouseLeaderHouseId";
     public DashboardController(
         IHouseLeaderService houseLeaderService,
         IHouseService houseService,
@@ -61,31 +62,36 @@ public class DashboardController : HouseLeaderBaseController
             return RedirectToPage("/Account/Login", new { area = "Identity" });
         } */
 
-        var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
-        if (houseLeader == null)
-        {
-            TempData["Info"] = "You are not registered as a house leader. Please register first.";
-            return RedirectToAction(nameof(Register));
+        var claim = User.FindFirstValue(HouseLeaderClaimType);
+        if (claim == null){
+            
+            TempData["Info"] = "Please select a house to manage.";
+            return RedirectToAction(nameof(Select));
         }
+        int houseId = 0;
+        if (int.TryParse(claim, out houseId) == false || (houseId == 0)){
+            TempData["Info"] = "Please select a house to manage.";
+            return RedirectToAction(nameof(Select));
+        } 
 
         var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-
+        
         var viewModel = new HouseLeaderDashboardViewModel
         {
-            HouseLeader = houseLeader,
-            House = houseLeader.House!
+            //HouseLeader = ,
+            House = await _houseService.GetByIdAsync(houseId)!
         };
 
         if (activeTournament != null)
         {
             viewModel.ActiveTournament = activeTournament;
             viewModel.Participants = (await _participantService.GetByTournamentAndHouseAsync(
-                activeTournament.Id, houseLeader.HouseId)).ToList();
+                activeTournament.Id, houseId)).ToList();
 
             var events = await _eventService.GetByTournamentIdAsync(activeTournament.Id);
             viewModel.TotalEvents = events.Count();
             viewModel.EventsWithParticipants = await _context.Results
-                .Where(r => r.TournamentId == activeTournament.Id && r.HouseId == houseLeader.HouseId)
+                .Where(r => r.TournamentId == activeTournament.Id && r.HouseId == houseId)
                 .Select(r => r.EventId)
                 .Distinct()
                 .CountAsync();
@@ -204,7 +210,7 @@ public class DashboardController : HouseLeaderBaseController
 
             // Verify user is a house leader for this house
             var houseLeader = await _houseLeaderService.GetByUserIdAsync(userId);
-            if (houseLeader == null || houseLeader.HouseId != houseId)
+            if (houseLeader == null || hHouseId != houseId)
             {
                 TempData["Error"] = "You are not authorized to manage this house.";
                 return RedirectToAction(nameof(Select));
