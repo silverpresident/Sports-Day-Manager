@@ -66,6 +66,13 @@ The Sports Day Manager project is a functional .NET 10.0 MVC application with co
   - Records come from two sources: existing records in Events and new records from Results
   - Comprehensive filtering by division, class, category, house, event, and year
   - Statistics dashboard for result analysis
+- **Public Announcement Controller implemented** (December 2025):
+  - Created AnnouncementController in public area with Index and Details actions
+  - Index view displays all active announcements with priority-based styling
+  - Details view shows full announcement information with metadata
+  - Added navigation links in Dashboard, Quick Links, and main navigation menu
+  - Real-time updates via SignalR for announcement changes
+  - Comprehensive logging with ILogger
 
 ## Current Focus
 
@@ -99,6 +106,10 @@ The project is in a stable state with core functionality working. The system can
   - **Records**: View existing event records and new records set during tournaments
   - **Results**: Comprehensive result viewing with filtering by division, class, category, house, and event
   - **Statistics**: Result statistics dashboard showing tournament performance metrics
+- **View announcements**:
+  - **Announcements Index**: View all active announcements with priority-based styling
+  - **Announcement Details**: View full announcement with metadata and tournament information
+  - Real-time updates via SignalR
 
 ## Known Issues
 
@@ -124,8 +135,7 @@ Potential areas for enhancement:
 ## Technical Debt
 
 - Missing anti-forgery token validation on some POST actions
-- RecordService and ResultService created; consider similar pattern for Announcements
+- Consider creating AnnouncementService with IAnnouncementService interface for consistency with other services
 - DeveloperService created for testing; consider expanding for more test scenarios
 - HouseDetailsViewModel, HouseResultsViewModel, and HouseParticipantsViewModel created; consider similar ViewModels for other complex views
 - HouseLeader area ViewModels created in HouseLeaderDashboardViewModel.cs; consider splitting into separate files
-- RecordViewModel and ResultViewModel created; views need to be implemented for Record and Result controllers

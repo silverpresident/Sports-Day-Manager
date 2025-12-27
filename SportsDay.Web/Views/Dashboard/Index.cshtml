@@ -57,7 +57,12 @@
                             <div>
                                 <i class="bi bi-megaphone-fill me-2"></i>Announcements
                             </div>
-                            <small>Auto-refreshes every 2 minutes</small>
+                            <div>
+                                <a asp-controller="Announcement" asp-action="Index" class="btn btn-sm btn-light me-2">
+                                    <i class="bi bi-list-ul me-1"></i>View All
+                                </a>
+                                <small>Auto-refreshes every 2 minutes</small>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body" id="announcements-container">
@@ -147,6 +152,9 @@
                             </a>
                             <a asp-controller="Record" asp-action="Index" class="list-group-item list-group-item-action">
                                 <i class="bi bi-trophy me-2 text-success"></i>Records
+                            </a>
+                            <a asp-controller="Announcement" asp-action="Index" class="list-group-item list-group-item-action">
+                                <i class="bi bi-megaphone me-2 text-success"></i>Announcements
                             </a>
                         </div>
                     </div>

@@ -1,0 +1,158 @@
+@model IEnumerable<SportsDay.Lib.Models.Announcement>
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Announcements";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5">
+                        <i class="bi bi-megaphone-fill text-success me-2"></i>Announcements
+                    </h1>
+                    @if (ViewBag.ActiveTournament != null)
+                    {
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-trophy me-1"></i>@ViewBag.ActiveTournament.Name
+                        </p>
+                    }
+                </div>
+                <div>
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-success">
+                        <i class="bi bi-house me-1"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message as string))
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@ViewBag.Message
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(ViewBag.Error as string))
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-x-circle me-2"></i>@ViewBag.Error
+        </div>
+    }
+    else if (!Model.Any())
+    {
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-megaphone text-muted" style="font-size: 4rem;"></i>
+                <h3 class="mt-3 text-muted">No Active Announcements</h3>
+                <p class="text-muted">There are currently no announcements to display.</p>
+                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-success mt-3">
+                    <i class="bi bi-house me-1"></i>Return to Dashboard
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                @foreach (var announcement in Model)
+                {
+                    var (bgClass, borderClass, icon, textClass) = announcement.Priority switch
+                    {
+                        AnnouncementPriority.Info => ("bg-info bg-opacity-10", "border-info", "bi-info-circle", "text-info"),
+                        AnnouncementPriority.Warning => ("bg-warning bg-opacity-10", "border-warning", "bi-exclamation-triangle", "text-warning"),
+                        AnnouncementPriority.Danger => ("bg-danger bg-opacity-10", "border-danger", "bi-exclamation-circle", "text-danger"),
+                        AnnouncementPriority.Primary => ("bg-primary bg-opacity-10", "border-primary", "bi-bell", "text-primary"),
+                        AnnouncementPriority.Secondary => ("bg-secondary bg-opacity-10", "border-secondary", "bi-chat", "text-secondary"),
+                        _ => ("bg-light", "border-secondary", "bi-megaphone", "text-secondary")
+                    };
+
+                    <div class="card mb-4 border-start border-5 @borderClass @bgClass">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-shrink-0">
+                                    <i class="bi @icon fs-2 @textClass me-3"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <span class="badge @(announcement.Priority switch
+                                            {
+                                                AnnouncementPriority.Info => "bg-info",
+                                                AnnouncementPriority.Warning => "bg-warning text-dark",
+                                                AnnouncementPriority.Danger => "bg-danger",
+                                                AnnouncementPriority.Primary => "bg-primary",
+                                                AnnouncementPriority.Secondary => "bg-secondary",
+                                                _ => "bg-secondary"
+                                            })">
+                                                @announcement.Priority
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(announcement.Tag))
+                                            {
+                                                <span class="badge bg-light text-dark ms-1">@announcement.Tag</span>
+                                            }
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock me-1"></i>@announcement.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                        </small>
+                                    </div>
+                                    <div class="markdown-body">
+                                        @Html.Raw(Markdig.Markdown.ToHtml(announcement.Body))
+                                    </div>
+                                    @if (announcement.ExpiresAt.HasValue)
+                                    {
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                <i class="bi bi-hourglass-split me-1"></i>Expires: @announcement.ExpiresAt.Value.ToString("MMM dd, yyyy HH:mm")
+                                            </small>
+                                        </div>
+                                    }
+                                    <div class="mt-3">
+                                        <a asp-action="Details" asp-route-id="@announcement.Id" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-eye me-1"></i>View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>Showing @Model.Count() active announcement@(Model.Count() != 1 ? "s" : "")
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize SignalR connection
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/SportsHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().then(function () {
+            console.log("SignalR connected for announcements");
+        }).catch(function (err) {
+            console.error("SignalR connection error:", err.toString());
+        });
+
+        // Handle real-time announcement updates
+        connection.on("ReceiveAnnouncement", function () {
+            console.log("Announcement update received, reloading page...");
+            location.reload();
+        });
+
+        // Auto-refresh every 2 minutes as fallback
+        setInterval(function () {
+            location.reload();
+        }, 120000);
+    </script>
+}

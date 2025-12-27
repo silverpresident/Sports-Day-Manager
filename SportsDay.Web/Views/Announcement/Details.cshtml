@@ -1,0 +1,165 @@
+@model SportsDay.Lib.Models.Announcement
+@using SportsDay.Lib.Enums
+@{
+    ViewData["Title"] = "Announcement Details";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Dashboard" asp-action="Index">
+                            <i class="bi bi-house me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">Announcements</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            @{
+                var (bgClass, borderClass, icon, textClass, badgeClass) = Model.Priority switch
+                {
+                    AnnouncementPriority.Info => ("bg-info bg-opacity-10", "border-info", "bi-info-circle", "text-info", "bg-info"),
+                    AnnouncementPriority.Warning => ("bg-warning bg-opacity-10", "border-warning", "bi-exclamation-triangle", "text-warning", "bg-warning text-dark"),
+                    AnnouncementPriority.Danger => ("bg-danger bg-opacity-10", "border-danger", "bi-exclamation-circle", "text-danger", "bg-danger"),
+                    AnnouncementPriority.Primary => ("bg-primary bg-opacity-10", "border-primary", "bi-bell", "text-primary", "bg-primary"),
+                    AnnouncementPriority.Secondary => ("bg-secondary bg-opacity-10", "border-secondary", "bi-chat", "text-secondary", "bg-secondary"),
+                    _ => ("bg-light", "border-secondary", "bi-megaphone", "text-secondary", "bg-secondary")
+                };
+            }
+
+            <div class="card border-start border-5 @borderClass @bgClass">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">
+                                <i class="bi @icon @textClass me-2"></i>Announcement Details
+                            </h4>
+                        </div>
+                        <div>
+                            <span class="badge @badgeClass">@Model.Priority</span>
+                            @if (!string.IsNullOrEmpty(Model.Tag))
+                            {
+                                <span class="badge bg-light text-dark ms-1">@Model.Tag</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="markdown-body mb-4">
+                        @Html.Raw(Markdig.Markdown.ToHtml(Model.Body))
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock text-muted me-2"></i>
+                                <div>
+                                    <small class="text-muted d-block">Posted</small>
+                                    <strong>@Model.CreatedAt.ToString("dddd, MMMM dd, yyyy")</strong>
+                                    <br>
+                                    <small class="text-muted">@Model.CreatedAt.ToString("hh:mm tt")</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.ExpiresAt.HasValue)
+                        {
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-hourglass-split text-muted me-2"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Expires</small>
+                                        <strong>@Model.ExpiresAt.Value.ToString("dddd, MMMM dd, yyyy")</strong>
+                                        <br>
+                                        <small class="text-muted">@Model.ExpiresAt.Value.ToString("hh:mm tt")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.CreatedBy))
+                        {
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person text-muted me-2"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Posted By</small>
+                                        <strong>@Model.CreatedBy</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-trophy text-muted me-2"></i>
+                                <div>
+                                    <small class="text-muted d-block">Tournament</small>
+                                    <strong>@Model.Tournament.Name</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Announcements
+                        </a>
+                        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-success">
+                            <i class="bi bi-house me-1"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.UpdatedAt.HasValue && Model.UpdatedAt != Model.CreatedAt)
+            {
+                <div class="alert alert-light mt-3" role="alert">
+                    <small class="text-muted">
+                        <i class="bi bi-pencil me-1"></i>
+                        Last updated: @Model.UpdatedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                        @if (!string.IsNullOrEmpty(Model.UpdatedBy))
+                        {
+                            <text> by @Model.UpdatedBy</text>
+                        }
+                    </small>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize SignalR connection
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/SportsHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().then(function () {
+            console.log("SignalR connected for announcement details");
+        }).catch(function (err) {
+            console.error("SignalR connection error:", err.toString());
+        });
+
+        // Handle real-time announcement updates
+        connection.on("ReceiveAnnouncement", function () {
+            console.log("Announcement update received, reloading page...");
+            location.reload();
+        });
+    </script>
+}
