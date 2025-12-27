@@ -14,5 +14,5 @@ public interface IHouseLeaderService
     Task UpdateAsync(HouseLeader houseLeader);
     Task DeleteAsync(Guid id);
     Task<bool> ExistsAsync(Guid id);
-    Task<IEnumerable<Guid>> GetHousesByUserIdAsync(string? userId);
+    Task<List<int>> GetHousesByUserIdAsync(string? userId);
 }

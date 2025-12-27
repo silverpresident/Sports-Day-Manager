@@ -189,9 +189,20 @@ public class HouseLeaderService : IHouseLeaderService
         }
     }
 
-    public Task<IEnumerable<Guid>> GetHousesByUserIdAsync(string? userId)
+    public async Task<List<int>> GetHousesByUserIdAsync(string? userId)
     {
-        ?
-        throw new NotImplementedException();
+        try
+        {
+            return await _context.HouseLeaders
+                .Where(hl => hl.UserId == userId)
+                .Select(hl => hl.HouseId)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving house leader for user {UserId}", userId);
+            throw;
+        }
+        //return List.Empty<Guid>();
     }
 }

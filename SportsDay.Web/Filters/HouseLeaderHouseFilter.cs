@@ -38,12 +38,13 @@ public class HouseLeaderHouseFilter : IAsyncActionFilter
         var user = context.HttpContext.User;
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (string.IsNullOrEmpty(userId))
+//TODO enable after testing is done
+       /*  if (string.IsNullOrEmpty(userId))
         {
             _logger.LogWarning("User ID not found in claims");
-            context.Result = new RedirectToActionResult("Login", "Account", new { area = "Identity" });
+            context.Result = new RedirectToActionResult("Login", "Account", new { area = "" });
             return;
-        }
+        } */
 
         // Check if HouseLeaderHouseId claim exists
         var houseIdClaim = user.FindFirstValue("HouseLeaderHouseId");
@@ -57,9 +58,10 @@ public class HouseLeaderHouseFilter : IAsyncActionFilter
 
         // No claim found, check if user is an administrator or has house leader records
         var isAdmin = user.IsInRole("Administrator");
+        var isHouseLeader = user.IsInRole("HouseLeader");
         var houseLeaders = await _houseLeaderService.GetByUserIdAsync(userId);
 
-        if (houseLeaders == null && !isAdmin)
+        if (houseLeaders == null && !isAdmin && !isHouseLeader)
         {
             // User is not a house leader at all
             _logger.LogWarning("User {UserId} attempted to access house leader area without being a house leader", userId);

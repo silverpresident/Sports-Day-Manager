@@ -69,7 +69,7 @@ public class DashboardController : HouseLeaderBaseController
         }
 
         var activeTournament = await _tournamentService.GetActiveTournamentAsync();
-        
+
         var viewModel = new HouseLeaderDashboardViewModel
         {
             HouseLeader = houseLeader,
@@ -81,7 +81,7 @@ public class DashboardController : HouseLeaderBaseController
             viewModel.ActiveTournament = activeTournament;
             viewModel.Participants = (await _participantService.GetByTournamentAndHouseAsync(
                 activeTournament.Id, houseLeader.HouseId)).ToList();
-            
+
             var events = await _eventService.GetByTournamentIdAsync(activeTournament.Id);
             viewModel.TotalEvents = events.Count();
             viewModel.EventsWithParticipants = await _context.Results
@@ -112,27 +112,34 @@ public class DashboardController : HouseLeaderBaseController
         // Get the house leader record for this user
         var houseIds = await _houseLeaderService.GetHousesByUserIdAsync(userId);
 
-        if (houseIds.Count() == 0 && !isAdmin && !isHouseLeader){
+        if (houseIds.Count() == 0 && !isAdmin && !isHouseLeader)
+        {
             TempData["Error"] = "You are not registered as a house leader.";
             return RedirectToAction(nameof(NotAllowed));
         }
-        if (houseIds.Count() == 1 && !isAdmin){
-            SelectSingleHouseClaim(houseIds[0]);
-            ?redir to index
+        if (houseIds.Count() == 1 && !isAdmin)
+        {
+            SelectSingleHouseClaim(houseIds.First());
+            return RedirectToAction(nameof(Index));
         }
         IEnumerable<House> availableHouses;
-        if (isAdmin){
+        if (isAdmin)
+        {
             //all houses
             availableHouses = await _houseService.GetAllAsync();
-        } else if (houseIds.Any()){
+        }
+        else if (houseIds.Any())
+        {
             availableHouses = await _houseService.GetAllAsync();
             availableHouses = availableHouses.Where(h => houseIds.Contains(h.Id)).ToList();
-        } else {
+        }
+        else
+        {
             TempData["Error"] = "You are not registered as a house leader.";
             return RedirectToAction(nameof(Register));
         }
 
-    // If user is an administrator, they can view all houses
+        // If user is an administrator, they can view all houses
 
         ViewBag.Houses = new SelectList(availableHouses, "Id", "Name");
         ViewBag.IsAdmin = isAdmin;
@@ -140,9 +147,36 @@ public class DashboardController : HouseLeaderBaseController
         return View();
     }
 
-    private void SelectSingleHouseClaim(Guid houseId)
+    private async void SelectSingleHouseClaim(int houseId)
     {
-        throw new NotImplementedException();
+        // Add HouseLeaderHouseId claim
+        var user = await _userManager.GetUserAsync(User);
+        if (user != null)
+        {
+            var existingClaim = (await _userManager.GetClaimsAsync(user))
+                .FirstOrDefault(c => c.Type == "HouseLeaderHouseId");
+
+            if (existingClaim != null)
+            {
+                await _userManager.RemoveClaimAsync(user, existingClaim);
+            }
+
+            await _userManager.AddClaimAsync(user, new Claim("HouseLeaderHouseId", houseId.ToString()));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "HouseLeader"));
+
+            // Refresh the sign-in to update claims
+            await _userManager.UpdateSecurityStampAsync(user);
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+            // Create new claims principal with updated claims
+            var claims = await _userManager.GetClaimsAsync(user);
+            var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+            _logger.LogInformation("selected house {HouseId}", houseId);
+        }
     }
 
     /// <summary>
@@ -189,16 +223,16 @@ public class DashboardController : HouseLeaderBaseController
                 }
 
                 await _userManager.AddClaimAsync(user, new Claim("HouseLeaderHouseId", houseId.ToString()));
-                
+                await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "HouseLeader"));
                 // Refresh the sign-in to update claims
                 await _userManager.UpdateSecurityStampAsync(user);
                 await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-                
+
                 // Create new claims principal with updated claims
                 var claims = await _userManager.GetClaimsAsync(user);
                 var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
                 var principal = new ClaimsPrincipal(identity);
-                
+
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
 
                 TempData["Success"] = $"You are now managing {house.Name}!";
@@ -240,10 +274,10 @@ public class DashboardController : HouseLeaderBaseController
     public async Task<IActionResult> Register()
     {
         var userId = _userManager.GetUserId(User);
-       /*  if (string.IsNullOrEmpty(userId))
-        {
-            return RedirectToPage("/Account/Login", new { area = "Identity" });
-        } */
+        /*  if (string.IsNullOrEmpty(userId))
+         {
+             return RedirectToPage("/Account/Login", new { area = "Identity" });
+         } */
 
         // Check if user is already a house leader
         var existingLeader = await _houseLeaderService.GetByUserIdAsync(userId);
@@ -305,7 +339,7 @@ public class DashboardController : HouseLeaderBaseController
             TempData["Success"] = $"You have successfully registered as a house leader for {house.Name}!";
             _logger.LogInformation("User {UserId} registered as house leader for {HouseName}", userId, house.Name);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Select));
         }
         catch (Exception ex)
         {
