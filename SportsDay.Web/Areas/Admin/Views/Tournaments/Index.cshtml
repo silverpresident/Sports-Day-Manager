@@ -77,6 +77,12 @@
                                             </a>
                                             @if (item.IsActive)
                                             {
+                                                <form asp-action="PublishPointsStanding" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Publish points standing">
+                                                        <i class="bi bi-trophy"></i>
+                                                    </button>
+                                                </form>
                                                 <form asp-action="SetActive" asp-route-id="@item.Id" method="post" class="d-inline">
                                                     @Html.AntiForgeryToken()
                                                     <button type="submit" class="btn btn-sm btn-outline-warning" title="Deactivate tournament">
@@ -93,8 +99,8 @@
                                                     </button>
                                                 </form>
                                             }
-                                            <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                    data-bs-toggle="modal" 
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal"
                                                     data-bs-target="#deleteModal@(item.Id)"
                                                     title="Delete tournament">
                                                 <i class="bi bi-trash"></i>

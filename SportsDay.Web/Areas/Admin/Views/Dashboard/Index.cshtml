@@ -271,13 +271,31 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a asp-area="Admin" asp-controller="Announcements" asp-action="Create" 
+                            <a asp-area="Admin" asp-controller="Announcements" asp-action="Create"
                                class="btn btn-outline-success w-100 text-start">
                                 <i class="bi bi-megaphone me-2"></i>New Announcement
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a asp-area="" asp-controller="Dashboard" asp-action="Index" 
+                            @if (Model.ActiveTournament != null)
+                            {
+                                <form asp-area="Admin" asp-controller="Tournaments" asp-action="PublishPointsStanding"
+                                      asp-route-id="@Model.ActiveTournament.Id" method="post" class="w-100">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-warning w-100 text-start">
+                                        <i class="bi bi-trophy me-2"></i>Publish Points Standing
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-secondary w-100 text-start" disabled>
+                                    <i class="bi bi-trophy me-2"></i>Publish Points Standing
+                                </button>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-area="" asp-controller="Dashboard" asp-action="Index"
                                class="btn btn-outline-primary w-100 text-start" target="_blank">
                                 <i class="bi bi-display me-2"></i>View Public Site
                             </a>
