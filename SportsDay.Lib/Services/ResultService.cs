@@ -427,6 +427,8 @@ public class ResultService : IResultService
             SpeedOrDistance = result.SpeedOrDistance,
             Points = result.Points,
             IsNewRecord = result.IsNewRecord,
+            IsDisqualified = result.IsDisqualified,
+            ResultLabel = result.ResultLabel,
             HouseId = result.HouseId,
             HouseName = result.House.Name,
             HouseColor = result.House.Color,

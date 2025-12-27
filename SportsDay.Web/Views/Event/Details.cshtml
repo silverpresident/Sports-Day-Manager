@@ -130,8 +130,8 @@
                             <table class="table table-hover table-sports mb-0">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="text-center" style="width: 60px;">
-                                            <i class="bi bi-hash"></i>
+                                        <th scope="col" class="text-center" style="width: 80px;">
+                                            <i class="bi bi-trophy me-1"></i>Place
                                         </th>
                                         <th scope="col">
                                             <i class="bi bi-person me-1"></i>Participant
@@ -157,16 +157,35 @@
                                             3 => "table-info",
                                             _ => ""
                                         };
-                                        var placementIcon = result.Placement switch
-                                        {
-                                            1 => "bi-trophy-fill text-warning",
-                                            2 => "bi-award-fill text-secondary",
-                                            3 => "bi-award text-info",
-                                            _ => "bi-circle"
-                                        };
                                         <tr class="@placementClass">
                                             <td class="text-center">
-                                                <i class="bi @placementIcon me-1"></i>@result.Placement
+                                                @if (!string.IsNullOrEmpty(result.ResultLabel))
+                                                {
+                                                    var labelClass = result.ResultLabel switch
+                                                    {
+                                                        "DQ" => "bg-danger",
+                                                        "DNS" => "bg-secondary",
+                                                        "DNF" => "bg-warning text-dark",
+                                                        "1st" => "bg-success",
+                                                        "2nd" => "bg-info text-dark",
+                                                        "3rd" => "bg-primary",
+                                                        _ => "bg-light text-dark"
+                                                    };
+                                                    <span class="badge @labelClass">
+                                                        @result.ResultLabel
+                                                    </span>
+                                                }
+                                                else if (result.Placement.HasValue)
+                                                {
+                                                    var placementIcon = result.Placement switch
+                                                    {
+                                                        1 => "bi-trophy-fill text-warning",
+                                                        2 => "bi-award-fill text-secondary",
+                                                        3 => "bi-award text-info",
+                                                        _ => "bi-circle"
+                                                    };
+                                                    <i class="bi @placementIcon me-1"></i>@result.Placement
+                                                }
                                             </td>
                                             <td>
                                                 @if (result.Participant != null)

@@ -78,6 +78,16 @@ public class ResultViewModel
     public bool IsNewRecord { get; set; }
 
     /// <summary>
+    /// Indicates whether the participant was disqualified.
+    /// </summary>
+    public bool IsDisqualified { get; set; }
+
+    /// <summary>
+    /// The result label (e.g., "1st", "2nd", "DQ", "DNS", "DNF").
+    /// </summary>
+    public string? ResultLabel { get; set; }
+
+    /// <summary>
     /// The house ID.
     /// </summary>
     public int HouseId { get; set; }

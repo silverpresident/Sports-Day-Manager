@@ -27,6 +27,11 @@ public class Result : BaseEntity
 
     public bool IsNewRecord { get; set; }
 
+    public bool IsDisqualified { get; set; }
+
+    [MaxLength(10)]
+    public string? ResultLabel { get; set; }
+
     [Required]
     public Guid TournamentId { get; set; }
 

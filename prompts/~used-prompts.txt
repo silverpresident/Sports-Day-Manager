@@ -1,0 +1,13 @@
+Add a IsDisqualified field to the result model. 
+Add a ResultLabel to the result model string (10)
+ResultLabel will store a place lable "1st", "2nd" or status "DQ", "DNS", "DNF"
+Update the services and generate the sql to do the update.
+also update section of the events view in the admin area, the houseleader area and public area which display results to show the resultlabel
+update the public results view to show the resultlabel.
+do not remove any of the currently displayed informaiton in the views.
+===
+Update applicable models to extend a BaseEntity whichadds common fieldsinlcuing CreatedAt, UpdatedAt, CreatedBy and UpdatedBy
+Update the relevant controller to reflect this change
+UPdate the setup.sql to refect this as well. 
+Have CreatedAt and updatedby default to "system"
+===
